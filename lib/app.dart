@@ -79,6 +79,7 @@ import 'util/focus/gamepad/gamepad_navigation_scope.dart';
 import 'util/focus/gamepad/gamepad_key_synthesizer.dart';
 import 'util/focus/open_popup.dart';
 import 'package:custom_tv_text_field/custom_tv_text_field.dart';
+import 'fluxer/hub/fluxer_hub_watcher.dart'; // FLUXER:
 
 class MoonfinApp extends StatefulWidget {
   const MoonfinApp({super.key});
@@ -96,6 +97,7 @@ class _MoonfinAppState extends State<MoonfinApp> {
   @override
   void initState() {
     super.initState();
+    FluxerHubWatcher.start(); // FLUXER: avisos de FluxerHub (plan, mantenimientos)
     _prefs = GetIt.instance<UserPreferences>();
     CustomKeyboard.onStylePicked = (style) =>
         _prefs.set(UserPreferences.keyboardStyle, style);

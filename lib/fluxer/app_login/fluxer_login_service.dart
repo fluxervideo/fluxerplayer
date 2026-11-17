@@ -15,6 +15,7 @@ import '../../auth/repositories/server_repository.dart';
 import '../../auth/repositories/session_repository.dart';
 import '../../auth/store/authentication_store.dart';
 import '../fluxer_config.dart';
+import '../hub/fluxer_hub_client.dart';
 
 /// Código que enseña la app mientras espera.
 class FluxerLoginCode {
@@ -41,12 +42,16 @@ class FluxerLoginSession {
   final String userName;
   final String accessToken;
 
+  /// Token propio de la app en FluxerHub (solo /api/app/*).
+  final String? hubToken;
+
   const FluxerLoginSession({
     required this.serverUrl,
     required this.serverName,
     required this.userId,
     required this.userName,
     required this.accessToken,
+    this.hubToken,
   });
 }
 
@@ -124,6 +129,7 @@ class FluxerLoginService {
             userId: data['user_id'] as String,
             userName: data['user_name'] as String? ?? '',
             accessToken: data['access_token'] as String,
+            hubToken: data['hub_token'] as String?,
           ),
         );
       case 'pending':
@@ -139,6 +145,11 @@ class FluxerLoginService {
     final getIt = GetIt.instance;
     final server = await getIt<ServerRepository>().addServer(session.serverUrl);
     if (server == null) return null;
+
+    final hubToken = session.hubToken;
+    if (hubToken != null && hubToken.isNotEmpty) {
+      await FluxerHubClient.instance.saveToken(hubToken);
+    }
 
     await getIt<AuthenticationStore>().putUser(
       PrivateUser(

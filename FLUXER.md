@@ -65,10 +65,30 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/auth/server_select_screen.dart` | botón «Entrar con Fluxer», sin búsqueda en la red ni certificados |
 | `lib/ui/screens/auth/add_server_dialog.dart` | directo a la dirección (sin Plex ni Emby Connect) |
 | `lib/auth/repositories/session_repository.dart` | mensajes del servidor grandes |
+| `lib/app.dart` | arrancar los avisos de FluxerHub (plan, mantenimientos, avisos) |
+| `lib/ui/screens/detail/item_detail_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/admin/admin_nav.dart` | sin administración |
 | `lib/util/signed_in_server_features.dart`, `lib/data/services/plugin_sync_service.dart` | sin Seerr |
 | `lib/data/services/achievements_service.dart` | sin logros |
 | `lib/ui/screens/settings/settings_side_panel.dart` (+ `panel/account_screen.dart`, `panel/about_category_screen.dart`, `panel/settings_search_index.dart`) | sin certificados, sin enlaces de Moonfin, sin After Hours |
+
+## FluxerHub desde la app
+
+Al entrar con Fluxer la app recibe también un token propio del Hub
+(`lib/fluxer/hub/fluxer_hub_client.dart`, almacén seguro) que solo abre
+`/api/app/*`: estado del plan, avisos y reportar un problema.
+- `fluxer_hub_watcher.dart`: al arrancar y cada 30 min, avisa del plan
+  (caducado o caduca en ≤5 días sin renovación automática; una vez al día),
+  mantenimientos (una vez cada uno) y avisos globales de ventana.
+- `fluxer_report_dialog.dart`: «Reportar un problema» en la ficha; llega a
+  FluxerHub como solicitud del cliente.
+
+## Versiones
+
+- Cada compilación manual se publica como **pre-release** «Prueba N»: el
+  actualizador de la app la ignora.
+- Una versión de verdad (la que el actualizador ofrece a los clientes) solo
+  se publica cuando lo decide el dueño del proyecto.
 
 ## Funciones ocultas
 

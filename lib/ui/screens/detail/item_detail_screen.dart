@@ -149,6 +149,8 @@ import '../../../util/platform_detection.dart';
 import '../../../util/signed_in_server_features.dart';
 import 'detail_layout_metrics.dart';
 import 'play_item_on_screen.dart';
+import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
+import '../../../fluxer/hub/fluxer_report_dialog.dart'; // FLUXER:
 
 const _textShadows = [Shadow(blurRadius: 4, color: Colors.black54)];
 
@@ -7687,6 +7689,12 @@ class DetailActionButtonsState extends State<DetailActionButtons> {
         ?byButton[button],
         ?cancelByButton[button],
       ],
+      if (fluxerCanReport(item)) // FLUXER: reportar un problema a FluxerHub
+        _DetailActionButton(
+          label: FluxerStrings.of(context).reportProblem,
+          icon: Icons.report_problem_outlined,
+          onPressed: () => showFluxerReportDialog(context, item),
+        ),
     ];
 
     if (isNeon) {
