@@ -116,6 +116,8 @@ import 'episode_browser.dart';
 import 'episode_browser_panel.dart';
 import 'osd_buttons.dart';
 import 'trickplay_housing_inset.dart';
+import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
+import '../../../fluxer/hub/fluxer_report_dialog.dart'; // FLUXER:
 
 class _SubtitleLoadingSpinner extends StatefulWidget {
   const _SubtitleLoadingSpinner();
@@ -6260,6 +6262,20 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen>
             _prefs,
           ))
             ?byButton[button],
+          if (_queue.currentItem is AggregatedItem &&
+              fluxerCanReport(_queue.currentItem as AggregatedItem)) // FLUXER:
+            _controlButton(
+              Icons.report_problem_outlined,
+              onPressed: () {
+                final item = _queue.currentItem;
+                if (item is! AggregatedItem) return;
+                _manager.pause();
+                showFluxerReportDialog(context, item);
+              },
+              size: secondaryIconSize,
+              extent: secondaryExtent,
+              tooltip: FluxerStrings.of(context).reportProblem,
+            ),
         ]);
 
         final orderedSecondaryButtons = PlatformDetection.isTV

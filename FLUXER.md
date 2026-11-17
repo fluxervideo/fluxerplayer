@@ -102,6 +102,22 @@ toca en git.
      versión con esas notas; la app la ofrece al abrirse (como mucho una vez
      al día; en Windows la descarga e instala sola).
 
+## Firma del instalador (pendiente)
+
+Sin firma, Windows enseña el aviso de SmartScreen. El workflow ya está
+preparado para firmar con **SignPath** (gratis para proyectos de código
+abierto, lo usa Moonfin); se activa solo cuando existen en el repo:
+- secreto `SIGNPATH_API_TOKEN` y variable `SIGNPATH_ORGANIZATION_ID`;
+- opcionales: `SIGNPATH_PROJECT_SLUG` (`fluxerplayer`),
+  `SIGNPATH_SIGNING_POLICY` (`release-signing`),
+  `SIGNPATH_ARTIFACT_CONFIGURATION` (`windows-installer`).
+
+Hay que solicitarlo en signpath.org (SignPath Foundation) como titular del
+proyecto. Alternativas de pago: Azure Artifact Signing o un certificado
+de firma de código. Ojo: con cualquier certificado nuevo, SmartScreen puede
+seguir avisando las primeras semanas, hasta que el instalador gana
+reputación con las descargas.
+
 ## Funciones ocultas
 
 `lib/fluxer/fluxer_features.dart`: un interruptor por función (Plex/Jellyfin/

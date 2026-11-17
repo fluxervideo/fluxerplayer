@@ -64,6 +64,9 @@ if tag and tag != f"v{VERSION['version']}":
 sub("pubspec.yaml", [
     (r"(?m)^version:\s*\S+", f"version: {VERSION['version']}+{build_number}"),
 ])
+sub("lib/fluxer/fluxer_build_info.dart", [
+    (r"const String fluxerMoonfinBase = '[^']*';", f"const String fluxerMoonfinBase = '{VERSION['moonfinBase']}';"),
+])
 
 # --- Windows: ventana, propiedades del .exe e instalador -------------------
 

@@ -78,6 +78,8 @@ class FluxerStrings {
         'audio' => _t('Problemas con el sonido o los subtítulos', 'Sound or subtitle problems'),
         _ => _t('Otra cosa', 'Something else'),
       };
+  String versionWithBase(String version, String moonfin) =>
+      _t('$version · basada en Moonfin $moonfin', '$version · based on Moonfin $moonfin');
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(

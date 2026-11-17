@@ -31,7 +31,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                 autofocus: true,
                 leading: const Icon(Icons.info_outline),
                 title: Text(l10n.version),
-                subtitle: Text(appVersion),
+                subtitle: Text(FluxerStrings.of(context).versionWithBase(appVersion, fluxerMoonfinBase)), // FLUXER:
                 trailing: const SizedBox.shrink(),
                 onTap: () {
                   if (FluxerFeatures.games) AfterHoursTrigger.press(context); // FLUXER:

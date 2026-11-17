@@ -25,10 +25,16 @@ env:
 
 permissions:
   contents: write  # publicar en Releases
+  actions: read    # SignPath lee el artefacto sin firmar
 
 jobs:
   windows:
     runs-on: windows-latest
+    env:
+      # Firma del instalador con SignPath (como Moonfin). Desactivada hasta
+      # que existan el secreto SIGNPATH_API_TOKEN y la variable
+      # SIGNPATH_ORGANIZATION_ID en el repo (ver FLUXER.md → Firma).
+      SIGNPATH_ENABLED: ${{ secrets.SIGNPATH_API_TOKEN != '' && vars.SIGNPATH_ORGANIZATION_ID != '' }}
     steps:
       - uses: actions/checkout@v5
 
@@ -72,10 +78,33 @@ jobs:
         run: .\build-windows.ps1
 
       - uses: actions/upload-artifact@v6
+        id: unsigned
         with:
           name: windows-exe
           path: '*_Windows_v*.exe'
           if-no-files-found: error
+
+      - name: Sign installer
+        if: env.SIGNPATH_ENABLED == 'true'
+        uses: SignPath/github-action-submit-signing-request@v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'fluxerplayer' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY || 'release-signing' }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION || 'windows-installer' }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      # El firmado sustituye al original: lo que se publica es el firmado.
+      - name: Use signed installer
+        if: env.SIGNPATH_ENABLED == 'true'
+        shell: pwsh
+        run: |
+          $signed = Get-ChildItem signed -Filter "*_Windows_v*.exe" | Select-Object -First 1
+          if (-not $signed) { throw "SignPath no ha devuelto el instalador firmado" }
+          Copy-Item $signed.FullName -Destination . -Force
 
       - name: Publish test build
         if: github.event_name == 'workflow_dispatch'

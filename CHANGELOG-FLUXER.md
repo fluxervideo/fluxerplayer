@@ -3,6 +3,13 @@
 Cada versión publicada (etiqueta `vX.Y.Z`) usa como notas la sección con su
 número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
+## 1.0.1 — (en preparación, sin publicar)
+
+Basada en Moonfin 3.1.0.
+
+- **Reportar un problema** también desde el reproductor, sin salir del vídeo.
+- «Acerca de» indica en qué versión de Moonfin está basada.
+
 ## 1.0.0 — Adaptada a Fluxer
 
 Primera versión de FluxerPlayer, la app de [fluxer.video](https://www.fluxer.video).
