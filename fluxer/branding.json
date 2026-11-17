@@ -4,6 +4,7 @@
   "companyId": "video.fluxer",
   "installerPrefix": "FluxerPlayer",
   "windowsInstallerAppId": "7315F9F1-0421-4FB8-86C3-FE99D5E3FF43",
-  "sourceCodeUrl": "https://github.com/marcostorrent/fluxermoon",
-  "updatesGithubRepo": "marcostorrent/fluxermoon"
+  "sourceCodeUrl": "https://github.com/marcostorrent/fluxerplayer",
+  "updatesGithubRepo": "marcostorrent/fluxerplayer",
+  "urlScheme": "fluxerplayer"
 }

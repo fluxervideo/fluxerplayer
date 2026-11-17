@@ -68,6 +68,23 @@ sub("build-windows.ps1", [
     (r'"Moonfin_Windows_v', f'"{prefix}_Windows_v'),
 ])
 
+# --- Enlaces fluxerplayer:// en vez de moonfin:// (no chocan con Moonfin) ---
+
+scheme = CFG["urlScheme"]
+sub("windows/runner/main.cpp", [
+    (r'L"Software\\\\Classes\\\\moonfin"', f'L"Software\\\\\\\\Classes\\\\\\\\{scheme}"'),
+    (r'L"URL:Moonfin"', f'L"URL:{NAME}"'),
+])
+sub("build-windows.ps1", [
+    (r'Subkey: "Software\\Classes\\moonfin"', f'Subkey: "Software\\\\Classes\\\\{scheme}"'),
+])
+sub("lib/data/services/deep_link_service.dart", [
+    (r"uri\.scheme != 'moonfin'", f"uri.scheme != '{scheme}'"),
+])
+sub("android/app/src/main/AndroidManifest.xml", [
+    (r'android:scheme="moonfin"', f'android:scheme="{scheme}"'),
+])
+
 # --- Actualizador: buscar versiones en NUESTRO repo, no en el de Moonfin -----
 
 repo = CFG["updatesGithubRepo"]
