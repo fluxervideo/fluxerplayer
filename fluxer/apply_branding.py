@@ -133,6 +133,34 @@ for arb in arbs:
 if changed_en == 0:
     errors.append("lib/l10n/app_en.arb: no se cambió ningún texto")
 
+# --- Textos propios (fluxer/branding/strings.json) --------------------------
+# Sustituyen el texto de una clave en todos los idiomas: 'es' en es_*, 'en' en
+# el resto. Si el idioma no tiene la clave (sale en inglés), se añade.
+
+overrides = {
+    k: v for k, v in json.loads(
+        (ROOT / "fluxer" / "branding" / "strings.json").read_text(encoding="utf-8")
+    ).items() if not k.startswith("_")
+}
+en_keys = set(json.loads((ROOT / "lib" / "l10n" / "app_en.arb").read_text(encoding="utf-8")))
+for key in overrides:
+    if key not in en_keys:
+        errors.append(f"strings.json: la clave {key!r} ya no existe en app_en.arb")
+for arb in arbs:
+    raw = arb.read_text(encoding="utf-8")
+    m = re.search(r'\n( +)"', raw)
+    top = m.group(1) if m else "    "
+    lang = arb.stem.removeprefix("app_").split("_")[0]
+    for key, texts in overrides.items():
+        value = json.dumps(texts["es"] if lang == "es" else texts["en"], ensure_ascii=False)
+        line = re.compile(r'^' + top + re.escape(json.dumps(key)) + r':\s*".*?"(?=\s*,?\s*$)', re.M)
+        new_line = top + json.dumps(key) + ": " + value
+        if line.search(raw):
+            raw = line.sub(lambda _: new_line, raw, count=1)
+        else:
+            raw = re.sub(r'(^' + top + r'"@@locale":[^\n]*\n)', lambda mm: mm.group(1) + new_line + ",\n", raw, count=1, flags=re.M)
+    arb.write_text(raw, encoding="utf-8")
+
 # --- Imágenes e iconos ------------------------------------------------------
 # Todo lo que haya en fluxer/branding/overlay/ se copia encima del repo con la
 # misma ruta (p. ej. overlay/windows/runner/resources/app_icon.ico).

@@ -253,7 +253,7 @@ class _AddServerButtonState extends State<AddServerButton> {
                         ],
                       ),
                     ),
-                    if (constraints.maxWidth >= 360)
+                    if (constraints.maxWidth >= 360 && FluxerFeatures.otherServerTypes) // FLUXER:
                       for (final type in ServerType.values)
                         Padding(
                           padding: const EdgeInsetsDirectional.only(start: 10),
