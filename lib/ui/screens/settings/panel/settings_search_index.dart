@@ -503,12 +503,14 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       account.leaf('pref_user_sort_by', l10n.settingsSortServersBy, keywords: [
         'server order',
       ]),
+      if (FluxerFeatures.clientCertificates) // FLUXER:
       account.leaf(
         'pref_allow_self_signed_certs',
         l10n.settingsAllowSelfSignedCerts,
         subtitle: l10n.settingsAllowSelfSignedCertsSubtitle,
         keywords: ['certificate', 'ssl', 'https', 'insecure'],
       ),
+      if (FluxerFeatures.clientCertificates) // FLUXER:
       account.leaf(
         'client_certificates',
         l10n.settingsClientCertificates,

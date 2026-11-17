@@ -33,6 +33,7 @@ import '../../widgets/overlay_sheet.dart';
 import '../../widgets/server_type_icon.dart';
 import 'add_server_dialog.dart';
 import '../../../fluxer/fluxer_routes.dart'; // FLUXER:
+import '../../../fluxer/fluxer_features.dart'; // FLUXER:
 import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
 
 final _kAccent = AppColorScheme.accent;
@@ -344,6 +345,7 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
   }
 
   void _startDiscovery() {
+    if (!FluxerFeatures.serverDiscovery) return; // FLUXER:
     setState(() => _isDiscovering = true);
     _discoveredServers.clear();
 
@@ -578,6 +580,7 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
               ),
             const SizedBox(height: 20),
           ],
+          if (FluxerFeatures.serverDiscovery) ...[ // FLUXER:
           Text(
             l10n.discoveredServers,
             style: Theme.of(
@@ -619,6 +622,7 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
                 ),
               ),
             ),
+          ], // FLUXER:
           if (_errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -633,7 +637,7 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
               final isVerySmall = constraints.maxWidth < 360;
               final actions = <Widget>[];
 
-              if (_untrustedAddress != null) {
+              if (_untrustedAddress != null && FluxerFeatures.clientCertificates) { // FLUXER:
                 actions.add(
                   _buildFooterActionButton(
                     onPressed: _isConnecting ? null : _allowSelfSignedAndRetry,

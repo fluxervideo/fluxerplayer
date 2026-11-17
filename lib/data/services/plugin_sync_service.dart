@@ -30,6 +30,7 @@ import '../../preference/seerr_row_config.dart';
 import '../../preference/user_preferences.dart';
 import '../../util/platform_detection.dart';
 import '../../util/signed_in_server_features.dart';
+import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
 enum _PluginAvailabilityStatus { available, unavailable, unknown }
 
@@ -85,6 +86,7 @@ class PluginSyncService extends ChangeNotifier {
   bool _seerrEnabled = false;
   bool get seerrEnabled => _seerrEnabled;
   bool get seerrAvailable =>
+      FluxerFeatures.seerr && // FLUXER:
       (_siloRequestsAvailable || (_pluginAvailable && _seerrEnabled)) &&
       _prefs.get(UserPreferences.seerrEnabled);
 

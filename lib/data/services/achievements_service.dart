@@ -7,6 +7,7 @@ import 'package:flutter/widgets.dart'
 import 'package:server_core/server_core.dart';
 
 import '../models/achievement_models.dart';
+import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
 /// Bounds for these requests, so a server that swallows connection attempts
 /// can't hold the settings panel open on a spinner.
@@ -49,7 +50,7 @@ class AchievementsService extends ChangeNotifier {
 
   /// Whether the plugin answered on this server. False until a probe succeeds,
   /// so the entry stays hidden on every server that doesn't run it.
-  bool get available => _available;
+  bool get available => FluxerFeatures.achievements && _available; // FLUXER:
 
   bool _leaderboardEnabled = true;
   bool _questsEnabled = true;

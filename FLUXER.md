@@ -61,8 +61,23 @@ Todo lo demás de FluxerMoon vive en ficheros propios (`lib/fluxer/`, `fluxer/`,
 
 | Fichero | Qué |
 |---|---|
-| `lib/ui/navigation/app_router.dart` | import + ruta `/fluxer-login` + permitirla sin sesión |
-| `lib/ui/screens/auth/server_select_screen.dart` | botón «Entrar con Fluxer» |
+| `lib/ui/navigation/app_router.dart` | ruta `/fluxer-login` (y permitirla sin sesión) + rutas bloqueadas |
+| `lib/ui/screens/auth/server_select_screen.dart` | botón «Entrar con Fluxer», sin búsqueda en la red ni certificados |
+| `lib/ui/screens/auth/add_server_dialog.dart` | directo a la dirección (sin Plex ni Emby Connect) |
+| `lib/auth/repositories/session_repository.dart` | mensajes del servidor grandes |
+| `lib/ui/screens/admin/admin_nav.dart` | sin administración |
+| `lib/util/signed_in_server_features.dart`, `lib/data/services/plugin_sync_service.dart` | sin Seerr |
+| `lib/data/services/achievements_service.dart` | sin logros |
+| `lib/ui/screens/settings/settings_side_panel.dart` (+ `panel/account_screen.dart`, `panel/about_category_screen.dart`, `panel/settings_search_index.dart`) | sin certificados, sin enlaces de Moonfin, sin After Hours |
+
+## Funciones ocultas
+
+`lib/fluxer/fluxer_features.dart`: un interruptor por función (Plex/Jellyfin/
+Silo/Emby Connect, búsqueda en la red, certificados, juegos y After Hours,
+logros, libros, Seerr, administración, enlaces de Moonfin). El código de
+Moonfin no se borra, solo se ocultan sus entradas, así que las
+actualizaciones no dan conflictos. **Al fusionar una versión nueva, revisar
+si Moonfin ha añadido funciones nuevas** que convenga ocultar.
 
 ## Entrar con Fluxer
 

@@ -85,6 +85,7 @@ import 'focus_route_observer.dart';
 import 'route_lifecycle_observer.dart';
 import '../screens/watch_party/watch_together_route.dart';
 import '../../fluxer/fluxer_routes.dart'; // FLUXER:
+import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
 const _authRoutes = {
   fluxerLoginPath, // FLUXER:
@@ -215,6 +216,7 @@ final appRouter = GoRouter(
     if (session.activeUserId == null) {
       return Destinations.startup;
     }
+    if (fluxerBlockedPath(path)) return Destinations.home; // FLUXER:
 
     // Has to sit above every other rule and below the signed-out one: the
     // wizard needs a user to set up, and nothing else is worth showing until

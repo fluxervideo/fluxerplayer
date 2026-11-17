@@ -78,6 +78,14 @@ sub("lib/data/services/app_update_service.dart", [
     (r"'MoonfinUpdateChecker/", f"'{NAME}UpdateChecker/"),
 ])
 
+# --- "Acerca de": código fuente y licencias, a NUESTRO repo (lo exige la GPL) -
+
+src = CFG["sourceCodeUrl"].rstrip("/")
+sub("lib/ui/screens/settings/panel/about_category_screen.dart", [
+    (r"'https://github\.com/Moonfin-Client/Moonfin-Core/blob/main/LICENSE'", f"'{src}/blob/fluxer/LICENSE'"),
+    (r"'https://github\.com/Moonfin-Client/Moonfin-Core'", f"'{src}'"),
+])
+
 # --- Nombre de cliente que ven Emby/Jellyfin (y la lista de dispositivos) ---
 
 for rel in ("lib/di/injection.dart", "lib/playback/device_profile_builder.dart"):

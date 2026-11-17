@@ -18,6 +18,7 @@ import '../../widgets/client_certificate_dialog.dart';
 import '../../widgets/overlay_sheet.dart';
 import '../../widgets/server_type_icon.dart';
 import '../../widgets/silo_native_offer_dialog.dart';
+import '../../../fluxer/fluxer_features.dart'; // FLUXER:
 
 /// Where the server screen goes once [AddServerDialog] closes.
 sealed class AddServerOutcome {
@@ -328,7 +329,8 @@ class _AddServerDialogState extends State<AddServerDialog> {
   @override
   void initState() {
     super.initState();
-    _startedOnAddress = widget.controller.text.trim().isNotEmpty;
+    _startedOnAddress = widget.controller.text.trim().isNotEmpty ||
+        !FluxerFeatures.otherServerTypes; // FLUXER: directo a la dirección
     _step = _startedOnAddress ? _Step.address : _Step.choose;
     _addressFocus.addListener(_onAddressFocusChanged);
     _focusLater(_startedOnAddress ? _addressFocus : _firstChoiceFocus);

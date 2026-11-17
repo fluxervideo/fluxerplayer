@@ -6,10 +6,12 @@ import '../../../auth/repositories/server_repository.dart';
 import '../../../auth/repositories/session_repository.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../navigation/destinations.dart';
+import '../../../fluxer/fluxer_features.dart'; // FLUXER:
 
 /// The panel covers Jellyfin, and Emby from 4.9, the oldest Emby it was
 /// checked against.
 bool adminServerSupported() {
+  if (!FluxerFeatures.serverAdmin) return false; // FLUXER:
   final getIt = GetIt.instance;
   if (!getIt.isRegistered<MediaServerClient>()) return false;
   if (getIt<MediaServerClient>().serverType == ServerType.jellyfin) return true;

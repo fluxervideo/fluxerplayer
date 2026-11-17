@@ -98,6 +98,7 @@ class _AccountScreen extends StatelessWidget {
                     UserSortBy.alphabetical => l10n.settingsAlphabetical,
                   },
                 ),
+                if (FluxerFeatures.clientCertificates) // FLUXER:
                 SwitchPreferenceTile(
                   preference: UserPreferences.allowSelfSignedCerts,
                   title: l10n.settingsAllowSelfSignedCerts,
@@ -105,6 +106,7 @@ class _AccountScreen extends StatelessWidget {
                   icon: Icons.gpp_maybe,
                   onChangedValue: (v) => gAllowSelfSignedCertificates = v,
                 ),
+                if (FluxerFeatures.clientCertificates) // FLUXER:
                 _TvSettingsListTile(
                   leading: const Icon(Icons.verified_user),
                   title: Text(l10n.settingsClientCertificates),

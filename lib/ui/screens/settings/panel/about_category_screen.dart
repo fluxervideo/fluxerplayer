@@ -33,7 +33,9 @@ class _AboutCategoryScreen extends StatelessWidget {
                 title: Text(l10n.version),
                 subtitle: Text(appVersion),
                 trailing: const SizedBox.shrink(),
-                onTap: () => AfterHoursTrigger.press(context),
+                onTap: () {
+                  if (FluxerFeatures.games) AfterHoursTrigger.press(context); // FLUXER:
+                },
               ),
               if (AppDistribution.supportsInAppUpdates)
                 const _CheckForUpdatesTile(),
@@ -47,6 +49,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                   title: l10n.sourceCode,
                 ),
               ),
+              if (FluxerFeatures.moonfinCommunityLinks) // FLUXER:
               _TvSettingsListTile(
                 leading: const Icon(Icons.bug_report),
                 title: Text(l10n.settingsReportAnIssue),
@@ -87,6 +90,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                   context.navigateTopLevel(Destinations.setup);
                 },
               ),
+              if (FluxerFeatures.moonfinCommunityLinks) // FLUXER:
               _TvSettingsListTile(
                 leading: const Icon(Icons.forum),
                 title: Text(l10n.settingsJoinDiscord),
@@ -97,6 +101,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                   title: l10n.settingsJoinTheDiscord,
                 ),
               ),
+              if (FluxerFeatures.moonfinCommunityLinks) // FLUXER:
               _TvSettingsListTile(
                 leading: const Icon(Icons.favorite),
                 title: Text(l10n.settingsSupportMoonfin),
@@ -119,6 +124,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                   title: l10n.settingsLicenses,
                 ),
               ),
+              if (FluxerFeatures.moonfinCommunityLinks) // FLUXER:
               _TvSettingsListTile(
                 leading: const Icon(Icons.privacy_tip),
                 title: Text(l10n.settingsPrivacyPolicy),

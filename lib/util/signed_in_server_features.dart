@@ -3,6 +3,7 @@ import 'package:server_core/server_core.dart';
 
 import '../auth/store/authentication_store.dart';
 import '../data/services/media_server_client_factory.dart';
+import '../fluxer/fluxer_features.dart'; // FLUXER:
 
 /// Whether [feature] holds for at least one of [serverTypes].
 ///
@@ -59,6 +60,7 @@ bool moonfinPluginOnAnySignedInServer({AuthenticationStore? store}) =>
     anySignedInServerSupports((f) => f.supportsMoonfinPlugin, store: store);
 
 bool seerrOnAnySignedInServer({AuthenticationStore? store}) =>
+    FluxerFeatures.seerr && // FLUXER:
     anySignedInServerSupports((f) => f.supportsJellyseerr, store: store);
 
 /// Whether the server an item came from supports [feature], for actions on
