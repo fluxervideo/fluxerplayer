@@ -84,8 +84,10 @@ import 'destinations.dart';
 import 'focus_route_observer.dart';
 import 'route_lifecycle_observer.dart';
 import '../screens/watch_party/watch_together_route.dart';
+import '../../fluxer/fluxer_routes.dart'; // FLUXER:
 
 const _authRoutes = {
+  fluxerLoginPath, // FLUXER:
   Destinations.startup,
   Destinations.serverSelect,
   Destinations.embyConnect,
@@ -271,6 +273,7 @@ final appRouter = GoRouter(
       path: Destinations.setup,
       builder: (context, state) => const SetupWizardScreen(),
     ),
+    fluxerLoginRoute, // FLUXER:
     GoRoute(
       path: Destinations.embyConnect,
       builder: (context, state) => const EmbyConnectScreen(),

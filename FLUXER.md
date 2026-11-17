@@ -52,3 +52,22 @@ fichero oficial que sustituye (mismo nombre y formato). Principales:
 | `assets/icons/moonfin_logo.svg` | Logo vectorial dentro de la app |
 | `assets/icons/app_icon.png` | Icono de la app |
 | `web/favicon.png` (64×64), `web/icons/*` | Solo versión web |
+
+## Ficheros oficiales modificados (revisar al fusionar)
+
+Todo lo demás de FluxerMoon vive en ficheros propios (`lib/fluxer/`, `fluxer/`,
+`.github/workflows/fluxer-*.yml`). Cada línea tocada lleva `// FLUXER:`
+(`git grep -n "FLUXER:"` las lista todas).
+
+| Fichero | Qué |
+|---|---|
+| `lib/ui/navigation/app_router.dart` | import + ruta `/fluxer-login` + permitirla sin sesión |
+| `lib/ui/screens/auth/server_select_screen.dart` | botón «Entrar con Fluxer» |
+
+## Entrar con Fluxer
+
+`lib/fluxer/app_login/`: la app pide un código a FluxerHub, el cliente lo
+acepta en `hub.fluxer.video/portal/vincular` (o pulsa «Entrar con mi cuenta
+de Fluxer» y se abre el navegador con el código puesto) y la app entra sola.
+Diseño completo: `fluxer/docs/login-fluxerhub.md`. URL del Hub:
+`lib/fluxer/fluxer_config.dart`.

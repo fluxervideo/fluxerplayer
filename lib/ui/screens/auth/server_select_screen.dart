@@ -32,6 +32,8 @@ import '../../widgets/login_scaffold.dart';
 import '../../widgets/overlay_sheet.dart';
 import '../../widgets/server_type_icon.dart';
 import 'add_server_dialog.dart';
+import '../../../fluxer/fluxer_routes.dart'; // FLUXER:
+import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
 
 final _kAccent = AppColorScheme.accent;
 
@@ -640,6 +642,15 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
                   ),
                 );
               }
+
+              // FLUXER: entrar con un código aceptado en FluxerHub.
+              actions.add(
+                _buildFooterActionButton(
+                  onPressed: _isConnecting ? null : () => context.go(fluxerLoginPath),
+                  icon: const Icon(Icons.qr_code_2, size: 16),
+                  label: FluxerStrings.of(context).signInWithFluxer,
+                ),
+              );
 
               if (!_isWebPluginMode) {
                 actions.add(
