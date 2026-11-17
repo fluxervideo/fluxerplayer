@@ -68,6 +68,16 @@ sub("build-windows.ps1", [
     (r'"Moonfin_Windows_v', f'"{prefix}_Windows_v'),
 ])
 
+# --- Actualizador: buscar versiones en NUESTRO repo, no en el de Moonfin -----
+
+repo = CFG["updatesGithubRepo"]
+sub("lib/data/services/app_update_service.dart", [
+    (r"/repos/Moonfin-Client/Moonfin-Core/releases/latest", f"/repos/{repo}/releases/latest"),
+    (r"https://github\.com/Moonfin-Client/Moonfin-Core/releases/latest",
+     f"https://github.com/{repo}/releases/latest"),
+    (r"'MoonfinUpdateChecker/", f"'{NAME}UpdateChecker/"),
+])
+
 # --- Nombre de cliente que ven Emby/Jellyfin (y la lista de dispositivos) ---
 
 for rel in ("lib/di/injection.dart", "lib/playback/device_profile_builder.dart"):
