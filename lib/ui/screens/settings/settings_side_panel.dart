@@ -127,6 +127,7 @@ import '../../../watch_party/silo_watch_party_manager.dart';
 import '../../../fluxer/fluxer_features.dart'; // FLUXER:
 import '../../../fluxer/fluxer_build_info.dart'; // FLUXER:
 import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
+import '../../../fluxer/hub/fluxer_account_screen.dart'; // FLUXER:
 
 part 'panel/settings_panel_infra.dart';
 part 'panel/settings_search_field.dart';
@@ -575,6 +576,12 @@ class _SettingsSidePanelState extends ConsumerState<SettingsSidePanel>
       ];
     }
     return [
+      _SettingsCategory( // FLUXER: Mi cuenta Fluxer (plan, renovar, invitar, diagnóstico)
+        FluxerStrings.of(context).fluxerAccount,
+        FluxerStrings.of(context).fluxerAccountSubtitle,
+        () => const FluxerAccountScreen(),
+        preview: false,
+      ),
       if (showAdmin)
         _SettingsCategory(
           l10n.administration,

@@ -651,7 +651,7 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
               actions.add(
                 _buildFooterActionButton(
                   onPressed: _isConnecting ? null : () => context.go(fluxerLoginPath),
-                  icon: const Icon(Icons.qr_code_2, size: 16),
+                  icon: Image.asset('assets/icons/app_icon.png', width: 20, height: 20),
                   label: FluxerStrings.of(context).signInWithFluxer,
                 ),
               );

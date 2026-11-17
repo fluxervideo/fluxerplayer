@@ -7,7 +7,10 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:get_it/get_it.dart';
+
 import '../../data/models/aggregated_item.dart';
+import '../../data/services/log_service.dart';
 import '../fluxer_config.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
@@ -55,6 +58,9 @@ class _ReportDialog extends StatefulWidget {
 class _ReportDialogState extends State<_ReportDialog> {
   String _symptom = 'wont_start';
   final _comment = TextEditingController();
+  // Solo si el cliente tiene activado «Grabar diagnóstico» (Mi cuenta Fluxer).
+  final bool _canAttach = GetIt.instance<LogService>().isEnabled;
+  bool _attachDiagnostic = true;
   bool _sending = false;
   String? _error;
 
@@ -86,7 +92,7 @@ class _ReportDialogState extends State<_ReportDialog> {
     });
     final item = widget.item;
     try {
-      final ok = await FluxerHubClient.instance.report(
+      final id = await FluxerHubClient.instance.report(
         type: 'technical_issue',
         title: _title(),
         comment: _comment.text.trim().isEmpty ? null : _comment.text.trim(),
@@ -96,8 +102,18 @@ class _ReportDialogState extends State<_ReportDialog> {
         seasonNumber: item.type == 'Episode' ? item.parentIndexNumber : null,
         episodeNumber: item.type == 'Episode' ? item.indexNumber : null,
       );
+      if (id != null && id > 0 && _canAttach && _attachDiagnostic) {
+        try {
+          await FluxerHubClient.instance.diagnostics(
+            GetIt.instance<LogService>().exportText(maxEntries: 5000),
+            reportId: id,
+          );
+        } catch (_) {
+          // El reporte ya llegó; sin diagnóstico no se pierde nada importante.
+        }
+      }
       if (!mounted) return;
-      if (!ok) {
+      if (id == null) {
         setState(() {
           _sending = false;
           _error = s.reportNeedsFluxerLogin;
@@ -156,6 +172,15 @@ class _ReportDialogState extends State<_ReportDialog> {
                   border: const OutlineInputBorder(),
                 ),
               ),
+              if (_canAttach)
+                CheckboxListTile(
+                  value: _attachDiagnostic,
+                  onChanged: (v) => setState(() => _attachDiagnostic = v ?? false),
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  controlAffinity: ListTileControlAffinity.leading,
+                  title: Text(s.attachDiagnostic),
+                ),
               if (_error != null) ...[
                 const SizedBox(height: 8),
                 Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),

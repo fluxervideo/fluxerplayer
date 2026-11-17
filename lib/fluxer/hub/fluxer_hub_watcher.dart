@@ -4,6 +4,7 @@
 // está vinculada al Hub (entró con «Entrar con Fluxer») y hay sesión, pide
 // /api/app/me y enseña, con la tarjeta grande (showFluxerCard), uno detrás de
 // otro:
+// - Una incidencia en su servidor: una vez cada 6 horas mientras dure.
 // - El plan: si no está activo (caducado, suspendido…) o caduca en
 //   [_warnDays] días o menos y no se va a renovar solo. Como mucho una vez al
 //   día, con «Renovar» (abre los planes en el portal).
@@ -33,6 +34,8 @@ class FluxerHubWatcher {
   static const _warnDays = 5;
   static const _planWarnedKey = 'fluxer_plan_warned_day';
   static const _seenMaintenancesKey = 'fluxer_seen_maintenances';
+  static const _incidentWarnedKey = 'fluxer_incident_warned_at';
+  static const _incidentEvery = Duration(hours: 6);
 
   static Timer? _timer;
   static bool _running = false;
@@ -60,6 +63,7 @@ class FluxerHubWatcher {
       final prefs = await SharedPreferences.getInstance();
       final urls = (me['urls'] as Map?)?.cast<String, dynamic>() ?? const {};
 
+      await _incident(s, prefs, (me['server'] as Map?)?.cast<String, dynamic>());
       await _plan(s, prefs, (me['plan'] as Map?)?.cast<String, dynamic>(), urls['plans'] as String?);
       await _notices(s, prefs, (me['notices'] as List?) ?? const []);
     } catch (_) {
@@ -67,6 +71,21 @@ class FluxerHubWatcher {
     } finally {
       _running = false;
     }
+  }
+
+  /// Incidencia en su servidor (FluxerHub la marca al fallar la conexión):
+  /// una vez cada [_incidentEvery] mientras dure.
+  static Future<void> _incident(FluxerStrings s, SharedPreferences prefs, Map<String, dynamic>? server) async {
+    if (server == null || server['status'] != 'incident') return;
+    final last = prefs.getInt(_incidentWarnedKey) ?? 0;
+    final now = DateTime.now().millisecondsSinceEpoch;
+    if (now - last < _incidentEvery.inMilliseconds) return;
+    await prefs.setInt(_incidentWarnedKey, now);
+    await showFluxerCard(
+      title: s.serverIncidentTitle,
+      text: s.serverIncident(server['name'] as String? ?? 'tu servidor'),
+      icon: Icons.warning_amber_rounded,
+    );
   }
 
   static Future<void> _plan(

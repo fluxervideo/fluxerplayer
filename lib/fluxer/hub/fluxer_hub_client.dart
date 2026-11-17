@@ -73,8 +73,9 @@ class FluxerHubClient {
     await _request((options) => _dio.post<dynamic>('notices/$id/acknowledge', options: options));
   }
 
-  /// Manda un «Reportar un problema». Devuelve true si llegó.
-  Future<bool> report({
+  /// Manda un «Reportar un problema». Devuelve su número en FluxerHub, o
+  /// null si la app ya no está vinculada.
+  Future<int?> report({
     required String type,
     required String title,
     String? comment,
@@ -101,7 +102,29 @@ class FluxerHubClient {
       ),
       rethrowErrors: true,
     );
-    return response != null;
+    return _id(response);
+  }
+
+  /// Manda el registro de diagnóstico: adjunto a [reportId] (un reporte que
+  /// se acaba de mandar) o como solicitud nueva. Número de la solicitud, o
+  /// null si la app ya no está vinculada.
+  Future<int?> diagnostics(String log, {String? comment, int? reportId}) async {
+    final response = await _request(
+      (options) => _dio.post<dynamic>(
+        'diagnostics',
+        options: options.copyWith(sendTimeout: const Duration(seconds: 60)),
+        data: {'log': log, 'comment': ?comment, 'report_id': ?reportId},
+      ),
+      rethrowErrors: true,
+    );
+    return _id(response);
+  }
+
+  static int? _id(Response<dynamic>? response) {
+    if (response == null) return null;
+    final data = response.data;
+    final id = data is Map ? data['id'] : null;
+    return id is int ? id : (id is num ? id.toInt() : 0);
   }
 
   Future<void> logout() async {

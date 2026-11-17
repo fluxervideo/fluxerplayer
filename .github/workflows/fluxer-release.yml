@@ -150,8 +150,7 @@ jobs:
           echo "version=$(python3 -c "import json;print(json.load(open('fluxer/version.json'))['version'])")" >> "$GITHUB_OUTPUT"
 
       # La clave de firma (secretos del repo). Todas las versiones tienen que ir
-      # firmadas con la MISMA clave o Android no deja actualizar. En una
-      # versión publicada no se admite la firma de depuración.
+      # firmadas con la MISMA clave o Android no deja actualizar.
       - name: Set up signing
         env:
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -161,11 +160,11 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
-            if [ -n "$FLUXER_RELEASE_TAG" ]; then
-              echo "::error::Falta la clave de firma de Android (secreto ANDROID_KEYSTORE_BASE64)."
-              exit 1
-            fi
-            echo "Sin clave de firma: APK firmado en modo depuración (solo para probar)."
+            # Mientras FluxerPlayer está en pruebas no se usa la clave buena
+            # (decisión del dueño, 2026-11-17). Ojo: un APK con firma de
+            # depuración no se puede actualizar luego con uno firmado con la
+            # clave buena (hay que desinstalar e instalar una vez).
+            echo "::warning::Sin clave de firma de Android: APK con firma de depuración (solo pruebas)."
             exit 0
           fi
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore

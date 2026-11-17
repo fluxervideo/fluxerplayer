@@ -10,6 +10,14 @@ Basada en Moonfin 3.1.0.
 - **Nuevo: FluxerPlayer para Android**, en móviles y tablets, y en
   **Android TV, Google TV y Fire TV**. Con «Entrar con Fluxer» basta con
   escanear el código de la tele con el móvil.
+- **Mi cuenta Fluxer** en los ajustes: tu plan, hasta cuándo dura y tu saldo,
+  con un botón para **renovar** (en la tele, con un código QR para hacerlo
+  desde el móvil), tu enlace de **Invita y gana** y desvincular la app.
+- **Avisos de incidencias**: si tu servidor tiene problemas, la app te avisa
+  de que ya lo estamos arreglando.
+- **Diagnóstico**: si algo falla, puedes grabar el diagnóstico y mandárnoslo
+  (o adjuntarlo al reportar un problema) para que lo arreglemos antes.
+- El botón «Entrar con Fluxer» lleva el icono de Fluxer.
 - **Reportar un problema** también desde el reproductor, sin salir del vídeo.
 - «Acerca de» indica en qué versión de Moonfin está basada.
 

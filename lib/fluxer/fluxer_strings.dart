@@ -80,6 +80,61 @@ class FluxerStrings {
       };
   String versionWithBase(String version, String moonfin) =>
       _t('$version · basada en Moonfin $moonfin', '$version · based on Moonfin $moonfin');
+  // Mi cuenta Fluxer
+  String get fluxerAccount => _t('Mi cuenta Fluxer', 'My Fluxer account');
+  String get fluxerAccountSubtitle =>
+      _t('Plan, renovar, invitar y diagnóstico', 'Plan, renew, invite and diagnostics');
+  String get fluxerAccountUnlinked => _t(
+        'Esta app no está vinculada a tu cuenta de Fluxer. Vincúlala con «Entrar con Fluxer» para ver tu plan, renovarlo y recibir avisos.',
+        'This app is not linked to your Fluxer account. Link it with “Sign in with Fluxer” to see and renew your plan and get notices.',
+      );
+  String get fluxerPlanSection => _t('Tu plan', 'Your plan');
+  String get noPlan => _t('Sin plan', 'No plan');
+  String planEndsOn(DateTime d) => _t(
+        'hasta el ${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}',
+        'until ${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}',
+      );
+  String get autoRenewOn => _t('renovación automática', 'auto-renew');
+  String balance(double v) => _t('saldo ${v.toStringAsFixed(2)} €', 'balance €${v.toStringAsFixed(2)}');
+  String get renewInBrowser => _t('Abre los planes en el navegador', 'Opens the plans in your browser');
+  String get renewOnPhone => _t('Escanea un código con el móvil para renovar', 'Scan a code with your phone to renew');
+  String get scanWithPhone => _t('Escanéalo con la cámara del móvil:', 'Scan it with your phone camera:');
+  String get inviteSection => _t('Invita y gana', 'Invite and earn');
+  String get inviteTitle => _t('Tu enlace de invitación', 'Your invite link');
+  String inviteHelp(num? reward) => reward != null && reward > 0
+      ? _t('Por cada amigo que se apunte ganas ${reward.toStringAsFixed(2)} € de saldo.',
+          'Earn €${reward.toStringAsFixed(2)} credit for every friend who joins.')
+      : _t('Compártelo con tus amigos.', 'Share it with your friends.');
+  String get copyInviteLink => _t('Copiar el enlace', 'Copy the link');
+  String get copied => _t('Copiado', 'Copied');
+  String get diagnosticSection => _t('Diagnóstico', 'Diagnostics');
+  String get recordDiagnostic => _t('Grabar diagnóstico', 'Record diagnostics');
+  String get recordDiagnosticHelp => _t(
+        'Actívalo, reproduce el fallo y luego envíanoslo. Gasta algo más de memoria: apágalo cuando acabes.',
+        'Turn it on, reproduce the problem, then send it to us. Uses a bit more memory: turn it off afterwards.',
+      );
+  String get sendDiagnostic => _t('Enviar diagnóstico a Fluxer', 'Send diagnostics to Fluxer');
+  String get sendDiagnosticSubtitle =>
+      _t('Nos ayuda a encontrar el fallo', 'Helps us find the problem');
+  String get sendDiagnosticHelp => _t(
+        'Mandaremos el registro de la app a Fluxer. Cuéntanos qué pasaba:',
+        'We will send the app log to Fluxer. Tell us what was happening:',
+      );
+  String get attachDiagnostic => _t('Adjuntar el diagnóstico de la app', 'Attach the app diagnostics');
+  String get fluxerSessionSection => _t('Sesión', 'Session');
+  String get fluxerLogout => _t('Desvincular de Fluxer', 'Unlink from Fluxer');
+  String get fluxerLogoutHelp => _t(
+        'La app deja de recibir avisos de tu cuenta. Puedes seguir viendo Fluxer y volver a vincularla cuando quieras.',
+        'The app stops getting notices from your account. You can keep watching and link it again any time.',
+      );
+
+  // Incidencias del servidor
+  String serverIncident(String name) => _t(
+        'Estamos teniendo problemas con $name. Ya lo estamos arreglando: si algo no carga, inténtalo en un rato.',
+        'We are having problems with $name. We are already fixing it: if something does not load, try again shortly.',
+      );
+  String get serverIncidentTitle => _t('Incidencia en tu servidor', 'Problem with your server');
+
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(
