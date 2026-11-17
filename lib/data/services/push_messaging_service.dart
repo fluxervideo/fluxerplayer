@@ -12,6 +12,7 @@ import '../../ui/navigation/deep_link_navigator.dart';
 import '../../ui/widgets/server_messages_dialog.dart';
 import '../../util/platform_detection.dart';
 import 'plugin_sync_service.dart';
+import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
 /// Every push carries a notification block, so the OS draws background and
 /// terminated notifications. Nothing to do here.
@@ -37,6 +38,7 @@ class PushMessagingService {
 
   Future<void> _doInitialize() async {
     if (!PlatformDetection.isMobile) return;
+    if (!FluxerFeatures.moonfinPush) return; // FLUXER:
 
     try {
       await Firebase.initializeApp(

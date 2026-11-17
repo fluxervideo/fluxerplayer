@@ -7,6 +7,9 @@ número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
 Basada en Moonfin 3.1.0.
 
+- **Nuevo: FluxerPlayer para Android**, en móviles y tablets, y en
+  **Android TV, Google TV y Fire TV**. Con «Entrar con Fluxer» basta con
+  escanear el código de la tele con el móvil.
 - **Reportar un problema** también desde el reproductor, sin salir del vídeo.
 - «Acerca de» indica en qué versión de Moonfin está basada.
 

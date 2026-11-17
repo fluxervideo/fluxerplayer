@@ -1,0 +1,247 @@
+# FluxerPlayer: compilar y publicar una versión.
+# Fichero propio de FluxerPlayer (no existe en Moonfin oficial), así que nunca
+# da conflictos al fusionar versiones nuevas de upstream. Los workflows
+# oficiales de Moonfin siguen en el repo pero desactivados desde GitHub.
+#
+# - Etiqueta vX.Y.Z (solo cuando lo decide el dueño del proyecto): compila
+#   Windows, Android móvil y Android TV / Google TV / Fire TV y publica UNA
+#   versión con los tres archivos y la sección «## X.Y.Z» de
+#   CHANGELOG-FLUXER.md como notas. Es la que ofrece el actualizador de la app.
+#   La etiqueta tiene que coincidir con fluxer/version.json.
+# - Lanzado a mano: solo compila (artefactos en la ejecución), no publica.
+name: FluxerPlayer Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+env:
+  # Mantener igual que FLUTTER_VERSION en .github/workflows/build.yml (oficial).
+  FLUTTER_VERSION: '3.47.2'
+  # Número de compilación: sube solo en cada ejecución (versión = X.Y.Z+N).
+  FLUXER_BUILD_NUMBER: ${{ github.run_number }}
+  FLUXER_RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
+
+permissions:
+  contents: write  # publicar en Releases
+  actions: read    # SignPath lee el artefacto sin firmar
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    env:
+      # Firma del instalador con SignPath (como Moonfin). Desactivada hasta
+      # que existan el secreto SIGNPATH_API_TOKEN y la variable
+      # SIGNPATH_ORGANIZATION_ID en el repo (ver FLUXER.md → Firma).
+      SIGNPATH_ENABLED: ${{ secrets.SIGNPATH_API_TOKEN != '' && vars.SIGNPATH_ORGANIZATION_ID != '' }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      # Marca y versión de FluxerPlayer. Ver fluxer/branding.json y fluxer/version.json.
+      - name: Apply FluxerPlayer branding
+        shell: pwsh
+        run: |
+          python fluxer/apply_branding.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          flutter gen-l10n
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      # Caché de vcpkg (libarchive + OpenSSL compilados): ahorra ~13 min.
+      - name: Find the runner's vcpkg and image versions
+        id: vcpkg
+        shell: pwsh
+        run: |
+          $commit = git -C $env:VCPKG_INSTALLATION_ROOT rev-parse HEAD
+          "commit=$commit" >> $env:GITHUB_OUTPUT
+          "image=$env:ImageVersion" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/cache@v5
+        with:
+          path: ~\AppData\Local\vcpkg\archives
+          key: vcpkg-${{ runner.os }}-${{ runner.arch }}-${{ steps.vcpkg.outputs.commit }}-${{ steps.vcpkg.outputs.image }}
+          restore-keys: vcpkg-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Build installer
+        shell: pwsh
+        run: .\build-windows.ps1
+
+      - uses: actions/upload-artifact@v6
+        id: unsigned
+        with:
+          name: windows-exe
+          path: '*_Windows_v*.exe'
+          if-no-files-found: error
+
+      - name: Sign installer
+        if: env.SIGNPATH_ENABLED == 'true'
+        uses: SignPath/github-action-submit-signing-request@v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG || 'fluxerplayer' }}
+          signing-policy-slug: ${{ vars.SIGNPATH_SIGNING_POLICY || 'release-signing' }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION || 'windows-installer' }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      # El firmado sustituye al original en el artefacto que se publica.
+      - name: Replace with the signed installer
+        if: env.SIGNPATH_ENABLED == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: windows-exe
+          path: signed/*_Windows_v*.exe
+          overwrite: true
+          if-no-files-found: error
+
+  android:
+    name: android (${{ matrix.target }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Móviles y tablets.
+          - target: mobile
+            flavor: mobile
+            channel: apk
+            extra: ''
+            file: Android
+          # Android TV, Google TV y Fire TV.
+          - target: tv
+            flavor: androidTv
+            channel: android_tv_apk
+            extra: --dart-define=MOONFIN_FORCE_TV=true
+            file: AndroidTV
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', 'pubspec.lock') }}
+          restore-keys: gradle-${{ runner.os }}-flutter-${{ env.FLUTTER_VERSION }}-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Apply FluxerPlayer branding
+        id: brand
+        run: |
+          python3 fluxer/apply_branding.py
+          flutter gen-l10n
+          echo "version=$(python3 -c "import json;print(json.load(open('fluxer/version.json'))['version'])")" >> "$GITHUB_OUTPUT"
+
+      # La clave de firma (secretos del repo). Todas las versiones tienen que ir
+      # firmadas con la MISMA clave o Android no deja actualizar. En una
+      # versión publicada no se admite la firma de depuración.
+      - name: Set up signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          STORE_TYPE: ${{ secrets.ANDROID_KEYSTORE_TYPE }}
+          STORE_PASSWORD: ${{ secrets.ANDROID_STORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
+            if [ -n "$FLUXER_RELEASE_TAG" ]; then
+              echo "::error::Falta la clave de firma de Android (secreto ANDROID_KEYSTORE_BASE64)."
+              exit 1
+            fi
+            echo "Sin clave de firma: APK firmado en modo depuración (solo para probar)."
+            exit 0
+          fi
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore
+          cat > android/keystore.properties <<EOF
+          storeFile=../release.keystore
+          storeType=$STORE_TYPE
+          storePassword=$STORE_PASSWORD
+          keyAlias=$KEY_ALIAS
+          keyPassword=$KEY_PASSWORD
+          EOF
+          keytool -list -keystore android/app/release.keystore -storetype "${STORE_TYPE:-PKCS12}" -storepass "$STORE_PASSWORD" >/dev/null
+
+      # El runner tiene 16 GB: menos memoria para Gradle deja sitio al
+      # compilador de Dart (igual que el build.yml oficial).
+      - name: Limit Gradle memory
+        run: |
+          mkdir -p ~/.gradle
+          cat >> ~/.gradle/gradle.properties <<'EOF'
+          org.gradle.jvmargs=-Xmx4G -XX:MaxMetaspaceSize=1G -XX:ReservedCodeCacheSize=256m -XX:+HeapDumpOnOutOfMemoryError
+          kotlin.daemon.jvmargs=-Xmx2G
+          EOF
+
+      - name: Build APK
+        run: |
+          v="${{ steps.brand.outputs.version }}"
+          flutter pub get
+          flutter build apk --release \
+            --flavor ${{ matrix.flavor }} \
+            --build-name "$v" \
+            --build-number "$FLUXER_BUILD_NUMBER" \
+            ${{ matrix.extra }} \
+            --dart-define=DISTRIBUTION_CHANNEL=${{ matrix.channel }}
+          apk="build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk"
+          test -f "$apk" || { find build/app/outputs -name '*.apk'; exit 1; }
+          cp "$apk" "FluxerPlayer_${{ matrix.file }}_v$v.apk"
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: android-${{ matrix.target }}
+          path: FluxerPlayer_*.apk
+          if-no-files-found: error
+
+  # Una sola versión con los tres archivos, solo en una etiqueta.
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/download-artifact@v7
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v="$(python3 -c "import json;print(json.load(open('fluxer/version.json'))['version'])")"
+          python3 - "$v" > release-notes.md <<'PY'
+          import re, sys
+          v = sys.argv[1]
+          text = open("CHANGELOG-FLUXER.md", encoding="utf-8").read()
+          m = re.search(rf"^## {re.escape(v)}\b(.*?)$\n(.*?)(?=^## |\Z)", text, re.M | re.S)
+          if not m:
+              sys.exit(f"CHANGELOG-FLUXER.md no tiene la sección ## {v}")
+          print(m.group(2).strip())
+          print(f"""
+          ---
+          **Descargas**
+          - Windows: `FluxerPlayer_Windows_v{v}.exe`. Si Windows avisa, «Más información» → «Ejecutar de todas formas».
+          - Móvil o tablet Android: `FluxerPlayer_Android_v{v}.apk`.
+          - Android TV, Google TV y Fire TV: `FluxerPlayer_AndroidTV_v{v}.apk`.""".replace("\n          ", "\n"))
+          PY
+          title="$(grep -m1 -E "^## ${v//./\\.}\b" CHANGELOG-FLUXER.md | sed 's/^## *//')"
+          ls -la dist
+          gh release create "$FLUXER_RELEASE_TAG" dist/* --verify-tag --latest \
+            --title "FluxerPlayer $title" --notes-file release-notes.md

@@ -66,7 +66,8 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/auth/add_server_dialog.dart` | directo a la dirección (sin Plex ni Emby Connect) |
 | `lib/auth/repositories/session_repository.dart` | mensajes del servidor grandes |
 | `lib/app.dart` | arrancar los avisos de FluxerHub (plan, mantenimientos, avisos) |
-| `lib/ui/screens/detail/item_detail_screen.dart` | botón «Reportar un problema» |
+| `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
+| `lib/data/services/push_messaging_service.dart` | sin notificaciones push de Moonfin (Firebase) |
 | `lib/ui/screens/admin/admin_nav.dart` | sin administración |
 | `lib/util/signed_in_server_features.dart`, `lib/data/services/plugin_sync_service.dart` | sin Seerr |
 | `lib/data/services/achievements_service.dart` | sin logros |
@@ -91,8 +92,8 @@ Se aplican al compilar (`pubspec.yaml` → `version: X.Y.Z+N`, N = número de
 compilación, sube solo en cada ejecución de CI); el pubspec de Moonfin no se
 toca en git.
 
-- **Prueba** (Actions → «FluxerPlayer Windows» → Run workflow): pre-release
-  «Prueba N · X.Y.Z+N». El actualizador de la app no la ve.
+- No se publican compilaciones de prueba. Lanzar «FluxerPlayer Release» a
+  mano solo compila (artefactos en la ejecución), sin publicar.
 - **Versión para clientes** (solo cuando lo decide el dueño del proyecto):
   1. Subir `version` en `fluxer/version.json` (y `moonfinBase` si se ha
      fusionado una versión de Moonfin).
@@ -101,6 +102,20 @@ toca en git.
   3. `git tag vX.Y.Z && git push origin vX.Y.Z`. CI compila y publica la
      versión con esas notas; la app la ofrece al abrirse (como mucho una vez
      al día; en Windows la descarga e instala sola).
+
+## Android (móvil y tele)
+
+Una etiqueta compila también `FluxerPlayer_Android_vX.Y.Z.apk` (móviles) y
+`FluxerPlayer_AndroidTV_vX.Y.Z.apk` (Android TV, Google TV, Fire TV).
+Identificador `video.fluxer.player` (convive con Moonfin), sin Firebase.
+Iconos y banner de la tele en `fluxer/branding/overlay/android/`.
+
+**Clave de firma**: `/home/devilgaia/projects/fluxerplayer-secrets/` (fuera
+del repo; hacer copia en lugar seguro). Va en los secretos del repo:
+`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_TYPE` (PKCS12),
+`ANDROID_STORE_PASSWORD`, `ANDROID_KEY_PASSWORD`, `ANDROID_KEY_ALIAS`
+(fluxerplayer). **Si se pierde, no se puede actualizar la app instalada**:
+habría que desinstalar e instalar de nuevo.
 
 ## Firma del instalador (pendiente)
 

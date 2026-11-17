@@ -35,6 +35,11 @@ abstract final class FluxerFeatures {
   /// GitHub de Moonfin y su política de privacidad. (El código fuente y las
   /// licencias se quedan siempre: los exige la GPL.)
   static const moonfinCommunityLinks = false;
+
+  /// Notificaciones push de Moonfin (Firebase de Moonfin, para su plugin de
+  /// servidor y Seerr). Apagadas: no se registran los aparatos en el Firebase
+  /// de Moonfin ni se pide permiso de notificaciones.
+  static const moonfinPush = false;
 }
 
 /// Red de seguridad del router (lib/ui/navigation/app_router.dart): si algo
