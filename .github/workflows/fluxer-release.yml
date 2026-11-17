@@ -197,8 +197,9 @@ jobs:
             --build-number "$FLUXER_BUILD_NUMBER" \
             ${{ matrix.extra }} \
             --dart-define=DISTRIBUTION_CHANNEL=${{ matrix.channel }}
-          apk="build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk"
-          test -f "$apk" || { find build/app/outputs -name '*.apk'; exit 1; }
+          # El de tele sale en minúsculas (app-androidtv-release.apk).
+          apk="$(find build/app/outputs/flutter-apk -iname 'app-${{ matrix.flavor }}-release.apk' | head -1)"
+          test -n "$apk" || { find build/app/outputs -name '*.apk'; exit 1; }
           cp "$apk" "FluxerPlayer_${{ matrix.file }}_v$v.apk"
 
       - uses: actions/upload-artifact@v6
