@@ -1,0 +1,55 @@
+# FluxerMoon: instalador de Windows x64.
+# Fichero propio de FluxerMoon (no existe en Moonfin oficial), así que nunca
+# da conflictos al fusionar versiones nuevas de upstream.
+# Los workflows oficiales de Moonfin siguen en el repo pero desactivados
+# desde la configuración de GitHub (gh workflow disable), no editándolos.
+name: FluxerMoon Windows
+
+on:
+  workflow_dispatch:
+  push:
+    tags: ['v*']
+
+env:
+  # Mantener igual que FLUTTER_VERSION en .github/workflows/build.yml (oficial).
+  FLUTTER_VERSION: '3.47.2'
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+
+      - name: Install Inno Setup
+        shell: pwsh
+        run: choco install innosetup -y --no-progress
+
+      # Caché de vcpkg (libarchive + OpenSSL compilados): ahorra ~13 min
+      # a partir de la segunda compilación.
+      - name: Find the runner's vcpkg and image versions
+        id: vcpkg
+        shell: pwsh
+        run: |
+          $commit = git -C $env:VCPKG_INSTALLATION_ROOT rev-parse HEAD
+          "commit=$commit" >> $env:GITHUB_OUTPUT
+          "image=$env:ImageVersion" >> $env:GITHUB_OUTPUT
+
+      - uses: actions/cache@v5
+        with:
+          path: ~\AppData\Local\vcpkg\archives
+          key: vcpkg-${{ runner.os }}-${{ runner.arch }}-${{ steps.vcpkg.outputs.commit }}-${{ steps.vcpkg.outputs.image }}
+          restore-keys: vcpkg-${{ runner.os }}-${{ runner.arch }}-
+
+      - name: Build installer
+        shell: pwsh
+        run: .\build-windows.ps1
+
+      - uses: actions/upload-artifact@v6
+        with:
+          name: windows-exe
+          path: '*_Windows_v*.exe'
+          if-no-files-found: error
