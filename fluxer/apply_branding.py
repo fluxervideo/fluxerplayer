@@ -44,6 +44,27 @@ def sub(rel: str, rules: list[tuple[str, str]]) -> None:
     write(rel, text)
 
 
+# --- Versión propia de FluxerPlayer (fluxer/version.json) -------------------
+# pubspec.yaml version = <version>+<número de compilación>. El número sube en
+# cada compilación (FLUXER_BUILD_NUMBER, en CI el número de ejecución): Android
+# lo necesita para aceptar una actualización. En una etiqueta v*, la etiqueta
+# debe coincidir con la versión.
+
+import os  # noqa: E402
+
+VERSION = json.loads((ROOT / "fluxer" / "version.json").read_text(encoding="utf-8"))
+build_number = os.environ.get("FLUXER_BUILD_NUMBER", "1").strip() or "1"
+if not re.fullmatch(r"\d+\.\d+\.\d+", VERSION["version"]):
+    errors.append(f"version.json: versión no válida {VERSION['version']!r} (debe ser X.Y.Z)")
+if not build_number.isdigit():
+    errors.append(f"FLUXER_BUILD_NUMBER no es un número: {build_number!r}")
+tag = os.environ.get("FLUXER_RELEASE_TAG", "").strip()
+if tag and tag != f"v{VERSION['version']}":
+    errors.append(f"la etiqueta {tag} no coincide con version.json ({VERSION['version']})")
+sub("pubspec.yaml", [
+    (r"(?m)^version:\s*\S+", f"version: {VERSION['version']}+{build_number}"),
+])
+
 # --- Windows: ventana, propiedades del .exe e instalador -------------------
 
 sub("windows/runner/main.cpp", [
@@ -200,4 +221,4 @@ if errors:
         print("  - " + e, file=sys.stderr)
     sys.exit(1)
 
-print(f"Marca '{NAME}' aplicada ({changed_en} textos en inglés, {len(arbs)} idiomas, {copied} imágenes).")
+print(f"Marca '{NAME}' {VERSION['version']}+{build_number} aplicada ({changed_en} textos en inglés, {len(arbs)} idiomas, {copied} imágenes).")

@@ -3,6 +3,12 @@
 # da conflictos al fusionar versiones nuevas de upstream.
 # Los workflows oficiales de Moonfin siguen en el repo pero desactivados
 # desde la configuración de GitHub (gh workflow disable), no editándolos.
+#
+# - Lanzado a mano (Run workflow): compilación de prueba, publicada como
+#   pre-release «Prueba N». El actualizador de la app NO la ve.
+# - Etiqueta vX.Y.Z: versión de verdad, con las notas de esa versión en
+#   CHANGELOG-FLUXER.md. Es la que el actualizador ofrece a los clientes.
+#   La etiqueta tiene que coincidir con fluxer/version.json.
 name: FluxerPlayer Windows
 
 on:
@@ -13,9 +19,12 @@ on:
 env:
   # Mantener igual que FLUTTER_VERSION en .github/workflows/build.yml (oficial).
   FLUTTER_VERSION: '3.47.2'
+  # Número de compilación: sube solo en cada ejecución (versión = X.Y.Z+N).
+  FLUXER_BUILD_NUMBER: ${{ github.run_number }}
+  FLUXER_RELEASE_TAG: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
 
 permissions:
-  contents: write  # publicar la versión de prueba en Releases
+  contents: write  # publicar en Releases
 
 jobs:
   windows:
@@ -27,13 +36,16 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      # Marca de FluxerPlayer (nombre, instalador, textos). Ver fluxer/branding.json.
+      # Marca y versión de FluxerPlayer. Ver fluxer/branding.json y fluxer/version.json.
       - name: Apply FluxerPlayer branding
+        id: brand
         shell: pwsh
         run: |
           python fluxer/apply_branding.py
           if ($LASTEXITCODE -ne 0) { exit 1 }
           flutter gen-l10n
+          $v = (Get-Content fluxer/version.json -Raw | ConvertFrom-Json).version
+          "version=$v" >> $env:GITHUB_OUTPUT
 
       - name: Install Inno Setup
         shell: pwsh
@@ -65,17 +77,38 @@ jobs:
           path: '*_Windows_v*.exe'
           if-no-files-found: error
 
-      # Cada compilación manual queda en Releases como versión de prueba
-      # (pre-release: el actualizador de la app solo mira la última versión
-      # NO de prueba), con enlace de descarga directo.
       - name: Publish test build
         if: github.event_name == 'workflow_dispatch'
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          $tag = "prueba-${{ github.run_number }}"
+          $n = "${{ github.run_number }}"
+          $v = "${{ steps.brand.outputs.version }}"
           $exe = Get-ChildItem -Filter "*_Windows_v*.exe" | Select-Object -First 1
-          gh release create $tag $exe.FullName --target "${{ github.ref_name }}" --prerelease `
-            --title "Prueba ${{ github.run_number }} (Windows)" `
-            --notes "Compilación de prueba de ${{ github.sha }}. Instalador sin firmar: en el aviso de Windows, «Más información» → «Ejecutar de todas formas»."
+          gh release create "prueba-$n" $exe.FullName --target "${{ github.ref_name }}" --prerelease `
+            --title "Prueba $n · $v+$n (Windows)" `
+            --notes "Compilación de prueba $v+$n ($env:GITHUB_SHA). No es una versión para clientes: el actualizador de la app no la ofrece. Instalador sin firmar: en el aviso de Windows, «Más información» → «Ejecutar de todas formas»."
+
+      # Notas = la sección «## X.Y.Z …» de CHANGELOG-FLUXER.md.
+      - name: Publish release
+        if: env.FLUXER_RELEASE_TAG != ''
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $v = "${{ steps.brand.outputs.version }}"
+          $lines = Get-Content CHANGELOG-FLUXER.md -Encoding UTF8
+          $start = ($lines | Select-String -Pattern "^## $([regex]::Escape($v))\b" | Select-Object -First 1).LineNumber
+          if (-not $start) { throw "CHANGELOG-FLUXER.md no tiene la sección ## $v" }
+          $title = $lines[$start - 1] -replace '^##\s*', ''
+          $body = @()
+          for ($i = $start; $i -lt $lines.Count; $i++) {
+            if ($lines[$i] -match '^## ') { break }
+            $body += $lines[$i]
+          }
+          $notes = ($body -join "`n").Trim() + "`n`n---`nWindows: descarga ``FluxerPlayer_Windows_v$v.exe``. Si Windows avisa, «Más información» → «Ejecutar de todas formas»."
+          Set-Content -Path release-notes.md -Value $notes -Encoding UTF8
+          $exe = Get-ChildItem -Filter "*_Windows_v*.exe" | Select-Object -First 1
+          gh release create "$env:FLUXER_RELEASE_TAG" $exe.FullName --verify-tag --latest `
+            --title "FluxerPlayer $title" --notes-file release-notes.md

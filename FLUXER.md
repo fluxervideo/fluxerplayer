@@ -85,10 +85,22 @@ Al entrar con Fluxer la app recibe también un token propio del Hub
 
 ## Versiones
 
-- Cada compilación manual se publica como **pre-release** «Prueba N»: el
-  actualizador de la app la ignora.
-- Una versión de verdad (la que el actualizador ofrece a los clientes) solo
-  se publica cuando lo decide el dueño del proyecto.
+FluxerPlayer tiene **sus propios números** (`fluxer/version.json`:
+`version`, y `moonfinBase` = versión de Moonfin sobre la que está montada).
+Se aplican al compilar (`pubspec.yaml` → `version: X.Y.Z+N`, N = número de
+compilación, sube solo en cada ejecución de CI); el pubspec de Moonfin no se
+toca en git.
+
+- **Prueba** (Actions → «FluxerPlayer Windows» → Run workflow): pre-release
+  «Prueba N · X.Y.Z+N». El actualizador de la app no la ve.
+- **Versión para clientes** (solo cuando lo decide el dueño del proyecto):
+  1. Subir `version` en `fluxer/version.json` (y `moonfinBase` si se ha
+     fusionado una versión de Moonfin).
+  2. Añadir su sección `## X.Y.Z — título` en `CHANGELOG-FLUXER.md`: nuestros
+     cambios + resumen de lo que trae Moonfin («De Moonfin»).
+  3. `git tag vX.Y.Z && git push origin vX.Y.Z`. CI compila y publica la
+     versión con esas notas; la app la ofrece al abrirse (como mucho una vez
+     al día; en Windows la descarga e instala sola).
 
 ## Funciones ocultas
 
