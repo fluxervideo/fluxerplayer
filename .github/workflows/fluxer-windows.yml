@@ -76,6 +76,6 @@ jobs:
         run: |
           $tag = "prueba-${{ github.run_number }}"
           $exe = Get-ChildItem -Filter "*_Windows_v*.exe" | Select-Object -First 1
-          gh release create $tag $exe.FullName --target "${{ github.sha }}" --prerelease `
+          gh release create $tag $exe.FullName --target "${{ github.ref_name }}" --prerelease `
             --title "Prueba ${{ github.run_number }} (Windows)" `
             --notes "Compilación de prueba de ${{ github.sha }}. Instalador sin firmar: en el aviso de Windows, «Más información» → «Ejecutar de todas formas»."
