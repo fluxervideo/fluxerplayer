@@ -24,6 +24,14 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
+      # Marca de FluxerMoon (nombre, instalador, textos). Ver fluxer/branding.json.
+      - name: Apply FluxerMoon branding
+        shell: pwsh
+        run: |
+          python fluxer/apply_branding.py
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+          flutter gen-l10n
+
       - name: Install Inno Setup
         shell: pwsh
         run: choco install innosetup -y --no-progress

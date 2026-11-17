@@ -24,6 +24,17 @@ git push
 - Los workflows oficiales de Moonfin no se editan: están desactivados desde
   GitHub (`gh workflow disable`).
 
+## Marca (nombre, instalador, textos)
+
+- Se configura en `fluxer/branding.json` (nombre visible, editor, GUID del
+  instalador, URL del código fuente).
+- `fluxer/apply_branding.py` la aplica en CI antes de compilar. Los ficheros
+  oficiales no se modifican en git, así que la marca nunca da conflictos.
+- Si una versión nueva de Moonfin cambia un texto que el script busca, la
+  compilación falla con un error que dice qué fichero revisar.
+- Probarlo en local: `python3 fluxer/apply_branding.py`, y deshacerlo con
+  `git checkout -- windows build-windows.ps1 lib`.
+
 ## Compilar
 
 - Windows: Actions → "FluxerMoon Windows" → Run workflow. El instalador
