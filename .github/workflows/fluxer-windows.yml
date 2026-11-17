@@ -14,6 +14,9 @@ env:
   # Mantener igual que FLUTTER_VERSION en .github/workflows/build.yml (oficial).
   FLUTTER_VERSION: '3.47.2'
 
+permissions:
+  contents: write  # publicar la versión de prueba en Releases
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -61,3 +64,18 @@ jobs:
           name: windows-exe
           path: '*_Windows_v*.exe'
           if-no-files-found: error
+
+      # Cada compilación manual queda en Releases como versión de prueba
+      # (pre-release: el actualizador de la app solo mira la última versión
+      # NO de prueba), con enlace de descarga directo.
+      - name: Publish test build
+        if: github.event_name == 'workflow_dispatch'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "prueba-${{ github.run_number }}"
+          $exe = Get-ChildItem -Filter "*_Windows_v*.exe" | Select-Object -First 1
+          gh release create $tag $exe.FullName --target "${{ github.sha }}" --prerelease `
+            --title "Prueba ${{ github.run_number }} (Windows)" `
+            --notes "Compilación de prueba de ${{ github.sha }}. Instalador sin firmar: en el aviso de Windows, «Más información» → «Ejecutar de todas formas»."
