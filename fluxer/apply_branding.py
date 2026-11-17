@@ -10,7 +10,7 @@ error que dice qué fichero y qué patrón, en vez de compilar con la marca a
 medias.
 
 Uso:  python fluxer/apply_branding.py
-Para deshacerlo en local:  git checkout -- windows build-windows.ps1 lib
+Para deshacerlo en local:  git checkout -- windows build-windows.ps1 lib assets web
 """
 import json
 import re
@@ -115,10 +115,26 @@ for arb in arbs:
 if changed_en == 0:
     errors.append("lib/l10n/app_en.arb: no se cambió ningún texto")
 
+# --- Imágenes e iconos ------------------------------------------------------
+# Todo lo que haya en fluxer/branding/overlay/ se copia encima del repo con la
+# misma ruta (p. ej. overlay/windows/runner/resources/app_icon.ico).
+# Solo se permite sustituir ficheros que existan: si Moonfin mueve o renombra
+# uno, falla en vez de dejar el icono viejo sin avisar.
+overlay = ROOT / "fluxer" / "branding" / "overlay"
+copied = 0
+for src in sorted(p for p in overlay.rglob("*") if p.is_file()):
+    rel = src.relative_to(overlay)
+    dst = ROOT / rel
+    if not dst.exists():
+        errors.append(f"overlay/{rel.as_posix()}: no existe {rel.as_posix()} en el repo")
+        continue
+    dst.write_bytes(src.read_bytes())
+    copied += 1
+
 if errors:
     print("ERROR aplicando la marca (¿Moonfin cambió estos ficheros?):", file=sys.stderr)
     for e in errors:
         print("  - " + e, file=sys.stderr)
     sys.exit(1)
 
-print(f"Marca '{NAME}' aplicada ({changed_en} textos en inglés, {len(arbs)} idiomas).")
+print(f"Marca '{NAME}' aplicada ({changed_en} textos en inglés, {len(arbs)} idiomas, {copied} imágenes).")

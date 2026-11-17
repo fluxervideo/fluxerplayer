@@ -33,9 +33,22 @@ git push
 - Si una versión nueva de Moonfin cambia un texto que el script busca, la
   compilación falla con un error que dice qué fichero revisar.
 - Probarlo en local: `python3 fluxer/apply_branding.py`, y deshacerlo con
-  `git checkout -- windows build-windows.ps1 lib`.
+  `git checkout -- windows build-windows.ps1 lib assets web`.
 
 ## Compilar
 
 - Windows: Actions → "FluxerMoon Windows" → Run workflow. El instalador
   aparece como artefacto `windows-exe`. Un tag `v*` también lo lanza.
+
+## Iconos e imágenes
+
+Copiar la imagen nueva en `fluxer/branding/overlay/` con la MISMA ruta que el
+fichero oficial que sustituye (mismo nombre y formato). Principales:
+
+| Fichero oficial | Dónde se ve |
+|---|---|
+| `windows/runner/resources/app_icon.ico` | Icono del .exe, barra de tareas e instalador (Windows) |
+| `assets/icons/moonfin.png` (512×512) | Logo dentro de la app |
+| `assets/icons/moonfin_logo.svg` | Logo vectorial dentro de la app |
+| `assets/icons/app_icon.png` | Icono de la app |
+| `web/favicon.png` (64×64), `web/icons/*` | Solo versión web |
