@@ -40,6 +40,8 @@ class FluxerStrings {
       );
   String get stillTrying =>
       _t('Sin conexión con Fluxer, reintentando…', 'No connection to Fluxer, retrying…');
+  String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
+  String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(
         'Acceso aceptado, pero no se ha podido conectar con $name. Inténtalo de nuevo.',
         'Access granted, but $name could not be reached. Please try again.',

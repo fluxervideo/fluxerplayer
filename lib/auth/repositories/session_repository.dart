@@ -19,6 +19,7 @@ import '../../ui/navigation/home_refresh_bus.dart';
 import '../../ui/screensaver/screensaver_controller.dart';
 import '../../ui/widgets/overlay_sheet.dart';
 import '../../ui/widgets/floating_notification.dart';
+import '../../fluxer/server_message/fluxer_server_message.dart'; // FLUXER:
 
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -1306,7 +1307,13 @@ class SessionRepository {
       case 'displaymessage':
         final text = message.arguments['Text'];
         if (text != null && text.trim().isNotEmpty) {
-          await _showRemoteMessage(text, message.arguments['Header']);
+          // FLUXER: mensaje grande, centrado y durante TimeoutMs.
+          final shown = showFluxerServerMessage(
+            text: text,
+            header: message.arguments['Header'],
+            timeoutMs: message.arguments['TimeoutMs'],
+          );
+          if (!shown) await _showRemoteMessage(text, message.arguments['Header']);
         }
       case 'setvolume':
         final raw = message.arguments['Volume'];
