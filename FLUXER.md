@@ -1,11 +1,11 @@
-# FluxerMoon
+# FluxerPlayer
 
 Cliente de Fluxer basado en [Moonfin](https://github.com/Moonfin-Client/Moonfin-Core) (GPLv3).
 
 ## Ramas y remotos
 
 - `upstream` → Moonfin oficial. `origin` → este repo.
-- `fluxer` → rama principal de FluxerMoon, construida encima de una versión
+- `fluxer` → rama principal de FluxerPlayer, construida encima de una versión
   publicada de Moonfin (ahora `3.1.0`).
 
 ## Actualizar con una versión nueva de Moonfin
@@ -37,7 +37,7 @@ git push
 
 ## Compilar
 
-- Windows: Actions → "FluxerMoon Windows" → Run workflow. El instalador
+- Windows: Actions → "FluxerPlayer Windows" → Run workflow. El instalador
   aparece como artefacto `windows-exe`. Un tag `v*` también lo lanza.
 
 ## Iconos e imágenes
@@ -55,7 +55,7 @@ fichero oficial que sustituye (mismo nombre y formato). Principales:
 
 ## Ficheros oficiales modificados (revisar al fusionar)
 
-Todo lo demás de FluxerMoon vive en ficheros propios (`lib/fluxer/`, `fluxer/`,
+Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/`,
 `.github/workflows/fluxer-*.yml`). Cada línea tocada lleva `// FLUXER:`
 (`git grep -n "FLUXER:"` las lista todas).
 

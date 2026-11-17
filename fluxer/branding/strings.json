@@ -1,5 +1,5 @@
 {
-  "_comment": "Textos de Moonfin que FluxerMoon cambia. Clave = la del .arb oficial (lib/l10n/app_en.arb). 'es' se usa en todos los idiomas es_*, 'en' en el resto. Lo aplica fluxer/apply_branding.py al compilar.",
+  "_comment": "Textos de Moonfin que FluxerPlayer cambia. Clave = la del .arb oficial (lib/l10n/app_en.arb). 'es' se usa en todos los idiomas es_*, 'en' en el resto. Lo aplica fluxer/apply_branding.py al compilar.",
   "addServerButtonSubtitle": {
     "es": "Con la dirección que te hemos dado en tu cuenta de Fluxer",
     "en": "With the address from your Fluxer account"

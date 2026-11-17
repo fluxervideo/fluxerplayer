@@ -1,9 +1,9 @@
-# FluxerMoon: instalador de Windows x64.
-# Fichero propio de FluxerMoon (no existe en Moonfin oficial), así que nunca
+# FluxerPlayer: instalador de Windows x64.
+# Fichero propio de FluxerPlayer (no existe en Moonfin oficial), así que nunca
 # da conflictos al fusionar versiones nuevas de upstream.
 # Los workflows oficiales de Moonfin siguen en el repo pero desactivados
 # desde la configuración de GitHub (gh workflow disable), no editándolos.
-name: FluxerMoon Windows
+name: FluxerPlayer Windows
 
 on:
   workflow_dispatch:
@@ -27,8 +27,8 @@ jobs:
         with:
           flutter-version: ${{ env.FLUTTER_VERSION }}
 
-      # Marca de FluxerMoon (nombre, instalador, textos). Ver fluxer/branding.json.
-      - name: Apply FluxerMoon branding
+      # Marca de FluxerPlayer (nombre, instalador, textos). Ver fluxer/branding.json.
+      - name: Apply FluxerPlayer branding
         shell: pwsh
         run: |
           python fluxer/apply_branding.py

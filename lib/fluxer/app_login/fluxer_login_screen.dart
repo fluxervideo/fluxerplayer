@@ -1,4 +1,4 @@
-// FluxerMoon: pantalla "Entrar con Fluxer".
+// FluxerPlayer: pantalla "Entrar con Fluxer".
 //
 // Enseña un código de un solo uso (y su QR). El cliente lo acepta en el
 // portal de FluxerHub (/portal/vincular), o pulsa «Entrar con mi cuenta de

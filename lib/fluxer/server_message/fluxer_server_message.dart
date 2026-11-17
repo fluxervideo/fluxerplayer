@@ -1,4 +1,4 @@
-// FluxerMoon: mensajes del servidor (Emby "Enviar mensaje", también desde
+// FluxerPlayer: mensajes del servidor (Emby "Enviar mensaje", también desde
 // FluxerHub) grandes, centrados y durante el tiempo pedido.
 //
 // Moonfin los enseñaba como notificación del sistema o un aviso pequeño de

@@ -1,4 +1,4 @@
-// FluxerMoon: entrar con un código aceptado en el portal de FluxerHub.
+// FluxerPlayer: entrar con un código aceptado en el portal de FluxerHub.
 //
 // Backend: FluxerHub `POST /api/app-login/start` y `POST /api/app-login/status`
 // (AppLoginPairingController). Al aceptarse, la sesión de Emby se guarda por

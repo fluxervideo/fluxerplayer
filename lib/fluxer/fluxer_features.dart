@@ -1,4 +1,4 @@
-// FluxerMoon: qué funciones de Moonfin se ven en la app.
+// FluxerPlayer: qué funciones de Moonfin se ven en la app.
 //
 // El código de Moonfin NO se borra (así las actualizaciones no dan
 // conflictos): solo se ocultan sus puntos de entrada. Cada enganche en un

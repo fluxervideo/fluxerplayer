@@ -1,8 +1,8 @@
 {
-  "appName": "FluxerMoon",
+  "appName": "FluxerPlayer",
   "publisher": "Fluxer",
   "companyId": "video.fluxer",
-  "installerPrefix": "FluxerMoon",
+  "installerPrefix": "FluxerPlayer",
   "windowsInstallerAppId": "7315F9F1-0421-4FB8-86C3-FE99D5E3FF43",
   "sourceCodeUrl": "https://github.com/marcostorrent/fluxermoon",
   "updatesGithubRepo": "marcostorrent/fluxermoon"

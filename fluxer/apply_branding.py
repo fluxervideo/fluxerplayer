@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Aplica la marca de FluxerMoon sobre el código oficial de Moonfin.
+"""Aplica la marca de FluxerPlayer sobre el código oficial de Moonfin.
 
 Se ejecuta en CI justo antes de compilar, sobre un checkout limpio. Los
 ficheros oficiales NO se modifican en git, así que fusionar versiones nuevas

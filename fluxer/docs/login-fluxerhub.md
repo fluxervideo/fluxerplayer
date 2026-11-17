@@ -7,7 +7,7 @@ servidor Emby sin escribir URL, usuario ni contraseña.
 ## Flujo
 
 ```
-App FluxerMoon                      FluxerHub                         Emby
+App FluxerPlayer                      FluxerHub                         Emby
 ──────────────                      ─────────                         ────
 POST /api/device-login/start  ───►  crea código K7Q2M9 (10 min)
    {device_id, device_name,          + poll_token secreto
@@ -62,7 +62,7 @@ y abre la sesión
 - Respeta suspensiones/baneos: sin suscripción activa no se aprueba.
 - Auditoría: `device_login.approved` con IP y dispositivo.
 - Ojo con `emby_devices`: Emby verá el DeviceId real de la app y el nombre de
-  cliente "FluxerMoon for Windows/Android TV/…"; revisar la clasificación.
+  cliente "FluxerPlayer for Windows/Android TV/…"; revisar la clasificación.
 
 ## Seguridad
 

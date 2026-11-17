@@ -1,4 +1,4 @@
-// FluxerMoon: textos propios (español / inglés), fuera de los .arb oficiales
+// FluxerPlayer: textos propios (español / inglés), fuera de los .arb oficiales
 // para no tocar las traducciones de Moonfin.
 
 import 'package:flutter/widgets.dart';
