@@ -157,6 +157,12 @@ class FluxerStrings {
   String get inviteTapToCopy => _t('Pulsa para copiar el enlace.', 'Tap to copy the link.');
   String get inviteTapForQr => _t('Pulsa para ver el código QR.', 'Tap to see the QR code.');
   String get inviteCopied => _t('Enlace de invitación copiado', 'Invite link copied');
+  String get portalLinkHint => _t(
+        'Entrarás ya con tu cuenta. El código vale 10 minutos.',
+        'You will be signed in already. The code is valid for 10 minutes.',
+      );
+  String get renewInBrowserSignedIn =>
+      _t('Abre tu cuenta de Fluxer, ya con la sesión iniciada', 'Opens your Fluxer account, already signed in');
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(

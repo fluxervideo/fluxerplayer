@@ -20,6 +20,10 @@ Basada en Moonfin 3.1.0.
 - Calidad siempre al máximo (200 Mbps): ya no hace falta tocar la tasa de
   bits.
 - Fuera las descargas: Fluxer es para ver en streaming.
+- **Renovar** abre tu cuenta de Fluxer ya con la sesión iniciada: en el
+  ordenador o el móvil, en el navegador; en la tele, con un código QR para el
+  móvil. Sin escribir usuario ni contraseña.
+- Invita y gana enseña solo tu código; al pulsarlo se copia el enlace.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 

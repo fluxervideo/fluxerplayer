@@ -5,15 +5,14 @@
 // Enganche: lib/ui/screens/detail/item_detail_screen.dart (`// FLUXER:`).
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'package:get_it/get_it.dart';
 
 import '../../data/models/aggregated_item.dart';
 import '../../data/services/log_service.dart';
-import '../fluxer_config.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
+import 'fluxer_portal.dart';
 
 /// Solo para lo que se reproduce (películas, capítulos, vídeos).
 bool fluxerCanReport(AggregatedItem item) =>
@@ -38,7 +37,7 @@ Future<void> showFluxerReportDialog(BuildContext context, AggregatedItem item) a
       ),
     );
     if (open == true) {
-      await launchUrl(Uri.parse('$fluxerHubUrl/portal/cuenta?tab=Soporte'), mode: LaunchMode.externalApplication);
+      if (context.mounted) await openFluxerPortal(context, 'support', title: s.openSupport);
     }
     return;
   }

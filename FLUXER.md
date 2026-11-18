@@ -92,6 +92,9 @@ Al entrar con Fluxer la app recibe también un token propio del Hub
 - `fluxer_account_screen.dart`: Ajustes → «Mi cuenta Fluxer» (plan, renovar
   —QR en la tele—, servidor, Invita y gana, diagnóstico, desvincular).
 - El vigilante avisa también de incidencias del servidor (cada 6 h).
+- `fluxer_portal.dart`: abre el portal ya con la sesión iniciada (enlace de un
+  solo uso del Hub, `api/app/portal-link`): navegador en ordenador y móvil,
+  QR en la tele. Lo usan «Renovar», el aviso del plan y el soporte.
 
 ## Versiones
 

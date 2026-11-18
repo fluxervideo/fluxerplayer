@@ -27,6 +27,7 @@ import '../../util/platform_detection.dart';
 import '../fluxer_routes.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
+import 'fluxer_portal.dart';
 
 class FluxerAccountScreen extends StatefulWidget {
   const FluxerAccountScreen({super.key});
@@ -66,8 +67,7 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
 
   Map<String, dynamic>? _map(String key) => (_me?[key] as Map?)?.cast<String, dynamic>();
 
-  /// QR para abrirlo en el móvil. No se abre el navegador: en la tele no lo
-  /// hay, y así el cliente no sale de la app en ningún aparato.
+  /// QR para abrir [url] en el móvil (el enlace de invitación en la tele).
   Future<void> _open(String url, String title) async {
     final s = FluxerStrings.of(context);
     await showDialog<void>(
@@ -224,8 +224,9 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
           autofocus: true,
           leading: const Icon(Icons.autorenew),
           title: Text(s.renew),
-          subtitle: Text(s.renewOnPhone),
-          onTap: () => _open(plansUrl, s.renew),
+          subtitle: Text(PlatformDetection.isTV ? s.renewOnPhone : s.renewInBrowserSignedIn),
+          // Portal ya con la sesión iniciada: navegador, o QR en la tele.
+          onTap: () => openFluxerPortal(context, 'plans', title: s.renew),
         ),
       if (server != null)
         ListTile(

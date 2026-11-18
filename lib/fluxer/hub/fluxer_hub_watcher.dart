@@ -19,13 +19,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../auth/repositories/session_repository.dart';
 import '../../ui/navigation/app_router.dart';
 import '../fluxer_strings.dart';
 import '../server_message/fluxer_server_message.dart';
 import 'fluxer_hub_client.dart';
+import 'fluxer_portal.dart';
 
 class FluxerHubWatcher {
   FluxerHubWatcher._();
@@ -119,8 +119,12 @@ class FluxerHubWatcher {
       actionLabel: plansUrl == null ? null : s.renew,
       icon: Icons.event_busy_outlined,
     );
-    if (renew == true && plansUrl != null) {
-      await launchUrl(Uri.parse(plansUrl), mode: LaunchMode.externalApplication);
+    if (renew == true) {
+      final context = appRouter.routerDelegate.navigatorKey.currentContext;
+      if (context != null && context.mounted) {
+        // Portal ya con la sesión iniciada: navegador, o QR en la tele.
+        await openFluxerPortal(context, 'plans', title: s.renew);
+      }
     }
   }
 

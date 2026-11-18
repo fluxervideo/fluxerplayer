@@ -142,6 +142,20 @@ class FluxerHubClient {
     }
   }
 
+  /// Enlace al portal con la sesión ya iniciada (un solo uso, 10 min).
+  /// [to]: plans, account o support. Null si no está vinculada o sin conexión.
+  Future<String?> portalLink(String to) async {
+    try {
+      final response = await _request(
+        (options) => _dio.post<Map<String, dynamic>>('portal-link', options: options, data: {'to': to}),
+        rethrowErrors: true,
+      );
+      return response?.data?['url'] as String?;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> logout() async {
     await _request((options) => _dio.post<dynamic>('logout', options: options));
     await clearToken();
