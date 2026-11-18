@@ -143,11 +143,6 @@ sub("lib/data/services/app_update_service.dart", [
     (r"https://github\.com/Moonfin-Client/Moonfin-Core/releases/latest",
      f"https://github.com/{repo}/releases/latest"),
     (r"'MoonfinUpdateChecker/", f"'{NAME}UpdateChecker/"),
-    # Comprobar SIEMPRE al abrir la app (Moonfin: como mucho 1 vez cada 24 h)
-    # y volver a avisar en cada arranque hasta que se actualice (Moonfin
-    # avisaba de cada versión una sola vez).
-    (r"static const _checkCooldown = Duration\(hours: 24\);", "static const _checkCooldown = Duration.zero;"),
-    (r"suppressIfAlreadyNotified: true,", "suppressIfAlreadyNotified: false,"),
 ])
 
 # --- "Acerca de": código fuente y licencias, a NUESTRO repo (lo exige la GPL) -
