@@ -28,6 +28,8 @@ Basada en Moonfin 3.1.0.
   visto hoy, en orden.
 - La pantalla de inicio es la misma que tienes en Fluxer (mismas filas y en
   el mismo orden): la preparamos nosotros para ti.
+- La app comprueba si hay una versión nueva cada vez que la abres, y te avisa
+  hasta que la instales.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 
