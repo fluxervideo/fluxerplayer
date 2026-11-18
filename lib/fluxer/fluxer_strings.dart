@@ -163,6 +163,38 @@ class FluxerStrings {
       );
   String get renewInBrowserSignedIn =>
       _t('Abre tu cuenta de Fluxer, ya con la sesión iniciada', 'Opens your Fluxer account, already signed in');
+  String get yourSubscription => _t('TU SUSCRIPCIÓN', 'YOUR SUBSCRIPTION');
+  String get subscriptionActive => _t('Activa', 'Active');
+  String subscriptionEndsInDays(int days) => days <= 0
+      ? _t('Caduca hoy', 'Ends today')
+      : days == 1
+          ? _t('Caduca mañana', 'Ends tomorrow')
+          : _t('Caduca en $days días', 'Ends in $days days');
+  String _date(DateTime d) =>
+      '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
+  String renewsOn(DateTime d) => _t('Se renueva el ${_date(d)}', 'Renews on ${_date(d)}');
+  String endsOn(DateTime d) => _t('Caduca el ${_date(d)}', 'Ends on ${_date(d)}');
+  String get autoRenewYes => _t('Renovación automática', 'Auto-renew on');
+  String get autoRenewNo => _t('Sin renovación automática', 'Auto-renew off');
+  String get myAccount => _t('Mi cuenta', 'My account');
+  // Pantalla de entrar
+  String get loginTitle => _t('Inicia sesión en Fluxer', 'Sign in to Fluxer');
+  String get loginSubtitle => _t('Elige una opción para entrar', 'Choose how to sign in');
+  String get fluxerAccountLabel => _t('Cuenta de Fluxer', 'Fluxer account');
+  String continueAs(String name) => _t('Continuar como $name', 'Continue as $name');
+  String get switchAccount => _t('Cambiar de cuenta', 'Switch account');
+  String get or => _t('o', 'or');
+  String get orOtherWay => _t('o entra con otra cuenta', 'or sign in with another account');
+  String get otherAccount => _t('¿Otra cuenta?', 'Another account?');
+  String get optionThisDevice => _t('En este aparato', 'On this device');
+  String get optionThisDeviceHelp => _t(
+        'Se abrirá la web de Fluxer en tu navegador. Entra con tu cuenta y pulsa «Dar acceso a la app».',
+        'The Fluxer website will open in your browser. Sign in and tap “Give the app access”.',
+      );
+  String get optionWithPhone => _t('Con tu móvil', 'With your phone');
+  String get optionWithPhoneTv => _t('Entra con tu móvil', 'Sign in with your phone');
+  String get optionOtherDevice => _t('Desde otro aparato', 'From another device');
+  String get scanQr => _t('Escanéalo con la cámara', 'Scan it with the camera');
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(

@@ -7,7 +7,6 @@
 // - «Invita y gana»: el enlace de referidos, con QR y botón de copiar.
 // - Diagnóstico: activar la grabación y mandarlo a Fluxer (llega como una
 //   solicitud con el registro adjunto).
-// - Cerrar la sesión de Fluxer en este aparato.
 // Sin vincular (entró sin «Entrar con Fluxer»), explica cómo vincularla.
 //
 // Enganche: lib/ui/screens/settings/settings_side_panel.dart (`// FLUXER:`).
@@ -18,7 +17,6 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moonfin_design/moonfin_design.dart';
 
-import '../../auth/repositories/session_repository.dart';
 import '../../data/services/log_service.dart';
 import '../../preference/user_preferences.dart';
 import '../../ui/screens/settings/settings_app_bar.dart';
@@ -144,29 +142,6 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Future<void> _logout() async {
-    final s = FluxerStrings.of(context);
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(s.fluxerLogout),
-        content: Text(s.fluxerLogoutHelp),
-        actions: [
-          TextButton(autofocus: true, onPressed: () => Navigator.pop(ctx, false), child: Text(s.back)),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(s.fluxerLogout)),
-        ],
-      ),
-    );
-    if (ok != true) return;
-    // Desvincula la app (su token del Hub deja de valer) y cierra la sesión
-    // de Emby: para volver a entrar hará falta un código nuevo.
-    await _client.logout();
-    try {
-      await GetIt.instance<SessionRepository>().destroyCurrentSession();
-    } catch (_) {}
-    if (mounted) context.go(fluxerLoginPath);
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = FluxerStrings.of(context);
@@ -262,13 +237,8 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
         ),
       ],
       ..._diagnosticTiles(s, linked: true),
-      _header(s.fluxerSessionSection),
-      ListTile(
-        leading: const Icon(Icons.logout),
-        title: Text(s.fluxerLogout),
-        subtitle: Text(s.fluxerLogoutHelp),
-        onTap: _logout,
-      ),
+      // «Cerrar sesión» está en el menú del usuario (la foto) y ya desvincula
+      // la app de FluxerHub: aquí no hace falta un botón igual.
     ];
   }
 

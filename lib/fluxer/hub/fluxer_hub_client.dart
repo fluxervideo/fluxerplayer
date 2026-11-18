@@ -56,6 +56,7 @@ class FluxerHubClient {
 
   Future<void> clearToken() async {
     _token = null;
+    _meCache = null;
     _loaded = true;
     try {
       await _storage.delete(key: _tokenKey);
@@ -64,10 +65,20 @@ class FluxerHubClient {
 
   /// Estado del plan, servidor, avisos y URLs del portal. Null si la app no
   /// está vinculada o no hay conexión.
-  Future<Map<String, dynamic>?> me() async {
+  Future<Map<String, dynamic>?> me({bool fresh = false}) async {
+    // Lo piden varias pantallas a la vez (lateral, menú del usuario, avisos):
+    // 1 minuto de caché.
+    final cached = _meCache;
+    if (!fresh && cached != null && DateTime.now().difference(cached.$1) < const Duration(minutes: 1)) {
+      return cached.$2;
+    }
     final response = await _request((options) => _dio.get<Map<String, dynamic>>('me', options: options));
-    return response?.data;
+    final data = response?.data;
+    _meCache = data == null ? null : (DateTime.now(), data);
+    return data;
   }
+
+  (DateTime, Map<String, dynamic>)? _meCache;
 
   Future<void> acknowledgeNotice(int id) async {
     await _request((options) => _dio.post<dynamic>('notices/$id/acknowledge', options: options));

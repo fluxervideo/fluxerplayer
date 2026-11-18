@@ -52,6 +52,8 @@ import '../navigation/app_router.dart';
 import 'offline_aware_image.dart';
 import 'adaptive/sf_symbol.dart';
 import 'user_avatar_image.dart';
+import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
+import '../../fluxer/hub/fluxer_subscription_card.dart'; // FLUXER:
 
 const _kExpandedWidthDesktop = 240.0;
 const _kExpandedWidthMobile = 260.0;
@@ -976,6 +978,13 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
           maintainState: true,
           child: _buildUserSection(),
         ),
+        // FLUXER: la suscripción de Fluxer bajo el usuario (tele/ordenador).
+        if (FluxerServers.activeIsFluxer)
+          Visibility(
+            visible: _isExpanded,
+            maintainState: true,
+            child: const FluxerSubscriptionCard(sidebar: true),
+          ),
         Expanded(
           child: LayoutBuilder(
             builder: (context, constraints) {

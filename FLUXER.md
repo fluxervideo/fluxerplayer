@@ -63,7 +63,8 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 |---|---|
 | `lib/ui/navigation/app_router.dart` | ruta `/fluxer-login` (y permitirla sin sesión), rutas bloqueadas y, en modo solo Fluxer, las pantallas de entrar de Moonfin llevan a la de Fluxer |
 | `lib/ui/screens/auth/server_select_screen.dart` | «Entrar/Continuar con Fluxer» arriba y principal, «Añadir otro servidor» secundario, sin búsqueda en la red ni certificados |
-| `lib/ui/widgets/user_menu_dialog.dart` | «Cambiar de usuario»: solo usuarios de Fluxer, sin «Añadir usuario» ni «Seleccionar servidor» |
+| `lib/ui/widgets/user_menu_dialog.dart` | «Cambiar de usuario»: solo usuarios de Fluxer, sin «Añadir usuario», «Seleccionar servidor» ni «Conexión rápida»; tarjeta de suscripción; «Cerrar sesión» desvincula del Hub |
+| `lib/ui/widgets/left_sidebar.dart` | suscripción bajo el usuario en la barra lateral |
 | `lib/ui/screens/auth/login_screen.dart` | en un servidor de Fluxer, «Entrar con Fluxer» (sin contraseña) encima del formulario |
 | `lib/ui/screens/auth/add_server_dialog.dart` | directo a la dirección (sin Plex ni Emby Connect) |
 | `lib/auth/repositories/session_repository.dart` | mensajes del servidor grandes |

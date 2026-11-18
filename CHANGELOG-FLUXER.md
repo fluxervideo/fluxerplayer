@@ -3,6 +3,22 @@
 Cada versión publicada (etiqueta `vX.Y.Z`) usa como notas la sección con su
 número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
+## 1.0.3 — Tu suscripción a la vista y entrar más fácil
+
+Basada en Moonfin 3.1.0.
+
+- **Pantalla de entrar nueva**: si ya tienes tu cuenta guardada, sale tu
+  perfil con tu foto y «Continuar como …». Las formas de entrar se ven como
+  dos opciones claras: en este aparato (abre la web) o con tu móvil (QR y
+  código). En la tele, con el móvil.
+- **Tu suscripción al pulsar tu foto**: plan, si está activa o cuándo caduca,
+  renovación automática, saldo y tu email, con botones para renovar y para
+  tu cuenta. En el móvil, debajo de tu nombre.
+- En la barra lateral, tu plan y hasta cuándo dura.
+- **Cerrar sesión** cierra la sesión del todo: para volver hay que entrar con
+  tu cuenta de Fluxer.
+- Fuera «Conexión rápida»: en Fluxer se entra con tu cuenta de Fluxer.
+
 ## 1.0.2 — Solo Fluxer, y tu inicio de Fluxer
 
 Basada en Moonfin 3.1.0.

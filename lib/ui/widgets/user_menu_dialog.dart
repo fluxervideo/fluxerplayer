@@ -32,6 +32,8 @@ import 'pin_entry_dialog.dart';
 import 'remote_control_dialog.dart';
 import 'settings/settings_panel.dart';
 import 'profile_carousel.dart';
+import '../../fluxer/hub/fluxer_hub_client.dart'; // FLUXER:
+import '../../fluxer/hub/fluxer_subscription_card.dart'; // FLUXER:
 import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
 import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
@@ -245,6 +247,9 @@ class _AccountDialogState extends State<_AccountDialog> {
   Future<void> _signOutCurrent() async {
     if (_busy) return;
     setState(() => _busy = true);
+    // FLUXER: cerrar sesión también desvincula la app de FluxerHub (para volver
+    // hará falta un código nuevo, no «Continuar con mi cuenta de Fluxer»).
+    await FluxerHubClient.instance.logout();
     await _sessionRepo.signOutSiloAccount();
 
     if (!mounted) return;
@@ -257,6 +262,7 @@ class _AccountDialogState extends State<_AccountDialog> {
     setState(() => _busy = true);
 
     // A Silo household's login ends on Silo too, not only on this device.
+    await FluxerHubClient.instance.logout(); // FLUXER: también desvincula la app
     await _sessionRepo.signOutSiloAccount();
     await _serverRepo.loadStoredServers();
     final serverIds = _serverRepo.servers.map((s) => s.id).toList();
@@ -361,11 +367,13 @@ class _AccountDialogState extends State<_AccountDialog> {
           if (!context.mounted) return;
           await SettingsPanel.open(context, const SettingsSidePanel());
         }),
+        if (!FluxerFeatures.fluxerOnly) // FLUXER: se entra con «Entrar con Fluxer», no con Quick Connect
         action(
           activeIsSilo ? l10n.siloApproveSignIn : l10n.quickConnect,
           () => Navigator.of(context).pop(_AccountDialogAction.quickConnect),
         ),
-        if (activeServerSupports((f) => f.supportsRemoteControl))
+        if (activeServerSupports((f) => f.supportsRemoteControl) &&
+            !(compact && FluxerFeatures.fluxerOnly)) // FLUXER: en el móvil, menos botones
           action(l10n.remoteControl, () {
             Navigator.of(context).pop();
             showRemoteControlDialog(context);
@@ -428,20 +436,31 @@ class _AccountDialogState extends State<_AccountDialog> {
                 ],
               ),
               Expanded(
-                child: Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: ProfileCarousel(
-                      entries: [for (final a in _accounts) _entryFor(a)],
-                      selected: _selected,
-                      focusNode: _carouselFocus,
-                      onSelected: (index) => setState(() => _selected = index),
-                      onActivate: (index) => _switchAccount(_accounts[index]),
-                      subtitle: _accounts.isEmpty
-                          ? null
-                          : _buildAccountSubtitle(_accounts[_selected]),
+                // FLUXER: la suscripción de Fluxer al lado de los perfiles.
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: SingleChildScrollView(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          child: ProfileCarousel(
+                            entries: [for (final a in _accounts) _entryFor(a)],
+                            selected: _selected,
+                            focusNode: _carouselFocus,
+                            onSelected: (index) => setState(() => _selected = index),
+                            onActivate: (index) => _switchAccount(_accounts[index]),
+                            subtitle: _accounts.isEmpty
+                                ? null
+                                : _buildAccountSubtitle(_accounts[_selected]),
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
+                    if (FluxerServers.activeIsFluxer) ...[
+                      const SizedBox(width: 32),
+                      const Center(child: SingleChildScrollView(child: FluxerSubscriptionCard())),
+                    ],
+                  ],
                 ),
               ),
               Wrap(
@@ -500,6 +519,8 @@ class _AccountDialogState extends State<_AccountDialog> {
                     ? () => setState(() => _selected++)
                     : null,
               ),
+              // FLUXER: la suscripción de Fluxer debajo del nombre.
+              if (FluxerServers.activeIsFluxer) const FluxerSubscriptionCard(compact: true),
               const SizedBox(height: 24),
             ],
             ProfileStrip(
