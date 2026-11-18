@@ -102,7 +102,7 @@ class FluxerStrings {
   String get autoRenewOn => _t('renovación automática', 'auto-renew');
   String balance(double v) => _t('saldo ${v.toStringAsFixed(2)} €', 'balance €${v.toStringAsFixed(2)}');
   String get renewInBrowser => _t('Abre los planes en el navegador', 'Opens the plans in your browser');
-  String get renewOnPhone => _t('Escanea un código con el móvil para renovar', 'Scan a code with your phone to renew');
+  String get renewOnPhone => _t('Escanea el código con el móvil para renovar', 'Scan the code with your phone to renew');
   String get scanWithPhone => _t('Escanéalo con la cámara del móvil:', 'Scan it with your phone camera:');
   String get inviteSection => _t('Invita y gana', 'Invite and earn');
   String get inviteTitle => _t('Tu enlace de invitación', 'Your invite link');
@@ -153,6 +153,10 @@ class FluxerStrings {
         'No se ha podido entrar con tu cuenta. Usa el código para volver a vincular la app.',
         'Could not sign in with your account. Use the code to link the app again.',
       );
+  String inviteCode(String code) => _t('Tu código de invitación: $code', 'Your invite code: $code');
+  String get inviteTapToCopy => _t('Pulsa para copiar el enlace.', 'Tap to copy the link.');
+  String get inviteTapForQr => _t('Pulsa para ver el código QR.', 'Tap to see the QR code.');
+  String get inviteCopied => _t('Enlace de invitación copiado', 'Invite link copied');
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(

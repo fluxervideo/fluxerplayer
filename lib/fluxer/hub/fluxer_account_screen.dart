@@ -17,7 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moonfin_design/moonfin_design.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../auth/repositories/session_repository.dart';
 import '../../data/services/log_service.dart';
@@ -67,12 +66,9 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
 
   Map<String, dynamic>? _map(String key) => (_me?[key] as Map?)?.cast<String, dynamic>();
 
-  /// En la tele no hay navegador: QR para abrirlo en el móvil.
+  /// QR para abrirlo en el móvil. No se abre el navegador: en la tele no lo
+  /// hay, y así el cliente no sale de la app en ningún aparato.
   Future<void> _open(String url, String title) async {
-    if (!PlatformDetection.isTV) {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      return;
-    }
     final s = FluxerStrings.of(context);
     await showDialog<void>(
       context: context,
@@ -217,7 +213,8 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
         title: Text(plan?['name'] as String? ?? s.noPlan),
         subtitle: Text([
           if (plan?['status_label'] != null) plan!['status_label'] as String,
-          if (endsAt != null) s.planEndsOn(endsAt),
+          // El estado activo ya dice la fecha («próxima renovación …»).
+          if (endsAt != null && plan?['status'] != 'active') s.planEndsOn(endsAt),
           if (plan?['auto_renew'] == true) s.autoRenewOn,
           if (balance != null) s.balance(balance),
         ].join(' · ')),
@@ -227,7 +224,7 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
           autofocus: true,
           leading: const Icon(Icons.autorenew),
           title: Text(s.renew),
-          subtitle: Text(PlatformDetection.isTV ? s.renewOnPhone : s.renewInBrowser),
+          subtitle: Text(s.renewOnPhone),
           onTap: () => _open(plansUrl, s.renew),
         ),
       if (server != null)
@@ -241,24 +238,27 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
         ),
       if (referral != null) ...[
         _header(s.inviteSection),
+        // Solo el código; al pulsar se copia el enlace (en la tele, donde
+        // copiar no sirve, se enseña su QR).
         ListTile(
           leading: const Icon(Icons.card_giftcard),
-          title: Text(s.inviteTitle),
-          subtitle: Text(s.inviteHelp(referral['reward_amount'] as num?)),
-          onTap: () => _open(referral['share_url'] as String, s.inviteTitle),
-        ),
-        if (!PlatformDetection.isTV)
-          ListTile(
-            leading: const Icon(Icons.copy),
-            title: Text(s.copyInviteLink),
-            subtitle: Text(referral['share_url'] as String),
-            onTap: () async {
-              await Clipboard.setData(ClipboardData(text: referral['share_url'] as String));
-              if (mounted) {
-                ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(s.copied)));
-              }
-            },
+          title: Text(s.inviteCode(_inviteCode(referral['share_url'] as String))),
+          subtitle: Text(
+            '${s.inviteHelp(referral['reward_amount'] as num?)} '
+            '${PlatformDetection.isTV ? s.inviteTapForQr : s.inviteTapToCopy}',
           ),
+          onTap: () async {
+            final url = referral['share_url'] as String;
+            if (PlatformDetection.isTV) {
+              await _open(url, s.inviteTitle);
+              return;
+            }
+            await Clipboard.setData(ClipboardData(text: url));
+            if (mounted) {
+              ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(s.inviteCopied)));
+            }
+          },
+        ),
       ],
       ..._diagnosticTiles(s, linked: true),
       _header(s.fluxerSessionSection),
@@ -294,6 +294,12 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
         onTap: _sendDiagnostic,
       ),
   ];
+
+  /// «https://www.fluxer.video/r/RMDSDWYR» → «RMDSDWYR».
+  static String _inviteCode(String url) {
+    final segments = Uri.tryParse(url)?.pathSegments.where((p) => p.isNotEmpty).toList() ?? const [];
+    return segments.isEmpty ? url : segments.last;
+  }
 
   Widget _header(String text) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
