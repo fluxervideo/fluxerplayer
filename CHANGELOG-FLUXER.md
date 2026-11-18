@@ -3,7 +3,7 @@
 Cada versión publicada (etiqueta `vX.Y.Z`) usa como notas la sección con su
 número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
-## 1.0.5 — Recargar saldo desde la app
+## 1.0.5 — Recargar saldo, test de velocidad y mejor con el mando
 
 Basada en Moonfin 3.1.0.
 
@@ -13,11 +13,6 @@ Basada en Moonfin 3.1.0.
   avisa en cuanto se suma. Si en 10 minutos no ha llegado, te dice que nos
   escribas por Telegram.
 - Está en el menú de tu foto y en Ajustes → Mi cuenta Fluxer.
-
-## 1.0.4 — Test de velocidad y mejor con el mando
-
-Basada en Moonfin 3.1.0.
-
 - **Test de velocidad** en Ajustes → Mi cuenta Fluxer: elige algo que hayas
   visto y te dice si a ese aparato le llega de sobra, justo o no le llega.
 - **Mi cuenta Fluxer** a pantalla completa, con la suscripción en grande.
