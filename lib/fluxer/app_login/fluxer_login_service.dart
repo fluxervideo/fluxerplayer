@@ -164,6 +164,7 @@ class FluxerLoginService {
     if (server == null) return null;
 
     await FluxerServers.add(server.id);
+    await FluxerServers.addUser(server.id, session.userId);
 
     final hubToken = session.hubToken;
     if (hubToken != null && hubToken.isNotEmpty) {

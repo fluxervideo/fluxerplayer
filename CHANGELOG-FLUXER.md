@@ -7,12 +7,13 @@ número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
 Basada en Moonfin 3.1.0.
 
-- **Entrar con Fluxer** es ahora el botón principal, grande y arriba. Si ya
-  tienes tu servidor de Fluxer guardado, pone «Continuar con Fluxer».
-- **Sin contraseñas**: si la app está vinculada a tu cuenta de Fluxer, entra
-  directamente aunque se haya cerrado la sesión, sin pedirte la contraseña.
-- «Añadir otro servidor» queda como opción secundaria, para cualquier
-  servidor Emby.
+- **Solo para clientes de Fluxer**: se entra siempre con tu cuenta de Fluxer
+  (código, QR o la web). Ya no hace falta escribir direcciones de servidor
+  ni contraseñas.
+- Si ya vinculaste la app, «Continuar con mi cuenta de Fluxer» entra de un
+  toque, aunque hayas cerrado la sesión.
+- «Cambiar de usuario» solo enseña tus cuentas de Fluxer.
+- «Cerrar sesión en este aparato» (Mi cuenta Fluxer) sale y desvincula la app.
 - Tu foto de perfil de Fluxer sale también como foto de tu usuario.
 - Con tu cuenta de Fluxer, la navegación va siempre en la barra lateral
   izquierda.

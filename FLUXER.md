@@ -61,8 +61,9 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 
 | Fichero | Qué |
 |---|---|
-| `lib/ui/navigation/app_router.dart` | ruta `/fluxer-login` (y permitirla sin sesión) + rutas bloqueadas |
+| `lib/ui/navigation/app_router.dart` | ruta `/fluxer-login` (y permitirla sin sesión), rutas bloqueadas y, en modo solo Fluxer, las pantallas de entrar de Moonfin llevan a la de Fluxer |
 | `lib/ui/screens/auth/server_select_screen.dart` | «Entrar/Continuar con Fluxer» arriba y principal, «Añadir otro servidor» secundario, sin búsqueda en la red ni certificados |
+| `lib/ui/widgets/user_menu_dialog.dart` | «Cambiar de usuario»: solo usuarios de Fluxer, sin «Añadir usuario» ni «Seleccionar servidor» |
 | `lib/ui/screens/auth/login_screen.dart` | en un servidor de Fluxer, «Entrar con Fluxer» (sin contraseña) encima del formulario |
 | `lib/ui/screens/auth/add_server_dialog.dart` | directo a la dirección (sin Plex ni Emby Connect) |
 | `lib/auth/repositories/session_repository.dart` | mensajes del servidor grandes |
@@ -139,6 +140,14 @@ proyecto. Alternativas de pago: Azure Artifact Signing o un certificado
 de firma de código. Ojo: con cualquier certificado nuevo, SmartScreen puede
 seguir avisando las primeras semanas, hasta que el instalador gana
 reputación con las descargas.
+
+## Solo Fluxer
+
+`FluxerFeatures.fluxerOnly` (true): se entra siempre con la cuenta de Fluxer.
+Las pantallas de entrar de Moonfin (elegir servidor, contraseña, usuarios
+del servidor, Emby Connect, Plex) redirigen a `/fluxer-login`
+(`fluxerAuthRedirect`). Si la app ya está vinculada, ahí sale «Continuar con
+mi cuenta de Fluxer» (sesión nueva desde el Hub, sin contraseña).
 
 ## Opciones fijadas en cuentas de Fluxer
 

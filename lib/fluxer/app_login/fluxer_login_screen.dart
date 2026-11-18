@@ -17,7 +17,9 @@ import '../../ui/widgets/focus/request_initial_focus.dart';
 import '../../ui/widgets/login_scaffold.dart';
 import '../../ui/widgets/sign_in_qr_code.dart';
 import '../../util/platform_detection.dart';
+import '../fluxer_features.dart';
 import '../fluxer_strings.dart';
+import '../hub/fluxer_hub_client.dart';
 import 'fluxer_login_service.dart';
 
 enum _Phase { requesting, waiting, connecting, failed }
@@ -40,10 +42,17 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
   int _pollFailures = 0;
   String? _error;
 
+  /// La app ya está vinculada a una cuenta de Fluxer: se ofrece seguir con
+  /// ella de un toque (sin código).
+  bool _linked = false;
+
   @override
   void initState() {
     super.initState();
     _requestCode();
+    FluxerHubClient.instance.isLinked.then((linked) {
+      if (mounted && linked) setState(() => _linked = true);
+    });
   }
 
   @override
@@ -128,13 +137,39 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     }
     if (result.switched) {
       context.go(Destinations.home);
+    } else if (FluxerFeatures.fluxerOnly) {
+      // Solo Fluxer: no hay pantallas de Moonfin a las que mandar.
+      setState(() {
+        _phase = _Phase.failed;
+        _error = FluxerStrings.of(context).sessionFailed;
+      });
     } else {
       context.go('${Destinations.server}?serverId=${result.serverId}');
     }
   }
 
+  /// App ya vinculada: sesión de Emby nueva desde FluxerHub, sin contraseña.
+  Future<void> _continueWithHub() async {
+    _pollTimer?.cancel();
+    setState(() {
+      _phase = _Phase.connecting;
+      _error = null;
+    });
+    final session = await _service.sessionFromHub();
+    if (!mounted) return;
+    if (session == null) {
+      setState(() => _linked = false);
+      await _requestCode();
+      if (mounted) setState(() => _error = FluxerStrings.of(context).hubSessionFailed);
+      return;
+    }
+    await _complete(session);
+  }
+
   void _goBack() {
     if (_phase == _Phase.connecting) return;
+    // Solo Fluxer: esta es la pantalla de entrada, no hay adónde volver.
+    if (FluxerFeatures.fluxerOnly) return;
     context.go(Destinations.serverSelect);
   }
 
@@ -194,6 +229,24 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
           ),
         ),
         const SizedBox(height: 24),
+        if (_linked && _phase != _Phase.connecting) ...[
+          FilledButton.icon(
+            autofocus: true,
+            onPressed: _continueWithHub,
+            icon: const Icon(Icons.login),
+            label: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Text(s.continueWithMyAccount, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            s.orOtherAccount,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColorScheme.onSurface.withValues(alpha: 0.55)),
+          ),
+          const SizedBox(height: 16),
+        ],
         _buildBody(context, s),
         if (_error != null) ...[
           const SizedBox(height: 12),
@@ -337,12 +390,13 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
   Widget _buildActions(FluxerStrings s) {
     final busy = _phase == _Phase.connecting || _phase == _Phase.requesting;
     final buttons = <Widget>[
-      OutlinedButton.icon(
-        onPressed: busy ? null : _goBack,
-        icon: const Icon(Icons.arrow_back, size: 18),
-        label: FittedBox(fit: BoxFit.scaleDown, child: Text(s.back)),
-        style: _buttonStyle(),
-      ),
+      if (!FluxerFeatures.fluxerOnly)
+        OutlinedButton.icon(
+          onPressed: busy ? null : _goBack,
+          icon: const Icon(Icons.arrow_back, size: 18),
+          label: FittedBox(fit: BoxFit.scaleDown, child: Text(s.back)),
+          style: _buttonStyle(),
+        ),
       // En una tele no suele haber navegador: allí, el móvil con el QR.
       if (!PlatformDetection.isTV && _phase == _Phase.waiting)
         OutlinedButton.icon(

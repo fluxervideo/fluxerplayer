@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import 'package:moonfin_design/moonfin_design.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../auth/repositories/session_repository.dart';
 import '../../data/services/log_service.dart';
 import '../../preference/user_preferences.dart';
 import '../../ui/screens/settings/settings_app_bar.dart';
@@ -161,8 +162,13 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
       ),
     );
     if (ok != true) return;
+    // Desvincula la app (su token del Hub deja de valer) y cierra la sesión
+    // de Emby: para volver a entrar hará falta un código nuevo.
     await _client.logout();
-    if (mounted) _load();
+    try {
+      await GetIt.instance<SessionRepository>().destroyCurrentSession();
+    } catch (_) {}
+    if (mounted) context.go(fluxerLoginPath);
   }
 
   @override

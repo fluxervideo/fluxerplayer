@@ -7,6 +7,13 @@
 // Para volver a enseñar algo: poner su valor a true.
 // Decidido con el usuario el 2026-11-17.
 abstract final class FluxerFeatures {
+  /// Solo para clientes de Fluxer: se entra siempre con la cuenta de Fluxer
+  /// («Entrar con Fluxer»: código, QR o web). Sin dirección de servidor a
+  /// mano ni contraseña de Emby; las pantallas de servidores, contraseña y
+  /// «Añadir usuario» de Moonfin llevan a la de Fluxer (fluxerAuthRedirect).
+  /// Decidido con el usuario el 2026-11-18.
+  static const fluxerOnly = true;
+
   /// Plex, Jellyfin, Silo y Emby Connect: solo Emby de Fluxer.
   static const otherServerTypes = false;
 
@@ -54,4 +61,13 @@ bool fluxerBlockedPath(String path) {
   if (!FluxerFeatures.books && (under('/books') || under('/player/book'))) return true;
   if (!FluxerFeatures.seerr && under('/seerr')) return true;
   return false;
+}
+
+/// Modo solo Fluxer: las pantallas de entrar de Moonfin (elegir servidor,
+/// contraseña, usuarios del servidor, Emby Connect, Plex) llevan a la de
+/// Fluxer. Enganche: lib/ui/navigation/app_router.dart.
+String? fluxerAuthRedirect(String path) {
+  if (!FluxerFeatures.fluxerOnly) return null;
+  const moonfinSignIn = {'/server-select', '/login', '/server', '/emby-connect', '/plex-sign-in'};
+  return moonfinSignIn.contains(path) ? '/fluxer-login' : null;
 }

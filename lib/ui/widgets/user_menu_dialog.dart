@@ -32,6 +32,8 @@ import 'pin_entry_dialog.dart';
 import 'remote_control_dialog.dart';
 import 'settings/settings_panel.dart';
 import 'profile_carousel.dart';
+import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
+import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
 enum _AccountDialogAction { quickConnect }
 
@@ -104,6 +106,11 @@ class _AccountDialogState extends State<_AccountDialog> {
       final users = _authStore.getUsers(server.id)
         ..sort((a, b) => b.lastUsed.compareTo(a.lastUsed));
       for (final user in users) {
+        // FLUXER: solo los usuarios que entraron con Fluxer.
+        if (FluxerFeatures.fluxerOnly && FluxerServers.hasUsers &&
+            !FluxerServers.isFluxerUser(server.id, user.id)) {
+          continue;
+        }
         loaded.add(_StoredAccount(server: server, user: user));
       }
     }
@@ -340,8 +347,9 @@ class _AccountDialogState extends State<_AccountDialog> {
 
     return [
       // Phones add a user from the + at the end of the avatar row.
-      if (!compact) action(l10n.addUser, _addUser, icon: Icons.person),
-      if (!PlatformDetection.isWeb)
+      if (!compact && !FluxerFeatures.fluxerOnly) // FLUXER: sin «Añadir usuario»
+        action(l10n.addUser, _addUser, icon: Icons.person),
+      if (!PlatformDetection.isWeb && !FluxerFeatures.fluxerOnly) // FLUXER: sin «Seleccionar servidor»
         action(l10n.selectServer, _changeServer, icon: Icons.home),
       action(l10n.signOut, _signOutCurrent),
       // A lone Silo household is already all signed out by "Sign out".
@@ -498,7 +506,7 @@ class _AccountDialogState extends State<_AccountDialog> {
               entries: entries,
               selected: _selected,
               onSelected: (index) => setState(() => _selected = index),
-              onAdd: _busy ? null : _addUser,
+              onAdd: _busy || FluxerFeatures.fluxerOnly ? null : _addUser, // FLUXER: sin «+»
               addLabel: l10n.addUser,
             ),
             if (selected != null) ...[

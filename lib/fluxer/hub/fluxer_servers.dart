@@ -36,6 +36,24 @@ class FluxerServers {
     await _prefs?.set(_pref, current.join(','));
   }
 
+  static final _usersPref = Preference<String>(key: 'fluxer_user_keys', defaultValue: '');
+
+  static Set<String> get _users =>
+      (_prefs?.get(_usersPref) ?? '').split(',').where((k) => k.isNotEmpty).toSet();
+
+  /// Usuario con el que se entró con Fluxer (para «Cambiar de usuario»).
+  static Future<void> addUser(String serverId, String userId) async {
+    final current = _users;
+    if (!current.add('$serverId:$userId')) return;
+    await _prefs?.set(_usersPref, current.join(','));
+  }
+
+  static bool isFluxerUser(String serverId, String userId) => _users.contains('$serverId:$userId');
+
+  /// ¿Hay algún usuario apuntado? (Quien entró con una versión anterior no
+  /// lo tiene: entonces no se filtra nada.)
+  static bool get hasUsers => _users.isNotEmpty;
+
   /// ¿La sesión activa es de un servidor de Fluxer?
   static bool get activeIsFluxer {
     final getIt = GetIt.instance;

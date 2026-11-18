@@ -127,10 +127,10 @@ class FluxerStrings {
       );
   String get attachDiagnostic => _t('Adjuntar el diagnóstico de la app', 'Attach the app diagnostics');
   String get fluxerSessionSection => _t('Sesión', 'Session');
-  String get fluxerLogout => _t('Desvincular de Fluxer', 'Unlink from Fluxer');
+  String get fluxerLogout => _t('Cerrar sesión en este aparato', 'Sign out of this device');
   String get fluxerLogoutHelp => _t(
-        'La app deja de recibir avisos de tu cuenta. Puedes seguir viendo Fluxer y volver a vincularla cuando quieras.',
-        'The app stops getting notices from your account. You can keep watching and link it again any time.',
+        'Sale de tu cuenta y desvincula la app. Para volver a entrar tendrás que aceptar un código nuevo en tu cuenta de Fluxer. Úsalo si el aparato no es tuyo o lo vas a dejar.',
+        'Signs you out and unlinks the app. To get back in you will need to accept a new code in your Fluxer account. Use it if the device is not yours or you are leaving it.',
       );
 
   // Incidencias del servidor
@@ -141,6 +141,18 @@ class FluxerStrings {
   String get serverIncidentTitle => _t('Incidencia en tu servidor', 'Problem with your server');
 
   String get setByFluxer => _t('la fija Fluxer', 'set by Fluxer');
+  String get continueWithMyAccount =>
+      _t('Continuar con mi cuenta de Fluxer', 'Continue with my Fluxer account');
+  String get orOtherAccount =>
+      _t('o entra con otra cuenta con este código:', 'or sign in with another account using this code:');
+  String get sessionFailed => _t(
+        'No se ha podido abrir la sesión. Inténtalo de nuevo.',
+        'Could not open the session. Please try again.',
+      );
+  String get hubSessionFailed => _t(
+        'No se ha podido entrar con tu cuenta. Usa el código para volver a vincular la app.',
+        'Could not sign in with your account. Use the code to link the app again.',
+      );
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(

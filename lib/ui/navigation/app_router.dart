@@ -208,6 +208,8 @@ final appRouter = GoRouter(
   ],
   redirect: (context, state) {
     final path = state.uri.path;
+    final fluxerSignIn = fluxerAuthRedirect(path); // FLUXER: solo se entra con Fluxer
+    if (fluxerSignIn != null) return fluxerSignIn;
     if (_authRoutes.contains(path)) return null;
     // The old Folders screen, for a bookmark or a link from an older app.
     if (path == '/folders') return Destinations.home;
