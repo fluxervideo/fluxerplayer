@@ -3,6 +3,17 @@
 Cada versión publicada (etiqueta `vX.Y.Z`) usa como notas la sección con su
 número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
+## 1.0.5 — Recargar saldo desde la app
+
+Basada en Moonfin 3.1.0.
+
+- **Recargar saldo** sin salir de la app (también en la tele): eliges PayPal
+  o Bizum y la cantidad, y la app te da a dónde enviarlo y el código que
+  tienes que poner en el concepto. Haces el pago por tu cuenta y la app te
+  avisa en cuanto se suma. Si en 10 minutos no ha llegado, te dice que nos
+  escribas por Telegram.
+- Está en el menú de tu foto y en Ajustes → Mi cuenta Fluxer.
+
 ## 1.0.4 — Test de velocidad y mejor con el mando
 
 Basada en Moonfin 3.1.0.

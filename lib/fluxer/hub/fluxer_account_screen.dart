@@ -28,6 +28,7 @@ import '../fluxer_routes.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
 import '../widgets/fluxer_tile.dart';
+import 'fluxer_recharge_screen.dart';
 import 'fluxer_speed_test_screen.dart';
 import 'fluxer_subscription_card.dart';
 
@@ -213,6 +214,13 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
   List<Widget> _optionTiles(FluxerStrings s) {
     final referral = _map('referral');
     return [
+      _header(s.paymentsSection),
+      FluxerTile(
+        leading: const Icon(Icons.account_balance_wallet_outlined),
+        title: Text(s.recharge),
+        subtitle: Text(s.rechargeSubtitle),
+        onTap: () => openFluxerRecharge(context),
+      ),
       _header(s.speedTestSection),
       FluxerTile(
         leading: const Icon(Icons.speed),

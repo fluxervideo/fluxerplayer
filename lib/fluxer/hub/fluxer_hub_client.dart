@@ -211,6 +211,52 @@ class FluxerHubClient {
     }
   }
 
+  /// Recargar saldo: métodos (los de la web), atajos de importe, saldo y
+  /// el Telegram de soporte. Null si no está vinculada.
+  Future<Map<String, dynamic>?> rechargeOptions() async {
+    final response = await _request(
+      (options) => _dio.get<Map<String, dynamic>>('recharge', options: options),
+      rethrowErrors: true,
+    );
+    return response?.data;
+  }
+
+  /// El código de 4 cifras para el concepto del pago (reservado para él).
+  Future<String?> rechargeCode(String method) async {
+    try {
+      final response = await _request(
+        (options) => _dio.post<Map<String, dynamic>>('recharge/code', options: options, data: {'payment_method': method}),
+        rethrowErrors: true,
+      );
+      return response?.data?['code'] as String?;
+    } on DioException catch (e) {
+      throw FluxerHubMessage(_message(e));
+    }
+  }
+
+  /// Anota la solicitud de recarga; devuelve {id, status, amount, balance}.
+  Future<Map<String, dynamic>?> rechargeRequest(String method, double? amount, String concept) async {
+    try {
+      final response = await _request(
+        (options) => _dio.post<Map<String, dynamic>>(
+          'recharge',
+          options: options,
+          data: {'payment_method': method, 'amount': amount, 'concept': concept},
+        ),
+        rethrowErrors: true,
+      );
+      return response?.data;
+    } on DioException catch (e) {
+      throw FluxerHubMessage(_message(e));
+    }
+  }
+
+  /// Estado de una solicitud: pending, completed o rejected (y el saldo).
+  Future<Map<String, dynamic>?> rechargeStatus(int id) async {
+    final response = await _request((options) => _dio.get<Map<String, dynamic>>('recharge/$id', options: options));
+    return response?.data;
+  }
+
   static String? _message(DioException e) {
     final data = e.response?.data;
     return data is Map && data['message'] is String ? data['message'] as String : null;

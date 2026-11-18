@@ -15,6 +15,7 @@ import 'package:moonfin_design/moonfin_design.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
+import 'fluxer_recharge_screen.dart';
 
 class FluxerSubscriptionCard extends StatefulWidget {
   const FluxerSubscriptionCard({
@@ -209,11 +210,19 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
               ),
             ),
           const SizedBox(height: 8),
+          // Recargar saldo dentro de la app (fluxer_recharge_screen.dart);
+          // planes y cuenta, en el portal.
+          FilledButton.icon(
+            autofocus: widget.autofocus,
+            onPressed: () => openFluxerRecharge(context),
+            icon: const Icon(Icons.account_balance_wallet_outlined, size: 18),
+            label: Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Text(s.recharge)),
+          ),
+          const SizedBox(height: 10),
           Row(
             children: [
               Expanded(
-                child: FilledButton.icon(
-                  autofocus: widget.autofocus,
+                child: OutlinedButton.icon(
                   onPressed: () => openFluxerPortal(context, 'plans', title: s.renew),
                   icon: const Icon(Icons.autorenew, size: 18),
                   label: Text(s.renew),
@@ -266,10 +275,20 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
                 ],
               ),
             ),
-          TextButton.icon(
-            onPressed: () => openFluxerPortal(context, 'plans', title: s.renew),
-            icon: const Icon(Icons.autorenew, size: 16),
-            label: Text(s.renew),
+          Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              TextButton.icon(
+                onPressed: () => openFluxerRecharge(context),
+                icon: const Icon(Icons.account_balance_wallet_outlined, size: 16),
+                label: Text(s.recharge),
+              ),
+              TextButton.icon(
+                onPressed: () => openFluxerPortal(context, 'plans', title: s.renew),
+                icon: const Icon(Icons.autorenew, size: 16),
+                label: Text(s.renew),
+              ),
+            ],
           ),
         ],
       ),

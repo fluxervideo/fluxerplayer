@@ -249,4 +249,58 @@ class FluxerStrings {
   String get speedMinMax => _t('Mínima / máxima', 'Min / max');
   String get speedLatency => _t('Respuesta del servidor', 'Server response');
   String get speedServer => _t('Lo que da tu servidor ahora', 'What your server gives now');
+
+  // Recargar saldo (fluxer_recharge_screen.dart), con los textos del portal.
+  String get recharge => _t('Recargar saldo', 'Top up balance');
+  String get paymentsSection => _t('Saldo', 'Balance');
+  String get rechargeSubtitle => _t('PayPal o Bizum, con un código en el concepto', 'PayPal or Bizum, with a code in the reference');
+  String get rechargeUnavailable =>
+      _t('No se puede recargar desde la app ahora mismo. Inténtalo en un rato.', 'Topping up from the app is not available right now. Try again later.');
+  String get rechargeIntro => _t(
+        'Elige cómo vas a pagar y te daremos los datos y un código, que tendrás que poner como concepto o asunto del pago. El pago lo haces tú desde la app de tu banco (Bizum) o desde PayPal; en cuanto llegue con ese código, el saldo se suma solo.',
+        'Choose how you will pay and we will give you the details and a code to put as the payment reference. You make the payment yourself from your bank app (Bizum) or PayPal; as soon as it arrives with that code, the balance is added automatically.',
+      );
+  String get rechargeNoMethods => _t('No hay ningún método de pago disponible ahora mismo.', 'No payment method is available right now.');
+  String get rechargeHowMuch => _t('¿Cuánto quieres recargar?', 'How much do you want to top up?');
+  String get otherAmount => _t('Otra cantidad', 'Other amount');
+  String get amountEuros => _t('Importe', 'Amount');
+  String sendTo(String? method) => _t('Envía a${method == null ? '' : ' ($method)'}:', 'Send to${method == null ? '' : ' ($method)'}:');
+  String sendAmountTo(double amount, String? method) => _t(
+        'Envía ${amount.toStringAsFixed(2)} € a${method == null ? '' : ' ($method)'}:',
+        'Send €${amount.toStringAsFixed(2)} to${method == null ? '' : ' ($method)'}:',
+      );
+  String get putThisConcept =>
+      _t('Pon este número como concepto o asunto del pago:', 'Put this number as the payment reference:');
+  String get conceptWhy => _t('Así sabremos que el ingreso es tuyo.', 'That is how we know the payment is yours.');
+  String get rechargePaid => _t('He pagado o voy a pagar ahora', 'I have paid or am paying now');
+  String get rechargeSelfPay => _t(
+        'La app no cobra nada: el pago lo haces tú desde PayPal o tu banco.',
+        'The app does not charge anything: you pay from PayPal or your bank.',
+      );
+  String get rechargeWaiting => _t('Esperando a que llegue tu pago…', 'Waiting for your payment…');
+  String get rechargeWaitingHelp => _t(
+        'Si pones bien el código, suele llegar en un momento. Lo comprobamos solos: puedes dejar esta pantalla abierta o salir, el saldo se sumará igual.',
+        'With the right code it usually arrives in a moment. We check by ourselves: you can keep this screen open or leave, the balance will be added anyway.',
+      );
+  String get rechargeLate => _t(
+        'Aún no nos ha llegado tu pago. Si ya lo has hecho, escríbenos por Telegram y lo miramos.',
+        'Your payment has not arrived yet. If you have already paid, message us on Telegram and we will check.',
+      );
+  String get rechargeRejected => _t(
+        'No hemos podido confirmar esta recarga. Escríbenos por Telegram y lo miramos.',
+        'We could not confirm this top-up. Message us on Telegram and we will check.',
+      );
+  String get supportTelegram => _t('Soporte por Telegram', 'Telegram support');
+  String get supportTelegramHelp => _t('Se abre el chat con Fluxer', 'Opens the chat with Fluxer');
+  String get supportTelegramTv => _t('Escanea el QR con el móvil', 'Scan the QR with your phone');
+  String get rechargeLeave => _t('Salir', 'Leave');
+  String get rechargeLeaveHelp => _t('El saldo se sumará igual cuando llegue', 'The balance will be added when it arrives');
+  String get rechargeDone => _t('¡Recarga recibida!', 'Top-up received!');
+  String rechargeDoneAmount(double v) =>
+      _t('¡Recibidos ${v.toStringAsFixed(2)} €!', '€${v.toStringAsFixed(2)} received!');
+  String get rechargeDoneHelp => _t(
+        'Ya está en tu saldo. Si tu plan se renueva solo, se cobrará de ahí.',
+        'It is in your balance. If your plan renews automatically, it will be charged from there.',
+      );
+  String get retry => _t('Reintentar', 'Retry');
 }
