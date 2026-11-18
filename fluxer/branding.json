@@ -4,8 +4,8 @@
   "companyId": "video.fluxer",
   "installerPrefix": "FluxerPlayer",
   "windowsInstallerAppId": "7315F9F1-0421-4FB8-86C3-FE99D5E3FF43",
-  "sourceCodeUrl": "https://github.com/marcostorrent/fluxerplayer",
-  "updatesGithubRepo": "marcostorrent/fluxerplayer",
+  "sourceCodeUrl": "https://github.com/fluxervideo/fluxerplayer",
+  "updatesGithubRepo": "fluxervideo/fluxerplayer",
   "urlScheme": "fluxerplayer",
   "androidAppId": "video.fluxer.player"
 }

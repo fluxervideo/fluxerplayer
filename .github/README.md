@@ -5,7 +5,7 @@
 <h3 align="center">La app oficial de <a href="https://www.fluxer.video">Fluxer</a></h3>
 
 <p align="center">
-  <a href="https://github.com/marcostorrent/fluxerplayer/releases"><b>Descargar</b></a> ·
+  <a href="https://github.com/fluxervideo/fluxerplayer/releases"><b>Descargar</b></a> ·
   <a href="https://hub.fluxer.video">Mi cuenta de Fluxer</a>
 </p>
 
@@ -27,7 +27,7 @@ Android, Android TV y Fire TV.
 ### Instalar en Windows
 
 1. Descarga el instalador `FluxerPlayer_Windows_v….exe` de la página de
-   [versiones](https://github.com/marcostorrent/fluxerplayer/releases).
+   [versiones](https://github.com/fluxervideo/fluxerplayer/releases).
 2. Si Windows avisa de que el instalador no es conocido, pulsa
    **Más información → Ejecutar de todas formas**.
 3. Abre FluxerPlayer y pulsa **Entrar con Fluxer**.
