@@ -28,6 +28,11 @@ final Map<String, Object> _locked = {
   // cada aparato (grande en ordenador/tele, galería en el móvil) y con
   // «Tendencias de hoy» (fluxer_media_bar.dart). Su sección no sale en Ajustes:
   // lo que se ve lo manda la configuración del servidor (Home Screen Companion).
+  // Sin la sincronización de ajustes del plugin de Moonfin: se activaba sola
+  // y mezclaba los ajustes de FluxerPlayer con el Moonfin oficial del mismo
+  // usuario (y subía al servidor lo que fija Fluxer). En FluxerPlayer manda
+  // la configuración de Emby (secciones de inicio de Home Screen Companion).
+  'pref_plugin_sync_enabled': false,
   'mediaBarEnabled': true,
   'mediaBarMode': UserPreferences.mediaBarMode.defaultValue,
 };
@@ -42,7 +47,7 @@ Object? fluxerLockedValue(String key) {
 /// Secciones de Ajustes que no salen en cuentas de Fluxer (las manda el
 /// servidor). Buscador de ajustes: por el prefijo de su id.
 bool fluxerHidesSettingsSection(String slug) =>
-    FluxerServers.activeIsFluxer && const {'media-bar'}.contains(slug);
+    FluxerServers.activeIsFluxer && const {'media-bar', 'plugin-sync', 'settings-sync'}.contains(slug);
 
 /// ¿Está fijada esta opción ahora mismo (cuenta de Fluxer)?
 bool fluxerIsLocked(String key) => fluxerLockedValue(key) != null;

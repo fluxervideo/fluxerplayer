@@ -120,7 +120,8 @@ class _AccountScreen extends StatelessWidget {
           ],
           // Settings sync is the Moonfin plugin's. Not offered when no
           // signed-in server could have it (all Silo, say).
-          if (moonfinPluginOnAnySignedInServer())
+          if (moonfinPluginOnAnySignedInServer() &&
+              !fluxerHidesSettingsSection('plugin-sync')) // FLUXER: sin sincronizar con Moonfin
             adaptiveListSection(
               children: [
                 _TvSettingsListTile(
