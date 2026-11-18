@@ -156,6 +156,13 @@ class FluxerHubClient {
     }
   }
 
+  /// «Tendencias de hoy» del servidor de la app: ids de Emby en orden.
+  Future<List<String>> trendingIds() async {
+    final response = await _request((options) => _dio.get<Map<String, dynamic>>('trending', options: options));
+    final ids = response?.data?['ids'];
+    return ids is List ? ids.whereType<String>().toList() : const [];
+  }
+
   Future<void> logout() async {
     await _request((options) => _dio.post<dynamic>('logout', options: options));
     await clearToken();

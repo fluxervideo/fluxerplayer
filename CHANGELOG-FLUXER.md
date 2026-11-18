@@ -24,6 +24,7 @@ Basada en Moonfin 3.1.0.
   ordenador o el móvil, en el navegador; en la tele, con un código QR para el
   móvil. Sin escribir usuario ni contraseña.
 - Invita y gana enseña solo tu código; al pulsarlo se copia el enlace.
+- La barra de inicio enseña **Tendencias de hoy**: lo más visto hoy, en orden.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 

@@ -21,6 +21,7 @@ import '../utils/blocked_ratings.dart';
 import '../utils/bounded_concurrency.dart';
 import '../utils/latest_media_row_normalizer.dart';
 import 'tmdb_repository.dart';
+import '../../fluxer/hub/fluxer_media_bar.dart'; // FLUXER:
 
 class MediaBarRepository {
 
@@ -57,6 +58,10 @@ class MediaBarRepository {
     final excludedGenres = _splitCsv(
       UserPreferences.mediaBarExcludedGenres,
     ).toSet();
+
+    // FLUXER: en cuentas de Fluxer, «Tendencias de hoy» en su orden.
+    final fluxerTrending = await fluxerTrendingMediaBarItems(_client, fields: _fields, maxItems: maxItems);
+    if (fluxerTrending.isNotEmpty) return MediaBarReady(fluxerTrending.map(_toSlideItem).toList());
 
     final fetchLimit = maxItems + 2;
 

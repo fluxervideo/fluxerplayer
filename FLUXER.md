@@ -71,6 +71,7 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto) |
 | `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
+| `lib/data/repositories/media_bar_repository.dart` | barra de inicio con «Tendencias de hoy» (Hub `api/app/trending`) en cuentas de Fluxer |
 | `lib/util/platform_detection.dart` (`supportsOfflineDownloads`) | sin descargas ni modo sin conexión |
 | `lib/data/services/push_messaging_service.dart` | sin notificaciones push de Moonfin (Firebase) |
 | `lib/ui/screens/admin/admin_nav.dart` | sin administración |
