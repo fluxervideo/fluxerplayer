@@ -1,18 +1,4 @@
-// FluxerPlayer: avisos de FluxerHub en la app.
-//
-// Al arrancar (con unos segundos de margen) y cada 30 minutos, si la app
-// está vinculada al Hub (entró con «Entrar con Fluxer») y hay sesión, pide
-// /api/app/me y enseña, con la tarjeta grande (showFluxerCard), uno detrás de
-// otro:
-// - Una incidencia en su servidor: una vez cada 6 horas mientras dure.
-// - El plan: si no está activo (caducado, suspendido…) o caduca en
-//   [_warnDays] días o menos y no se va a renovar solo. Como mucho una vez al
-//   día, con «Renovar» (abre los planes en el portal).
-// - Mantenimientos programados de su servidor: una vez cada uno.
-// - Avisos globales que el Hub marca para enseñar en ventana y que el cliente
-//   no ha cerrado aún («Entendido» lo marca también en el portal).
-//
-// Enganche: lib/app.dart (`// FLUXER:`).
+// FluxerPlayer: Avisos de la cuenta de Fluxer (plan, incidencias, mantenimientos).
 
 import 'dart:async';
 

@@ -1,17 +1,4 @@
-// FluxerPlayer: actualizar desde la app en Android (móvil, Android TV,
-// Google TV, Fire TV), como Moonfin ya hace en Windows.
-//
-// Moonfin comprueba las versiones de GitHub y saca el aviso; en Android solo
-// abría el APK en el navegador (y en la tele ni eso: no hay navegador). Aquí
-// se completa: «Descargar» baja el APK (el de tele o el de móvil, lo elige
-// Moonfin) con una barra de progreso y abre el instalador de Android. La
-// primera vez Android pide permitir que FluxerPlayer instale apps.
-//
-// Enganches (`// FLUXER:`): lib/ui/widgets/app_update_dialog.dart (Ajustes →
-// Acerca de → Buscar actualizaciones) y app_update_banner.dart (el aviso
-// automático: en el móvil «Descargar» instala; en la tele, donde la pastilla
-// no se puede pulsar con el mando, sale el diálogo de actualizar).
-// Nativo: android/.../org/fluxer/FluxerApkInstaller.kt.
+// FluxerPlayer: Actualizar en Android: descarga el APK y abre el instalador.
 
 import 'dart:io';
 

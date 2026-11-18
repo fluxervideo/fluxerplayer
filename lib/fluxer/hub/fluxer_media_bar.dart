@@ -1,12 +1,4 @@
-// FluxerPlayer: la barra de medios de inicio enseña «Tendencias de hoy».
-//
-// En cuentas de Fluxer, en vez de elegir al azar, usa la colección
-// «Tendencias de hoy» que FluxerHub rellena cada noche (lo más visto hoy en
-// TMDb que tiene su servidor), en su orden: la nº 1 primero. Si no hay
-// tendencias (servidor sin la colección, sin conexión con el Hub…), lista
-// vacía y la barra sigue como en Moonfin.
-//
-// Enganche: lib/data/repositories/media_bar_repository.dart (`// FLUXER:`).
+// FluxerPlayer: Barra de inicio con «Tendencias de hoy».
 
 import 'package:server_core/server_core.dart';
 

@@ -1,10 +1,4 @@
-// FluxerPlayer: abrir el portal de FluxerHub desde la app («Renovar», «Mi
-// cuenta», soporte), ya con la sesión iniciada (enlace de un solo uso que da
-// el Hub, api/app/portal-link).
-//
-// - Ordenador y móvil: lo abre en el navegador.
-// - Tele (sin navegador): enseña un QR para abrirlo en el móvil.
-// Sin vincular o sin conexión, el enlace normal del portal (pedirá entrar).
+// FluxerPlayer: Abrir la cuenta de Fluxer en el navegador (QR en la tele).
 
 import 'package:flutter/material.dart';
 import 'package:moonfin_design/moonfin_design.dart';

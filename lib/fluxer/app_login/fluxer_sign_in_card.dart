@@ -1,15 +1,4 @@
-// FluxerPlayer: el botón principal para entrar, en la pantalla de servidores
-// y en la de contraseña de un servidor de Fluxer.
-//
-// - «Entrar con Fluxer» o, si ya hay un servidor de Fluxer guardado,
-//   «Continuar con Fluxer · <servidor>».
-// - Si la app está vinculada a FluxerHub, pide una sesión de Emby nueva sin
-//   contraseña (api/app/session) y entra. Si no lo está (o el Hub no puede),
-//   va a la pantalla del código / QR.
-// - «Añadir otro servidor» queda como enlace secundario (FluxerAddServerLink).
-//
-// Enganches: lib/ui/screens/auth/server_select_screen.dart y
-// lib/ui/screens/auth/login_screen.dart (`// FLUXER:`).
+// FluxerPlayer: Botón «Entrar con Fluxer» de la pantalla de servidores.
 
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';

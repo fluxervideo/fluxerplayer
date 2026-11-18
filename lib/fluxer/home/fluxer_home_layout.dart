@@ -1,21 +1,4 @@
-// FluxerPlayer: la pantalla de inicio la manda el servidor Emby.
-//
-// En cuentas de Fluxer, las filas de inicio (y su orden) son las secciones
-// de inicio de Emby del usuario (`GET /Users/{id}/HomeSections`): las que
-// configura Home Screen Companion. Se traducen a filas de Moonfin:
-//
-//   colección con estilo «spotlight» → la barra grande (mediaBar)
-//   resume (Continuar viendo)        → fila nativa resume (con progreso)
-//   nextup                           → fila nativa nextUp
-//   userviews (Mi contenido)         → fila nativa de bibliotecas
-//   latestmedia (Lo último en …)     → fila nativa latestMedia (una por biblioteca)
-//   boxset / collections / items     → fila «del servidor» con el nombre,
-//                                      contenido y orden de Emby (fluxerServerRowItems)
-//
-// El resultado se guarda (para tenerlo al pintar) y se fija como la
-// configuración de filas (fluxer_locks.dart → 'home_sections_config'); la
-// pantalla «Filas» no sale en Ajustes. Se refresca al arrancar, cada 30 min
-// (FluxerHubWatcher) y al entrar con Fluxer.
+// FluxerPlayer: Filas de inicio según las secciones de inicio del servidor Emby.
 
 import 'dart:convert';
 

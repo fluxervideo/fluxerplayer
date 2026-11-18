@@ -1,15 +1,4 @@
-// FluxerPlayer: pantalla "Entrar con Fluxer".
-//
-// - Con una cuenta ya vinculada: su perfil (foto o inicial, nombre) con
-//   «Continuar como …» (sesión nueva desde FluxerHub, sin contraseña) y
-//   «Cambiar de cuenta» (la desvincula). En tele y ordenador, a la izquierda;
-//   en el móvil, arriba.
-// - Las formas de entrar, separadas como DOS opciones (una u otra):
-//   · «En este aparato»: abre la web de Fluxer con el código ya puesto
-//     (ordenador y móvil; nunca en la tele, que no tiene navegador).
-//   · «Con tu móvil»: QR + código de un solo uso que se acepta en
-//     hub.fluxer.video/portal/vincular (en la tele, la única opción).
-// Mientras, la app pregunta cada pocos segundos; al aceptarse entra sola.
+// FluxerPlayer: Pantalla «Entrar con Fluxer»: perfil guardado, código/QR o web.
 
 import 'dart:async';
 

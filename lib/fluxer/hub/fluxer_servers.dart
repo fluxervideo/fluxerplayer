@@ -1,10 +1,4 @@
-// FluxerPlayer: qué servidores guardados son de Fluxer (se entró en ellos
-// con «Entrar con Fluxer»), y si la sesión activa es de uno de ellos.
-//
-// Sirve para destacar «Continuar con Fluxer», ofrecer entrar sin contraseña
-// y aplicar las opciones que fija Fluxer (fluxer_locks.dart) SOLO en cuentas
-// de Fluxer. Se guarda en el mismo almacén que las preferencias de Moonfin
-// porque se lee de forma inmediata (al pintar).
+// FluxerPlayer: Qué servidores guardados son de Fluxer.
 
 import 'package:get_it/get_it.dart';
 import 'package:jellyfin_preference/jellyfin_preference.dart';

@@ -1,13 +1,4 @@
-// FluxerPlayer: la suscripción de Fluxer en el menú del usuario (al pulsar la
-// foto). En tele y ordenador, tarjeta al lado de los perfiles; en el móvil,
-// versión compacta debajo del nombre.
-//
-// Datos de FluxerHub (api/app/me): plan, estado, hasta cuándo dura, si se
-// renueva solo, saldo, email y servidor. «Renovar» y «Mi cuenta» abren el
-// portal ya con la sesión iniciada (fluxer_portal.dart). Sin vincular, nada.
-//
-// Enganches: lib/ui/widgets/user_menu_dialog.dart y left_sidebar.dart
-// (`// FLUXER:`); también Ajustes → Mi cuenta Fluxer (fluxer_account_screen.dart).
+// FluxerPlayer: Tarjeta con los datos de la suscripción.
 
 import 'package:flutter/material.dart';
 import 'package:moonfin_design/moonfin_design.dart';

@@ -1,16 +1,4 @@
 // FluxerPlayer: Ajustes → «Mi cuenta Fluxer».
-//
-// A pantalla completa (sin la vista previa de Ajustes):
-// - La suscripción en grande (FluxerSubscriptionCard): plan, estado, fechas,
-//   saldo, email y servidor, con «Renovar» y «Mi cuenta» (navegador, o QR en
-//   la tele).
-// - Test de velocidad (fluxer_speed_test_screen.dart).
-// - «Invita y gana»: el enlace de referidos, con QR y botón de copiar.
-// - Diagnóstico: activar la grabación y mandarlo a Fluxer (llega como una
-//   solicitud con el registro adjunto).
-// Sin vincular (entró sin «Entrar con Fluxer»), explica cómo vincularla.
-//
-// Enganche: lib/ui/screens/settings/settings_side_panel.dart (`// FLUXER:`).
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

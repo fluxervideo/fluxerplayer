@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="../fluxer/branding/source/logo_and_text.png" alt="FluxerPlayer" width="520">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="../fluxer/branding/source/logo_and_text.png">
+    <img src="../fluxer/branding/source/logo_and_text_light.png" alt="FluxerPlayer" width="520">
+  </picture>
 </p>
 
 <h3 align="center">La app oficial de <a href="https://www.fluxer.video">Fluxer</a></h3>
@@ -12,8 +15,8 @@
 ---
 
 **FluxerPlayer** es la aplicación para ver el contenido de tu suscripción a
-[fluxer.video](https://www.fluxer.video), en el ordenador y, próximamente, en
-Android, Android TV y Fire TV.
+[fluxer.video](https://www.fluxer.video), en Windows, Android, Android TV,
+Google TV y Fire TV.
 
 ## Para clientes de Fluxer
 
@@ -24,13 +27,18 @@ Android, Android TV y Fire TV.
   equipo.
 - Pensada para la tele y el mando, el ratón y el teclado.
 
-### Instalar en Windows
+### Instalar
 
-1. Descarga el instalador `FluxerPlayer_Windows_v….exe` de la página de
-   [versiones](https://github.com/fluxervideo/fluxerplayer/releases).
-2. Si Windows avisa de que el instalador no es conocido, pulsa
-   **Más información → Ejecutar de todas formas**.
-3. Abre FluxerPlayer y pulsa **Entrar con Fluxer**.
+Descarga el archivo de tu aparato en la página de
+[versiones](https://github.com/fluxervideo/fluxerplayer/releases):
+
+- **Windows:** `FluxerPlayer_Windows_v….exe`. Si Windows avisa de que no lo
+  conoce, pulsa **Más información → Ejecutar de todas formas**.
+- **Móvil o tablet Android:** `FluxerPlayer_Android_v….apk`.
+- **Android TV, Google TV o Fire TV:** `FluxerPlayer_AndroidTV_v….apk`.
+
+Luego abre FluxerPlayer y pulsa **Entrar con Fluxer**. Las siguientes
+versiones se instalan desde la propia app.
 
 ¿Dudas o problemas? Escríbenos desde tu cuenta de
 [hub.fluxer.video](https://hub.fluxer.video) (Mi cuenta → Soporte).

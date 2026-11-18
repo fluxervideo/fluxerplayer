@@ -1,9 +1,4 @@
-// FluxerPlayer: la app frente a FluxerHub con su token propio.
-//
-// El token llega al entrar con código (FluxerLoginService) y SOLO abre
-// /api/app/* en el Hub (estado del plan, avisos, reportar un problema).
-// Se guarda en el almacén seguro del sistema. Si el Hub dice que la app ya
-// no está vinculada (401), se borra y la app deja de preguntar.
+// FluxerPlayer: Cliente de la API de la app en la cuenta de Fluxer (token propio).
 
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';

@@ -1,8 +1,4 @@
-// FluxerPlayer: fila de las pantallas de Fluxer que se maneja bien con el
-// mando de la tele: se resalta al tener el foco (como las de Ajustes de
-// Moonfin, TvFocusHighlight) y el botón central / Enter la pulsa. Un
-// ListTile normal casi no se ve con el foco y, en algunas teles, no
-// respondía al botón central.
+// FluxerPlayer: Fila que se maneja bien con el mando de la tele.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

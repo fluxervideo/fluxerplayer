@@ -1,8 +1,4 @@
-// FluxerPlayer: «Reportar un problema» desde la ficha de una película o
-// capítulo. Llega a FluxerHub como una solicitud del cliente (Solicitudes),
-// con el título y el elemento de Emby, el aparato y la app.
-//
-// Enganche: lib/ui/screens/detail/item_detail_screen.dart (`// FLUXER:`).
+// FluxerPlayer: Reportar un problema con un título.
 
 import 'package:flutter/material.dart';
 
@@ -21,7 +17,7 @@ import 'fluxer_portal.dart';
 bool fluxerCanReport(AggregatedItem item) =>
     const {'Movie', 'Episode', 'Video', 'MusicVideo', 'Series', 'Season'}.contains(item.type);
 
-/// Lo mismo que el portal (MediaCustomerReport::SYMPTOMS en FluxerHub).
+/// Los mismos que en la cuenta de Fluxer.
 const _symptoms = ['wont_start', 'buffering', 'cuts', 'bad_quality', 'audio', 'other'];
 
 Future<void> showFluxerReportDialog(BuildContext context, AggregatedItem item) async {

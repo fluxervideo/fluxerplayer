@@ -1,14 +1,5 @@
-# FluxerPlayer: compilar y publicar una versión.
-# Fichero propio de FluxerPlayer (no existe en Moonfin oficial), así que nunca
-# da conflictos al fusionar versiones nuevas de upstream. Los workflows
-# oficiales de Moonfin siguen en el repo pero desactivados desde GitHub.
-#
-# - Etiqueta vX.Y.Z (solo cuando lo decide el dueño del proyecto): compila
-#   Windows, Android móvil y Android TV / Google TV / Fire TV y publica UNA
-#   versión con los tres archivos y la sección «## X.Y.Z» de
-#   CHANGELOG-FLUXER.md como notas. Es la que ofrece el actualizador de la app.
-#   La etiqueta tiene que coincidir con fluxer/version.json.
-# - Lanzado a mano: solo compila (artefactos en la ejecución), no publica.
+# FluxerPlayer: una etiqueta vX.Y.Z compila Windows y Android y publica la
+# versión con las notas de CHANGELOG-FLUXER.md.
 name: FluxerPlayer Release
 
 on:
@@ -31,9 +22,7 @@ jobs:
   windows:
     runs-on: windows-latest
     env:
-      # Firma del instalador con SignPath (como Moonfin). Desactivada hasta
-      # que existan el secreto SIGNPATH_API_TOKEN y la variable
-      # SIGNPATH_ORGANIZATION_ID en el repo (ver FLUXER.md → Firma).
+      # Firma con SignPath si están configurados el secreto y la variable.
       SIGNPATH_ENABLED: ${{ secrets.SIGNPATH_API_TOKEN != '' && vars.SIGNPATH_ORGANIZATION_ID != '' }}
     steps:
       - uses: actions/checkout@v5
@@ -160,11 +149,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
           if [ -z "$ANDROID_KEYSTORE_BASE64" ]; then
-            # Mientras FluxerPlayer está en pruebas no se usa la clave buena
-            # (decisión del dueño, 2026-11-17). Ojo: un APK con firma de
-            # depuración no se puede actualizar luego con uno firmado con la
-            # clave buena (hay que desinstalar e instalar una vez).
-            echo "::warning::Sin clave de firma de Android: APK con firma de depuración (solo pruebas)."
+            echo "::warning::Sin clave de firma de Android: APK con firma de depuración."
             exit 0
           fi
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/release.keystore

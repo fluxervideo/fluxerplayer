@@ -1,10 +1,4 @@
-// FluxerPlayer: entrar con un código aceptado en el portal de FluxerHub.
-//
-// Backend: FluxerHub `POST /api/app-login/start` y `POST /api/app-login/status`
-// (AppLoginPairingController). Al aceptarse, la sesión de Emby se guarda por
-// la misma vía pública que usa Emby Connect
-// (lib/auth/repositories/emby_connect_repository.dart, connectToServer), así
-// que no hace falta tocar auth_repository.dart.
+// FluxerPlayer: Entrar con un código aceptado en la cuenta de Fluxer.
 
 import 'dart:async';
 

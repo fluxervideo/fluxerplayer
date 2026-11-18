@@ -1,14 +1,4 @@
-// FluxerPlayer: opciones que Fluxer fija cuando se entra con una cuenta de
-// Fluxer. En esas cuentas valen siempre lo que pone aquí y no se pueden
-// cambiar en Ajustes; con cualquier otra cuenta, funcionan como en Moonfin.
-//
-// Enganches (`// FLUXER:`):
-// - lib/preference/user_preferences.dart → get(): devuelve el valor fijado.
-// - lib/ui/widgets/navigation_layout.dart → sanitizeNavbarPosition().
-// - Ajustes: la opción sale como «fijada por Fluxer» (navigation_category_screen)
-//   o no sale (quality_decoding_screen: tasa de bits, TV en vivo directo).
-//
-// Para fijar otra opción: añadir su clave y su valor a [_locked].
+// FluxerPlayer: Opciones fijadas en cuentas de Fluxer.
 
 import 'package:flutter/widgets.dart';
 

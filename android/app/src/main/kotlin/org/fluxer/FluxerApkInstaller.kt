@@ -1,12 +1,4 @@
-// FluxerPlayer: instalar una actualización (APK) desde la propia app, en el
-// móvil y en la tele. Dart descarga el APK en la caché
-// (cache/fluxer_update/) y aquí se le pasa al instalador de Android con un
-// proveedor propio de solo lectura (sin depender de androidx FileProvider).
-// La primera vez, Android pide permitir que FluxerPlayer instale apps.
-//
-// Enganches: MainActivity.configureFlutterEngine y AndroidManifest.xml
-// (permiso REQUEST_INSTALL_PACKAGES y el <provider>), marcados FLUXER.
-// Dart: lib/fluxer/update/fluxer_android_update.dart.
+// FluxerPlayer: Abre el instalador de Android con el APK descargado.
 
 package org.fluxer
 

@@ -1,16 +1,4 @@
-// FluxerPlayer: «Test de velocidad» (Ajustes → Mi cuenta Fluxer).
-//
-// La misma prueba que la del portal de FluxerHub (ConnectionTestService):
-// el cliente elige algo que ha visto estos 7 días (o el vídeo de prueba si no
-// ha visto nada); el Hub da un enlace firmado a un tramo de ESE archivo en su
-// servidor y la app lo descarga directamente de allí, midiendo por ventanas
-// de 250 ms (como mucho 10 s desde el primer byte). Antes, 6 pings al
-// servidor para la latencia. Lo medido va al Hub, que calcula las medias y
-// si le llega de sobra, justo o no le llega para ese archivo.
-//
-// Desde la app mide el aparato donde se ve (la tele), que es lo que importa.
-//
-// Hub: GET/POST api/app/connection-test, POST api/app/connection-test/{id}/result.
+// FluxerPlayer: Test de velocidad contra el servidor de Fluxer.
 
 import 'dart:async';
 

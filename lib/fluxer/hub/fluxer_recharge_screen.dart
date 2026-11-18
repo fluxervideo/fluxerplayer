@@ -1,19 +1,4 @@
-// FluxerPlayer: «Recargar saldo» dentro de la app, como la recarga del portal
-// de FluxerHub (RechargeFlow.vue), con sus mismos métodos y logos:
-//
-// 1. Elegir cómo va a pagar (PayPal, Bizum… los métodos activos en la web).
-// 2. Importe (uno por plan, o el que quiera), a dónde enviarlo y el código
-//    de 4 cifras que tiene que poner como concepto/asunto del pago. Ese
-//    código queda reservado para él: si paga antes de pulsar el botón, el
-//    pago se reconoce igual.
-// 3. «He pagado o voy a pagar ahora» anota la solicitud y la app pregunta al
-//    Hub cada 30 s (y al volver a la app) si ya se ha sumado. Con el código
-//    bien puesto suele ser casi al momento. A los 10 minutos sin llegar,
-//    avisa de que escriba a soporte por Telegram (QR en la tele).
-//
-// El pago lo hace el cliente por su cuenta: la app no cobra nada.
-// Hub: GET api/app/recharge, POST api/app/recharge/code, POST api/app/recharge,
-// GET api/app/recharge/{id} (AppRechargeController).
+// FluxerPlayer: Recargar saldo: método, importe, código de concepto y espera del pago.
 
 import 'dart:async';
 
@@ -35,7 +20,7 @@ import 'fluxer_hub_client.dart';
 Future<void> openFluxerRecharge(BuildContext context) => Navigator.of(context, rootNavigator: true)
     .push(MaterialPageRoute<void>(builder: (_) => const FluxerRechargeScreen()));
 
-/// Logos del Hub (assets/images/payment-methods), por código del método.
+/// Logos de los métodos de pago, por código.
 const _methodIcons = {
   'paypal': 'assets/icons/fluxer_pay_paypal.svg',
   'bizum': 'assets/icons/fluxer_pay_bizum.svg',
@@ -513,7 +498,7 @@ class _FluxerRechargeScreenState extends State<FluxerRechargeScreen> with Widget
   Color get _muted => AppColorScheme.onSurface.withValues(alpha: 0.72);
 }
 
-/// Un método de pago: el logo del Hub sobre blanco, como en el portal.
+/// Un método de pago: su logo sobre blanco.
 class _MethodTile extends StatelessWidget {
   const _MethodTile({required this.name, required this.icon, required this.onTap, this.autofocus = false});
 

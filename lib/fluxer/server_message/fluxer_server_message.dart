@@ -1,22 +1,4 @@
-// FluxerPlayer: avisos grandes y centrados.
-//
-// Se usan para:
-// - Los mensajes del servidor (Emby «Enviar mensaje», también desde
-//   FluxerHub). Moonfin los enseñaba como notificación del sistema o un aviso
-//   pequeño de duración fija, ignorando TimeoutMs (en una tele casi no se
-//   veían). Enganche: lib/auth/repositories/session_repository.dart
-//   (`// FLUXER:`).
-// - Los avisos de FluxerHub (plan a punto de caducar, mantenimientos, avisos
-//   globales): FluxerHubWatcher.
-//
-// Cómo se ven:
-// - Tarjeta grande en el centro, por encima de todo (también del vídeo).
-// - Con duración, dura exactamente eso, con una barra que se va vaciando.
-//   Sin duración, se queda hasta que el cliente pulse «Entendido».
-// - Botón de acción opcional (p. ej. «Renovar»). Los botones se pulsan con el
-//   mando, y Atrás/Esc cierra. Al cerrarse, el foco vuelve a donde estaba.
-// - Un mensaje del servidor nuevo sustituye al que se esté enseñando; los
-//   avisos del Hub esperan su turno (showFluxerCard espera a que se cierre).
+// FluxerPlayer: Avisos grandes y centrados.
 
 import 'dart:async';
 

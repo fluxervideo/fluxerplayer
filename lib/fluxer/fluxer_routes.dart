@@ -1,5 +1,4 @@
-// FluxerPlayer: rutas propias. Se enganchan en lib/ui/navigation/app_router.dart
-// (líneas marcadas `// FLUXER:`).
+// FluxerPlayer: Rutas propias.
 
 import 'package:go_router/go_router.dart';
 

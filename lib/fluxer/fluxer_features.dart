@@ -1,17 +1,9 @@
-// FluxerPlayer: qué funciones de Moonfin se ven en la app.
-//
-// El código de Moonfin NO se borra (así las actualizaciones no dan
-// conflictos): solo se ocultan sus puntos de entrada. Cada enganche en un
-// fichero oficial lleva `// FLUXER:` y consulta esta clase.
-//
-// Para volver a enseñar algo: poner su valor a true.
-// Decidido con el usuario el 2026-11-17.
+// FluxerPlayer: Funciones de Moonfin que se muestran en FluxerPlayer.
 abstract final class FluxerFeatures {
   /// Solo para clientes de Fluxer: se entra siempre con la cuenta de Fluxer
   /// («Entrar con Fluxer»: código, QR o web). Sin dirección de servidor a
   /// mano ni contraseña de Emby; las pantallas de servidores, contraseña y
   /// «Añadir usuario» de Moonfin llevan a la de Fluxer (fluxerAuthRedirect).
-  /// Decidido con el usuario el 2026-11-18.
   static const fluxerOnly = true;
 
   /// Plex, Jellyfin, Silo y Emby Connect: solo Emby de Fluxer.
