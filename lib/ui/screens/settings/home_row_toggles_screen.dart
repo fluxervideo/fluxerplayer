@@ -18,6 +18,7 @@ import '../../widgets/settings/preference_tiles.dart';
 import '../detail/playlist_sort_filter_bar.dart';
 import '../../../util/signed_in_server_features.dart';
 import 'settings_app_bar.dart';
+import '../../../fluxer/fluxer_locks.dart'; // FLUXER:
 
 class HomeRowTogglesScreen extends StatefulWidget {
   const HomeRowTogglesScreen({super.key});
@@ -429,6 +430,7 @@ class _HomeRowTogglesScreenState extends State<HomeRowTogglesScreen> {
                     icon: Icons.visibility_off_outlined,
                     onChanged: _onHideWatchedInRecentRowsChanged,
                   ),
+                  if (!fluxerIsLocked(UserPreferences.mergeRecentRowsByType.key)) // FLUXER: fijada
                   SwitchPreferenceTile(
                     preference: UserPreferences.mergeRecentRowsByType,
                     title: l10n.mergeRecentRowsByType,
@@ -457,6 +459,8 @@ class _HomeRowTogglesScreenState extends State<HomeRowTogglesScreen> {
                 ],
               ),
 
+              // FLUXER: las filas (y su orden) las manda Emby: fuera sus opciones.
+              if (!fluxerHidesSettingsSection('row-options-rows')) ...[
               if (musicOnAnyServer) ...[
                 _SectionHeader(l10n.audio),
                 adaptiveListSection(
@@ -824,6 +828,7 @@ class _HomeRowTogglesScreenState extends State<HomeRowTogglesScreen> {
                   ],
                 ],
               ),
+              ], // FLUXER: fin de las opciones de filas ocultas
               const SizedBox(height: 32),
             ],
           ),

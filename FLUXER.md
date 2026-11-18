@@ -72,6 +72,8 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto) |
 | `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
 | `lib/ui/screens/settings/panel/home_screen_category_screen.dart`, `panel/settings_search_index.dart` | sin «Barra de medios» ni «Filas» en cuentas de Fluxer |
+| `lib/ui/screens/home/home_screen.dart` | refrescar las filas de Emby al entrar/volver al inicio |
+| `lib/ui/screens/settings/home_row_toggles_screen.dart` | «Opciones de filas» sin las opciones de filas que manda Emby |
 | `lib/data/services/row_data_source.dart` | filas «del servidor» de Fluxer (secciones de inicio de Emby) |
 | `lib/data/repositories/media_bar_repository.dart` | barra de inicio con «Tendencias de hoy» (Hub `api/app/trending`) en cuentas de Fluxer |
 | `lib/util/platform_detection.dart` (`supportsOfflineDownloads`) | sin descargas ni modo sin conexión |
@@ -164,8 +166,9 @@ de inicio y su orden son las secciones de inicio de Emby del usuario
 traducidas a filas de Moonfin (spotlight → barra grande; resume, nextup,
 userviews, latestmedia → filas nativas; boxset/collections/items → filas
 «del servidor» con el nombre, contenido y orden de Emby). Se fija como
-`home_sections_config` y «Filas» no sale en Ajustes. Se refresca al arrancar,
-cada 30 min y al entrar con Fluxer.
+`home_sections_config` y «Filas» no sale en Ajustes (en «Opciones de filas»
+solo quedan las preferencias personales). Se refresca al arrancar, cada 30
+min, al entrar con Fluxer y cada vez que se entra o se vuelve al inicio.
 
 ## Opciones fijadas en cuentas de Fluxer
 

@@ -105,6 +105,7 @@ import '../../widgets/seerr/seerr_genre_label.dart';
 import '../../widgets/skeleton/skeleton_home_row.dart';
 import '../../widgets/skeleton/skeleton_shimmer.dart';
 import '../../../preference/seerr_preferences.dart';
+import '../../../fluxer/home/fluxer_home_layout.dart'; // FLUXER:
 
 Color get _homeBackground => AppColorScheme.background;
 
@@ -235,6 +236,7 @@ class _HomeShellState extends State<_HomeShell>
     _lastObservedPath = appRouter.routerDelegate.currentConfiguration.uri.path;
     homeRefreshBus.addListener(_onHomeRefreshRequested);
     userDataSync.addListener(_onUserDataChanged);
+    unawaited(FluxerHomeLayout.refresh()); // FLUXER: filas de inicio de Emby al entrar
     if (homeRefreshBus.consumePending()) {
       _viewModel.refresh(preserveExisting: true);
     }
@@ -392,6 +394,7 @@ class _HomeShellState extends State<_HomeShell>
 
   void _onHomeRefreshRequested() {
     if (!mounted) return;
+    unawaited(FluxerHomeLayout.refresh()); // FLUXER: botón de inicio / recargar
     _viewModel.refresh(
       newMediaBar: homeRefreshBus.consumeNewMediaBar(),
       newSectionsOnly: homeRefreshBus.consumeNewSectionsOnly(),
@@ -577,6 +580,7 @@ class _HomeShellState extends State<_HomeShell>
 
   @override
   void didPopNext() {
+    unawaited(FluxerHomeLayout.refresh()); // FLUXER: al volver al inicio
     _partyRooms?.setHomeVisible(_isHomeRouteActive());
     if (!_isHomeRouteActive()) {
       _themeMusicService.fadeOutAndStop();

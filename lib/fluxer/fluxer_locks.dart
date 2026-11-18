@@ -34,6 +34,9 @@ final Map<String, Object> _locked = {
   // usuario (y subía al servidor lo que fija Fluxer). En FluxerPlayer manda
   // la configuración de Emby (secciones de inicio de Home Screen Companion).
   'pref_plugin_sync_enabled': false,
+  // Filas de inicio: sin unir las de «Lo último en…» por tipo (cambiaría lo
+  // que manda Emby). Las demás opciones de filas no salen en Ajustes.
+  'pref_merge_recent_rows_by_type': false,
   'mediaBarEnabled': true,
   'mediaBarMode': UserPreferences.mediaBarMode.defaultValue,
 };
@@ -50,7 +53,7 @@ Object? fluxerLockedValue(String key) {
 /// Secciones de Ajustes que no salen en cuentas de Fluxer (las manda el
 /// servidor). Buscador de ajustes: por el prefijo de su id.
 bool fluxerHidesSettingsSection(String slug) =>
-    FluxerServers.activeIsFluxer && const {'media-bar', 'plugin-sync', 'settings-sync', 'home-sections'}.contains(slug);
+    FluxerServers.activeIsFluxer && const {'media-bar', 'plugin-sync', 'settings-sync', 'home-sections', 'row-options-rows'}.contains(slug);
 
 /// ¿Está fijada esta opción ahora mismo (cuenta de Fluxer)?
 bool fluxerIsLocked(String key) => fluxerLockedValue(key) != null;
