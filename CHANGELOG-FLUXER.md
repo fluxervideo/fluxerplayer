@@ -16,6 +16,8 @@ Basada en Moonfin 3.1.0.
 - Tu foto de perfil de Fluxer sale también como foto de tu usuario.
 - Con tu cuenta de Fluxer, la navegación va siempre en la barra lateral
   izquierda.
+- Calidad siempre al máximo (200 Mbps): ya no hace falta tocar la tasa de
+  bits.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 

@@ -1659,6 +1659,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
         keywords: ['docked', 'on screen', 'play button', 'center', 'controls'],
       ),
     quality.screen(keywords: ['bitrate', 'resolution', 'hdr', 'decoder']),
+    if (!fluxerIsLocked('pref_max_bitrate')) // FLUXER: fijada
     quality.leaf('pref_max_bitrate', l10n.maxStreamingBitrate, keywords: [
       'quality',
       'bandwidth',
@@ -1669,7 +1670,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       '1080p',
       'transcode',
     ]),
-    if (liveTvOnAnyServer)
+    if (liveTvOnAnyServer && !fluxerIsLocked('pref_live_direct')) // FLUXER: oculta
       quality.leaf(
         'pref_live_direct',
         l10n.settingsLiveTvDirect,

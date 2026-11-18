@@ -14,6 +14,7 @@ class _QualityDecodingScreen extends StatelessWidget {
           _SectionHeader(l10n.streaming),
           adaptiveListSection(
             children: [
+              if (!fluxerIsLocked(UserPreferences.maxBitrate.key)) // FLUXER: fijada en 200 Mbps
               StringPickerPreferenceTile(
                 preference: UserPreferences.maxBitrate,
                 title: l10n.maxStreamingBitrate,
@@ -45,7 +46,8 @@ class _QualityDecodingScreen extends StatelessWidget {
                   MaxVideoResolution.res2160p => '2160p (4K)',
                 },
               ),
-              if (liveTvOnAnySignedInServer())
+              if (liveTvOnAnySignedInServer() &&
+                  !fluxerIsLocked(UserPreferences.liveTvDirectPlayEnabled.key)) // FLUXER: oculta
                 SwitchPreferenceTile(
                   preference: UserPreferences.liveTvDirectPlayEnabled,
                   title: l10n.settingsLiveTvDirect,
