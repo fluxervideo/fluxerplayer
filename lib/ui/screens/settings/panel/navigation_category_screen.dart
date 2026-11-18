@@ -72,6 +72,14 @@ class _NavigationCategoryScreenState extends State<_NavigationCategoryScreen> {
           _SectionHeader(l10n.appearance),
           adaptiveListSection(
             children: [
+              if (fluxerIsLocked(UserPreferences.navbarPosition.key)) // FLUXER: la fija Fluxer
+                ListTile(
+                  enabled: false,
+                  leading: const Icon(Icons.view_sidebar),
+                  title: Text(l10n.navigationStyle),
+                  subtitle: Text('${l10n.leftSidebar} · ${FluxerStrings.of(context).setByFluxer}'),
+                )
+              else
               EnumPreferenceTile<NavbarPosition>(
                 preference: UserPreferences.navbarPosition,
                 title: l10n.navigationStyle,

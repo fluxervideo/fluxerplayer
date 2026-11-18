@@ -1,35 +1,46 @@
 // FluxerPlayer: qué servidores guardados son de Fluxer (se entró en ellos
-// con «Entrar con Fluxer»). Sirve para destacar «Continuar con Fluxer» en la
-// pantalla de servidores y ofrecer entrar sin contraseña.
+// con «Entrar con Fluxer»), y si la sesión activa es de uno de ellos.
+//
+// Sirve para destacar «Continuar con Fluxer», ofrecer entrar sin contraseña
+// y aplicar las opciones que fija Fluxer (fluxer_locks.dart) SOLO en cuentas
+// de Fluxer. Se guarda en el mismo almacén que las preferencias de Moonfin
+// porque se lee de forma inmediata (al pintar).
 
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_it/get_it.dart';
+import 'package:jellyfin_preference/jellyfin_preference.dart';
+
+import '../../auth/repositories/session_repository.dart';
+import '../../preference/user_preferences.dart';
 
 class FluxerServers {
   FluxerServers._();
 
-  static const _key = 'fluxer_server_ids';
-  static Set<String> _cache = {};
-  static bool _loaded = false;
+  static final _pref = Preference<String>(key: 'fluxer_server_ids', defaultValue: '');
 
-  /// Carga la lista (una vez). Las pantallas la leen luego con [contains].
-  static Future<Set<String>> load() async {
-    if (_loaded) return _cache;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      _cache = (prefs.getStringList(_key) ?? const []).toSet();
-    } catch (_) {}
-    _loaded = true;
-    return _cache;
+  static UserPreferences? get _prefs =>
+      GetIt.instance.isRegistered<UserPreferences>() ? GetIt.instance<UserPreferences>() : null;
+
+  static Set<String> get ids {
+    final raw = _prefs?.get(_pref) ?? '';
+    return raw.split(',').where((id) => id.isNotEmpty).toSet();
   }
 
-  static bool contains(String serverId) => _cache.contains(serverId);
+  /// Compatibilidad con quien lo pedía de forma diferida.
+  static Future<Set<String>> load() async => ids;
+
+  static bool contains(String serverId) => ids.contains(serverId);
 
   static Future<void> add(String serverId) async {
-    await load();
-    if (!_cache.add(serverId)) return;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList(_key, _cache.toList());
-    } catch (_) {}
+    final current = ids;
+    if (!current.add(serverId)) return;
+    await _prefs?.set(_pref, current.join(','));
+  }
+
+  /// ¿La sesión activa es de un servidor de Fluxer?
+  static bool get activeIsFluxer {
+    final getIt = GetIt.instance;
+    if (!getIt.isRegistered<SessionRepository>()) return false;
+    final serverId = getIt<SessionRepository>().activeServerId;
+    return serverId != null && contains(serverId);
   }
 }

@@ -18,6 +18,7 @@ import '../util/platform_detection.dart';
 import 'home_section_config.dart';
 import 'preference_constants.dart';
 import 'seerr_row_config.dart';
+import '../fluxer/fluxer_locks.dart'; // FLUXER:
 
 class UserPreferences extends ChangeNotifier {
   static const _lastServerIdPreferenceKey = 'pref_last_server_id';
@@ -898,6 +899,8 @@ class UserPreferences extends ChangeNotifier {
   }
 
   T get<T>(Preference<T> pref) {
+    final fluxerLocked = fluxerLockedValue(pref.key); // FLUXER: opciones fijadas en cuentas de Fluxer
+    if (fluxerLocked is T) return fluxerLocked;
     if (_isScopedPreference(pref)) {
       final scoped = _scopedPreference(pref);
       if (scoped != null && _store.containsKey(scoped.key)) {

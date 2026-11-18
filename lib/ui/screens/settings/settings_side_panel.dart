@@ -124,6 +124,7 @@ import '../detail/playlist_sort_filter_bar.dart';
 import '../playback/osd_buttons.dart';
 import '../watch_party/watch_together_route.dart';
 import '../../../watch_party/silo_watch_party_manager.dart';
+import '../../../fluxer/fluxer_locks.dart'; // FLUXER:
 import '../../../fluxer/fluxer_features.dart'; // FLUXER:
 import '../../../fluxer/fluxer_build_info.dart'; // FLUXER:
 import '../../../fluxer/fluxer_strings.dart'; // FLUXER:

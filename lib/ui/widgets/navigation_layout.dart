@@ -16,6 +16,7 @@ import 'package:moonfin_design/moonfin_design.dart';
 import 'package:playback_core/playback_core.dart';
 import '../navigation/destinations.dart';
 import '../navigation/route_lifecycle_observer.dart';
+import '../../fluxer/fluxer_locks.dart'; // FLUXER:
 
 class NavigationLayout extends StatefulWidget {
   final String? activeRoute;
@@ -37,6 +38,8 @@ class NavigationLayout extends StatefulWidget {
   ];
 
   static NavbarPosition sanitizeNavbarPosition(NavbarPosition position) {
+    final fluxerLocked = fluxerLockedValue('pref_navbar_position'); // FLUXER:
+    if (fluxerLocked is NavbarPosition) return fluxerLocked;
     if (position == NavbarPosition.bottom && !allowBottomNavbar) {
       return NavbarPosition.top;
     }

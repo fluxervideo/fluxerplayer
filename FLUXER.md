@@ -69,6 +69,7 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/app.dart` | arrancar los avisos de FluxerHub (plan, mantenimientos, avisos) |
 | `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto) |
+| `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
 | `lib/data/services/push_messaging_service.dart` | sin notificaciones push de Moonfin (Firebase) |
 | `lib/ui/screens/admin/admin_nav.dart` | sin administración |
 | `lib/util/signed_in_server_features.dart`, `lib/data/services/plugin_sync_service.dart` | sin Seerr |
@@ -138,6 +139,15 @@ proyecto. Alternativas de pago: Azure Artifact Signing o un certificado
 de firma de código. Ojo: con cualquier certificado nuevo, SmartScreen puede
 seguir avisando las primeras semanas, hasta que el instalador gana
 reputación con las descargas.
+
+## Opciones fijadas en cuentas de Fluxer
+
+`lib/fluxer/fluxer_locks.dart`: con una cuenta de Fluxer (entró con «Entrar
+con Fluxer», `FluxerServers`), esas opciones valen lo que fija Fluxer y en
+Ajustes salen como «la fija Fluxer». Con cualquier otra cuenta, como en
+Moonfin. Ahora: barra de navegación = lateral izquierda. Para fijar otra:
+añadir su clave y valor a `_locked` (y, si tiene pantalla en Ajustes,
+enseñarla como fijada).
 
 ## Funciones ocultas
 

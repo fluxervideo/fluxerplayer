@@ -14,6 +14,8 @@ Basada en Moonfin 3.1.0.
 - «Añadir otro servidor» queda como opción secundaria, para cualquier
   servidor Emby.
 - Tu foto de perfil de Fluxer sale también como foto de tu usuario.
+- Con tu cuenta de Fluxer, la navegación va siempre en la barra lateral
+  izquierda.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 

@@ -17,6 +17,8 @@ import '../../auth/store/authentication_store.dart';
 import '../fluxer_config.dart';
 import '../hub/fluxer_hub_client.dart';
 import '../hub/fluxer_servers.dart';
+import '../../preference/user_preferences.dart';
+import '../../ui/widgets/navigation_layout.dart';
 
 /// Código que enseña la app mientras espera.
 class FluxerLoginCode {
@@ -183,6 +185,11 @@ class FluxerLoginService {
       userId: session.userId,
       username: session.userName,
     );
+    // Las opciones que fija Fluxer (p. ej. la barra lateral) cambian al
+    // entrar en una cuenta de Fluxer: la barra se coloca ya, sin reiniciar.
+    NavigationLayout.positionNotifier.value =
+        NavigationLayout.sanitizeNavbarPosition(getIt<UserPreferences>().get(UserPreferences.navbarPosition));
+
     return FluxerLoginResult(serverId: server.id, switched: switched);
   }
 

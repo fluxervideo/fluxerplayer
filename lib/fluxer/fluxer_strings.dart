@@ -140,6 +140,7 @@ class FluxerStrings {
       );
   String get serverIncidentTitle => _t('Incidencia en tu servidor', 'Problem with your server');
 
+  String get setByFluxer => _t('la fija Fluxer', 'set by Fluxer');
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(
