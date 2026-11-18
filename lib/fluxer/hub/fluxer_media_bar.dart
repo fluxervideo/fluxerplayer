@@ -13,6 +13,9 @@ import 'package:server_core/server_core.dart';
 import 'fluxer_hub_client.dart';
 import 'fluxer_servers.dart';
 
+/// Tope de seguridad: la colección suele tener 10-30 títulos.
+const _maxTrending = 40;
+
 Future<List<Map<String, dynamic>>> fluxerTrendingMediaBarItems(
   MediaServerClient client, {
   required String fields,
@@ -40,7 +43,8 @@ Future<List<Map<String, dynamic>>> fluxerTrendingMediaBarItems(
         .where((item) => (item['BackdropImageTags'] as List?)?.isNotEmpty ?? false)
         .toList()
       ..sort((a, b) => (rank[a['Id']] ?? 1 << 30).compareTo(rank[b['Id']] ?? 1 << 30));
-    return withBackdrop.take(maxItems).toList();
+    // Toda la lista de «Tendencias de hoy» (no el número de la barra de Moonfin).
+    return withBackdrop.take(maxItems > _maxTrending ? maxItems : _maxTrending).toList();
   } catch (_) {
     return const [];
   }

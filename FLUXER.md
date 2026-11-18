@@ -71,6 +71,7 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto) |
 | `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
+| `lib/ui/screens/settings/panel/home_screen_category_screen.dart`, `panel/settings_search_index.dart` | sin la sección «Barra de medios» en cuentas de Fluxer |
 | `lib/data/repositories/media_bar_repository.dart` | barra de inicio con «Tendencias de hoy» (Hub `api/app/trending`) en cuentas de Fluxer |
 | `lib/util/platform_detection.dart` (`supportsOfflineDownloads`) | sin descargas ni modo sin conexión |
 | `lib/data/services/push_messaging_service.dart` | sin notificaciones push de Moonfin (Firebase) |
@@ -159,7 +160,10 @@ mi cuenta de Fluxer» (sesión nueva desde el Hub, sin contraseña).
 `lib/fluxer/fluxer_locks.dart`: con una cuenta de Fluxer (entró con «Entrar
 con Fluxer», `FluxerServers`), esas opciones valen lo que fija Fluxer y en
 Ajustes salen como «la fija Fluxer». Con cualquier otra cuenta, como en
-Moonfin. Ahora: barra de navegación = lateral izquierda. Para fijar otra:
+Moonfin. Ahora: barra de navegación = lateral izquierda; tasa de bits = 200
+Mbps; sin TV en vivo directo; barra de medios siempre activa con su estilo
+por defecto y «Tendencias de hoy» (su sección no sale en Ajustes:
+`fluxerHidesSettingsSection`). Para fijar otra:
 añadir su clave y valor a `_locked` (y, si tiene pantalla en Ajustes,
 enseñarla como fijada).
 

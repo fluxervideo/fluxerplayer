@@ -2348,5 +2348,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
     return true;
   }());
 
+  // FLUXER: sin las secciones que manda el servidor (barra de medios).
+  entries.removeWhere((e) => fluxerHidesSettingsSection(e.id.split('.').first));
   return entries;
 }

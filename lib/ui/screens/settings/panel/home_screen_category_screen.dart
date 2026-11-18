@@ -224,6 +224,7 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
                 onTap: () =>
                     context.pushSettingsScreen(const HomeRowTogglesScreen()),
               ),
+              if (!fluxerHidesSettingsSection('media-bar')) // FLUXER: la manda el servidor
               _TvSettingsListTile(
                 leading: const Icon(Icons.featured_play_list),
                 title: Text(l10n.mediaBar),

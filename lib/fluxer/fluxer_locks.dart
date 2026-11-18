@@ -11,6 +11,7 @@
 // Para fijar otra opción: añadir su clave y su valor a [_locked].
 
 import '../preference/preference_constants.dart';
+import '../preference/user_preferences.dart';
 import 'hub/fluxer_servers.dart';
 
 /// clave de la preferencia de Moonfin → valor que fija Fluxer.
@@ -23,6 +24,12 @@ final Map<String, Object> _locked = {
   // TV en vivo: reproducción directa desactivada (lo de Moonfin por defecto).
   // La opción no sale en Ajustes.
   'pref_live_direct': false,
+  // Barra de medios de inicio: siempre activa, con el estilo por defecto de
+  // cada aparato (grande en ordenador/tele, galería en el móvil) y con
+  // «Tendencias de hoy» (fluxer_media_bar.dart). Su sección no sale en Ajustes:
+  // lo que se ve lo manda la configuración del servidor (Home Screen Companion).
+  'mediaBarEnabled': true,
+  'mediaBarMode': UserPreferences.mediaBarMode.defaultValue,
 };
 
 /// El valor fijado para [key] si la sesión activa es de Fluxer; si no, null.
@@ -31,6 +38,11 @@ Object? fluxerLockedValue(String key) {
   if (value == null) return null;
   return FluxerServers.activeIsFluxer ? value : null;
 }
+
+/// Secciones de Ajustes que no salen en cuentas de Fluxer (las manda el
+/// servidor). Buscador de ajustes: por el prefijo de su id.
+bool fluxerHidesSettingsSection(String slug) =>
+    FluxerServers.activeIsFluxer && const {'media-bar'}.contains(slug);
 
 /// ¿Está fijada esta opción ahora mismo (cuenta de Fluxer)?
 bool fluxerIsLocked(String key) => fluxerLockedValue(key) != null;
