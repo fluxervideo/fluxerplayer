@@ -9,6 +9,7 @@ import '../../data/services/app_update_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../util/platform_detection.dart';
 import 'status_banner_pill.dart';
+import '../../fluxer/update/fluxer_android_update.dart'; // FLUXER:
 
 /// Floating glass pill announcing a newer GitHub release. Mirrors the offline
 /// banner: slides in, auto-dismisses on a countdown, and stays non-focusable
@@ -71,6 +72,7 @@ class _AppUpdateBannerState extends State<AppUpdateBanner>
           GetIt.instance<AppUpdateService>().checkForUpdateIfDue;
       final update = await check();
       if (!mounted || update == null) return;
+      if (fluxerAndroidInAppUpdate && PlatformDetection.useLeanbackUi && fluxerOfferAndroidUpdate(update, fromButton: false)) return; // FLUXER: en la tele, diálogo con el mando
       setState(() => _update = update);
       _entrance.forward();
       _autoDismissTimer = Timer(_autoDismissDuration, _dismiss);
@@ -107,6 +109,7 @@ class _AppUpdateBannerState extends State<AppUpdateBanner>
             label: l10n.download,
             tint: tint,
             onTap: () {
+              if (fluxerAndroidInAppUpdate && fluxerOfferAndroidUpdate(update, fromButton: true)) { unawaited(_dismiss()); return; } // FLUXER: descargar e instalar el APK
               unawaited(
                 launchUrl(
                   update.downloadUri,

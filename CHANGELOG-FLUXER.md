@@ -3,6 +3,20 @@
 Cada versión publicada (etiqueta `vX.Y.Z`) usa como notas la sección con su
 número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
+## 1.0.6 — Actualizar sin salir de la app en Android
+
+Basada en Moonfin 3.1.0.
+
+- **En Android (móvil y tele) se actualiza desde la app**: al salir una
+  versión nueva, «Descargar» baja la actualización y abre el instalador; solo
+  hay que pulsar «Instalar». La primera vez Android pide permitir que
+  FluxerPlayer instale apps. En la tele sale el aviso para elegirlo con el
+  mando.
+- Ya firmada con la clave definitiva de FluxerPlayer. **Para instalar esta
+  versión hay que desinstalar antes la anterior una última vez** (hay que
+  volver a entrar con tu cuenta de Fluxer); a partir de aquí, cada
+  actualización se instala encima.
+
 ## 1.0.5 — Recargar saldo, test de velocidad y mejor con el mando
 
 Basada en Moonfin 3.1.0.

@@ -8,6 +8,7 @@ import '../../data/services/app_update_service.dart';
 import '../../l10n/app_localizations.dart';
 import '../../util/platform_detection.dart';
 import 'track_selector_dialog.dart';
+import '../../fluxer/update/fluxer_android_update.dart'; // FLUXER:
 
 /// Checks for an update and shows the dialog or an appropriate snackbar.
 Future<void> checkAndShowUpdateResult(BuildContext context) async {
@@ -50,7 +51,7 @@ Future<void> showAppUpdateDialog(
     builder: (ctx) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (!PlatformDetection.isTV)
+        if (!PlatformDetection.isTV || fluxerAndroidInAppUpdate) // FLUXER: también en la tele (Android)
           _UpdateOption(
             icon: Icons.download_rounded,
             label: l10n.download,
@@ -66,6 +67,8 @@ Future<void> showAppUpdateDialog(
   );
 
   if (choice == null || !context.mounted) return;
+
+  if (choice == 'download' && fluxerAndroidInAppUpdate && update.downloadUri.isScheme('https') && update.downloadUri.path.toLowerCase().endsWith('.apk')) return fluxerDownloadAndInstallApk(context, update); // FLUXER: descargar e instalar el APK
 
   if (choice == 'download' &&
       Platform.isWindows &&

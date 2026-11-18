@@ -360,6 +360,7 @@ class MainActivity : AudioServiceActivity(), GamepadsCompatibleActivity {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         engineHandedToActivity = flutterEngine
+        org.fluxer.FluxerApkInstaller.register(this, flutterEngine.dartExecutor.binaryMessenger) // FLUXER: actualizar desde la app
 
         val bridge = LibretroBridge(
             flutterEngine,

@@ -303,4 +303,17 @@ class FluxerStrings {
         'It is in your balance. If your plan renews automatically, it will be charged from there.',
       );
   String get retry => _t('Reintentar', 'Retry');
+
+  // Actualizar desde la app en Android (update/fluxer_android_update.dart).
+  String updateDownloading(String version) => _t('Descargando FluxerPlayer $version', 'Downloading FluxerPlayer $version');
+  String get updatePreparing => _t('Preparando la descarga…', 'Preparing the download…');
+  String get updateInstallHint => _t(
+        'Al terminar se abre el instalador de Android: pulsa «Instalar». La primera vez te pedirá permitir que FluxerPlayer instale apps.',
+        'When it finishes, the Android installer opens: tap “Install”. The first time it will ask you to allow FluxerPlayer to install apps.',
+      );
+  String get updateFailed => _t(
+        'No se ha podido descargar o abrir la actualización. Inténtalo de nuevo en un rato.',
+        'Could not download or open the update. Please try again later.',
+      );
+  String get cancel => _t('Cancelar', 'Cancel');
 }

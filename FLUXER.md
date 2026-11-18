@@ -71,7 +71,10 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/app.dart` | arrancar los avisos de FluxerHub (plan, mantenimientos, avisos) |
 | `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto); en tele y ordenador, a todo el ancho sin la vista previa (`fluxerSettingsFullWidth`) |
-| `android/app/src/main/AndroidManifest.xml` | `<queries>` de navegadores y Custom Tabs (abrir la web de Fluxer al entrar en Android 11+) |
+| `android/app/src/main/AndroidManifest.xml` | `<queries>` de navegadores y Custom Tabs (abrir la web de Fluxer al entrar en Android 11+); permiso `REQUEST_INSTALL_PACKAGES` y `<provider>` `org.fluxer.FluxerApkProvider` (actualizar desde la app) |
+| `android/app/src/main/kotlin/org/moonfin/androidtv/MainActivity.kt` | registra `org.fluxer.FluxerApkInstaller` (canal `fluxer/apk_installer`) |
+| `lib/ui/widgets/app_update_dialog.dart` | Android: «Descargar» también en la tele, y descarga e instala el APK (`lib/fluxer/update/fluxer_android_update.dart`) |
+| `lib/ui/widgets/app_update_banner.dart` | Android: el aviso automático descarga e instala en el móvil; en la tele saca el diálogo de actualizar (la pastilla no se puede pulsar con el mando) |
 | `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
 | `lib/ui/screens/settings/panel/home_screen_category_screen.dart`, `panel/settings_search_index.dart` | sin «Barra de medios» ni «Filas» en cuentas de Fluxer |
 | `lib/ui/screens/home/home_screen.dart` | refrescar las filas de Emby al entrar/volver al inicio |
