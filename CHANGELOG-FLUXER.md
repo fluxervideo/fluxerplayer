@@ -19,6 +19,7 @@ Basada en Moonfin 3.1.0.
   izquierda.
 - Calidad siempre al máximo (200 Mbps): ya no hace falta tocar la tasa de
   bits.
+- Fuera las descargas: Fluxer es para ver en streaming.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 

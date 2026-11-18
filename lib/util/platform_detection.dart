@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import 'os_version_stub.dart' if (dart.library.io) 'os_version_io.dart';
+import '../fluxer/fluxer_features.dart'; // FLUXER:
 
 class PlatformDetection {
   const PlatformDetection._();
@@ -405,7 +406,9 @@ class PlatformDetection {
 
   /// Offline media is available on phones, tablets, desktops, and Android TV.
   /// Other TV platforms do not currently provide the download backend.
-  static bool get supportsOfflineDownloads => !isTV || isAndroid || isForcedTv;
+  static bool get supportsOfflineDownloads =>
+      FluxerFeatures.downloads && // FLUXER: en Fluxer no se descarga nada
+      (!isTV || isAndroid || isForcedTv);
 
   static bool get useNativeVideoSurface => isAndroid && isTV;
 

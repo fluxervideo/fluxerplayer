@@ -35,6 +35,13 @@ abstract final class FluxerFeatures {
   /// Peticiones por Seerr.
   static const seerr = false;
 
+  /// Descargas (y el modo sin conexión que enseña lo descargado): en Fluxer
+  /// no se descarga nada. Enganche: PlatformDetection.supportsOfflineDownloads,
+  /// del que dependen el botón de descargar, la sección «Descargas», las
+  /// opciones de descarga de Almacenamiento (la caché de imágenes se queda) y
+  /// el buscador de ajustes.
+  static const downloads = false;
+
   /// Pantallas de administración del servidor Emby.
   static const serverAdmin = false;
 

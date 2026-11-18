@@ -71,6 +71,7 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto) |
 | `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
+| `lib/util/platform_detection.dart` (`supportsOfflineDownloads`) | sin descargas ni modo sin conexión |
 | `lib/data/services/push_messaging_service.dart` | sin notificaciones push de Moonfin (Firebase) |
 | `lib/ui/screens/admin/admin_nav.dart` | sin administración |
 | `lib/util/signed_in_server_features.dart`, `lib/data/services/plugin_sync_service.dart` | sin Seerr |
@@ -162,7 +163,8 @@ enseñarla como fijada).
 
 `lib/fluxer/fluxer_features.dart`: un interruptor por función (Plex/Jellyfin/
 Silo/Emby Connect, búsqueda en la red, certificados, juegos y After Hours,
-logros, libros, Seerr, administración, enlaces de Moonfin). El código de
+logros, libros, Seerr, administración, enlaces de Moonfin, descargas,
+notificaciones push de Moonfin). El código de
 Moonfin no se borra, solo se ocultan sus entradas, así que las
 actualizaciones no dan conflictos. **Al fusionar una versión nueva, revisar
 si Moonfin ha añadido funciones nuevas** que convenga ocultar.
