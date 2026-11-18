@@ -174,6 +174,48 @@ class FluxerHubClient {
     return ids is List ? ids.whereType<String>().toList() : const [];
   }
 
+  /// Test de velocidad: lo que puede elegir (lo visto en 7 días o el vídeo
+  /// de prueba) y si puede empezar ahora. Null si no está vinculada.
+  Future<Map<String, dynamic>?> speedTestOptions() async {
+    final response = await _request(
+      (options) => _dio.get<Map<String, dynamic>>('connection-test', options: options),
+      rethrowErrors: true,
+    );
+    return response?.data;
+  }
+
+  /// Empieza una prueba: el enlace firmado al tramo del vídeo y el del ping.
+  /// Lanza [FluxerHubMessage] con el texto para el cliente si no se puede.
+  Future<Map<String, dynamic>?> speedTestStart(int? eventId) async {
+    try {
+      final response = await _request(
+        (options) => _dio.post<Map<String, dynamic>>('connection-test', options: options, data: {'event_id': eventId}),
+        rethrowErrors: true,
+      );
+      return response?.data;
+    } on DioException catch (e) {
+      throw FluxerHubMessage(_message(e));
+    }
+  }
+
+  /// Manda lo medido; el Hub calcula las medias y el veredicto.
+  Future<Map<String, dynamic>?> speedTestResult(int id, Map<String, dynamic> data) async {
+    try {
+      final response = await _request(
+        (options) => _dio.post<Map<String, dynamic>>('connection-test/$id/result', options: options, data: data),
+        rethrowErrors: true,
+      );
+      return response?.data;
+    } on DioException catch (e) {
+      throw FluxerHubMessage(_message(e));
+    }
+  }
+
+  static String? _message(DioException e) {
+    final data = e.response?.data;
+    return data is Map && data['message'] is String ? data['message'] as String : null;
+  }
+
   Future<void> logout() async {
     await _request((options) => _dio.post<dynamic>('logout', options: options));
     await clearToken();
@@ -196,4 +238,11 @@ class FluxerHubClient {
       return null;
     }
   }
+}
+
+/// Un error del Hub con el texto para el cliente (o null: sin conexión…).
+class FluxerHubMessage implements Exception {
+  const FluxerHubMessage(this.message);
+
+  final String? message;
 }

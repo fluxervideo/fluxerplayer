@@ -13,7 +13,9 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moonfin_design/moonfin_design.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -206,7 +208,25 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
   Future<void> _openInBrowser() async {
     final code = _code;
     if (code == null) return;
-    await launchUrl(Uri.parse(code.approveUrl), mode: LaunchMode.externalApplication);
+    final uri = Uri.parse(code.approveUrl);
+    // En Android, primero la pestaña del navegador dentro de la app (Custom
+    // Tabs): con algunos móviles abrir el navegador aparte volvía a la app sin
+    // hacer nada. Si no hay, el navegador normal.
+    var opened = false;
+    try {
+      opened = await launchUrl(
+        uri,
+        mode: !kIsWeb && defaultTargetPlatform == TargetPlatform.android ? LaunchMode.inAppBrowserView : LaunchMode.externalApplication,
+      );
+    } catch (_) {}
+    if (!opened) {
+      try {
+        opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      } catch (_) {}
+    }
+    if (!opened && mounted) {
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(FluxerStrings.of(context).openLinkFailed)));
+    }
   }
 
   /// "K7Q2M9" → "K7Q 2M9": más fácil de leer en una tele.
@@ -495,8 +515,10 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     );
   }
 
-  // QR + pasos con el código. En el móvil el QR va pequeño (no se puede
-  // escanear la propia pantalla): lo importante es el código.
+  // Pasos con el enlace y el código, una raya, y el QR («o escanea con la
+  // cámara»): queda claro que es lo uno o lo otro. En el móvil el QR va
+  // pequeño (no se puede escanear la propia pantalla): lo importante es el
+  // código. El enlace se abre al pulsarlo y el código se copia (no en la tele).
   Widget _codeBlock(FluxerStrings s, FluxerLoginCode code) {
     final qrSize = _isMobile ? 120.0 : (_isTv ? 200.0 : 170.0);
     final qr = Column(
@@ -504,8 +526,35 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
       children: [
         SignInQrCode(data: code.approveUrl, size: qrSize),
         const SizedBox(height: 8),
-        Text(s.scanQr, textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: _muted)),
+        Text(s.scanQr, textAlign: TextAlign.center, style: TextStyle(fontSize: 14, color: _muted, fontWeight: FontWeight.w600)),
       ],
+    );
+    final linkStyle = TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColorScheme.accent);
+    final codeBox = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppColorScheme.onSurface.withValues(alpha: 0.06),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: _line),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _pretty(code.code),
+            style: TextStyle(
+              fontSize: _isMobile ? 30 : 38,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 6,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          if (!_isTv) ...[
+            const SizedBox(width: 10),
+            Icon(Icons.copy_rounded, size: 20, color: _muted),
+          ],
+        ],
+      ),
     );
     final steps = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -514,31 +563,42 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
         _step('1', s.stepOpen),
         Padding(
           padding: const EdgeInsets.only(left: 34, top: 2, bottom: 12),
-          child: SelectableText(
-            _shortUrl(code.approveUrl),
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColorScheme.accent),
-          ),
+          child: _isTv
+              ? Text(_shortUrl(code.approveUrl), style: linkStyle)
+              : InkWell(
+                  onTap: _openInBrowser,
+                  borderRadius: BorderRadius.circular(6),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 2),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            _shortUrl(code.approveUrl),
+                            style: linkStyle.copyWith(decoration: TextDecoration.underline, decorationColor: AppColorScheme.accent),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.open_in_new, size: 16, color: AppColorScheme.accent),
+                      ],
+                    ),
+                  ),
+                ),
         ),
         _step('2', s.stepCode),
         Padding(
           padding: const EdgeInsets.only(left: 34, top: 6, bottom: 12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColorScheme.onSurface.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: _line),
-            ),
-            child: SelectableText(
-              _pretty(code.code),
-              style: TextStyle(
-                fontSize: _isMobile ? 30 : 38,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 6,
-                fontFeatures: const [FontFeature.tabularFigures()],
-              ),
-            ),
-          ),
+          child: _isTv
+              ? codeBox
+              : Tooltip(
+                  message: s.tapToCopy,
+                  child: InkWell(
+                    onTap: () => _copyCode(s, code.code),
+                    borderRadius: BorderRadius.circular(12),
+                    child: codeBox,
+                  ),
+                ),
         ),
         _step('3', s.stepAccept),
         const SizedBox(height: 14),
@@ -555,13 +615,32 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 460) {
-          return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [steps, const SizedBox(height: 16), Center(child: qr)]);
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              steps,
+              Padding(padding: const EdgeInsets.symmetric(vertical: 14), child: Divider(color: _line)),
+              Center(child: qr),
+            ],
+          );
         }
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [qr, const SizedBox(width: 24), Expanded(child: steps)],
+          children: [
+            Expanded(child: steps),
+            Container(width: 1, height: qrSize, margin: const EdgeInsets.symmetric(horizontal: 22), color: _line),
+            qr,
+          ],
         );
       },
+    );
+  }
+
+  Future<void> _copyCode(FluxerStrings s, String value) async {
+    await Clipboard.setData(ClipboardData(text: value));
+    if (!mounted) return;
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(content: Text(s.codeCopied), duration: const Duration(seconds: 2)),
     );
   }
 

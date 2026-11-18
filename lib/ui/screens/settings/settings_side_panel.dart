@@ -827,6 +827,7 @@ class _SettingsSidePanelState extends ConsumerState<SettingsSidePanel>
       ),
     );
 
+    final fluxerFull = fluxerSettingsFullWidth(context, (_searchedCategory ?? _categories.elementAtOrNull(_categoryIndex))?.title); // FLUXER:
     return Material(
       color: AppColorScheme.background.withValues(alpha: 0.96),
       child: SafeArea(
@@ -841,6 +842,8 @@ class _SettingsSidePanelState extends ConsumerState<SettingsSidePanel>
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (fluxerFull) Expanded(child: ClipRRect(borderRadius: AppRadius.circular(20), child: ColoredBox(color: AppColorScheme.surface, child: list))), // FLUXER: Mi cuenta Fluxer a todo el ancho, sin vista previa
+                    if (!fluxerFull) // FLUXER:
                     SizedBox(
                       width: 440,
                       child: ClipRRect(
@@ -851,8 +854,8 @@ class _SettingsSidePanelState extends ConsumerState<SettingsSidePanel>
                         ),
                       ),
                     ),
-                    const SizedBox(width: 24),
-                    Expanded(child: _buildPreviewPane(context)),
+                    if (!fluxerFull) const SizedBox(width: 24), // FLUXER: (if)
+                    if (!fluxerFull) Expanded(child: _buildPreviewPane(context)), // FLUXER: (if)
                   ],
                 ),
               ),

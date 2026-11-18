@@ -1,9 +1,10 @@
 // FluxerPlayer: Ajustes → «Mi cuenta Fluxer».
 //
-// - Plan (estado, caducidad, renovación automática) y saldo, con «Renovar».
-//   En el ordenador o el móvil abre los planes en el navegador; en la tele
-//   (sin navegador) enseña un QR para hacerlo desde el móvil.
-// - Estado del servidor.
+// A pantalla completa (sin la vista previa de Ajustes):
+// - La suscripción en grande (FluxerSubscriptionCard): plan, estado, fechas,
+//   saldo, email y servidor, con «Renovar» y «Mi cuenta» (navegador, o QR en
+//   la tele).
+// - Test de velocidad (fluxer_speed_test_screen.dart).
 // - «Invita y gana»: el enlace de referidos, con QR y botón de copiar.
 // - Diagnóstico: activar la grabación y mandarlo a Fluxer (llega como una
 //   solicitud con el registro adjunto).
@@ -20,12 +21,15 @@ import 'package:moonfin_design/moonfin_design.dart';
 import '../../data/services/log_service.dart';
 import '../../preference/user_preferences.dart';
 import '../../ui/screens/settings/settings_app_bar.dart';
+import '../../ui/widgets/settings/settings_panel.dart';
 import '../../ui/widgets/sign_in_qr_code.dart';
 import '../../util/platform_detection.dart';
 import '../fluxer_routes.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
-import 'fluxer_portal.dart';
+import '../widgets/fluxer_tile.dart';
+import 'fluxer_speed_test_screen.dart';
+import 'fluxer_subscription_card.dart';
 
 class FluxerAccountScreen extends StatefulWidget {
   const FluxerAccountScreen({super.key});
@@ -107,11 +111,14 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
             children: [
               Text(s.sendDiagnosticHelp),
               const SizedBox(height: 12),
-              TextField(
-                controller: comment,
-                maxLines: 3,
-                maxLength: 2000,
-                decoration: InputDecoration(labelText: s.reportCommentHint, border: const OutlineInputBorder()),
+              FluxerTvTextFieldEscape(
+                enabled: PlatformDetection.isTV,
+                child: TextField(
+                  controller: comment,
+                  maxLines: 3,
+                  maxLength: 2000,
+                  decoration: InputDecoration(labelText: s.reportCommentHint, border: const OutlineInputBorder()),
+                ),
               ),
             ],
           ),
@@ -149,10 +156,9 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
       appBar: buildSettingsAppBar(context, Text(s.fluxerAccount)),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              children: _linked ? _linkedTiles(s) : _unlinkedTiles(s),
-            ),
+          : _linked
+              ? _linkedBody(s)
+              : ListView(padding: const EdgeInsets.symmetric(vertical: 8), children: _unlinkedTiles(s)),
     );
   }
 
@@ -161,7 +167,7 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
       padding: const EdgeInsets.all(16),
       child: Text(s.fluxerAccountUnlinked),
     ),
-    ListTile(
+    FluxerTile(
       autofocus: true,
       leading: const Icon(Icons.qr_code_2),
       title: Text(s.signInWithFluxer),
@@ -171,58 +177,61 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
     ..._diagnosticTiles(s, linked: false),
   ];
 
-  List<Widget> _linkedTiles(FluxerStrings s) {
-    final plan = _map('plan');
-    final server = _map('server');
-    final customer = _map('customer');
-    final referral = _map('referral');
-    final urls = _map('urls') ?? const {};
-    final plansUrl = urls['plans'] as String?;
-    final endsAt = DateTime.tryParse(plan?['ends_at'] as String? ?? '')?.toLocal();
-    final balance = (customer?['balance'] as num?)?.toDouble();
-
-    return [
-      _header(s.fluxerPlanSection),
-      ListTile(
-        leading: const Icon(Icons.workspace_premium_outlined),
-        title: Text(plan?['name'] as String? ?? s.noPlan),
-        subtitle: Text([
-          if (plan?['status_label'] != null) plan!['status_label'] as String,
-          // El estado activo ya dice la fecha («próxima renovación …»).
-          if (endsAt != null && plan?['status'] != 'active') s.planEndsOn(endsAt),
-          if (plan?['auto_renew'] == true) s.autoRenewOn,
-          if (balance != null) s.balance(balance),
-        ].join(' · ')),
-      ),
-      if (plansUrl != null)
-        ListTile(
-          autofocus: true,
-          leading: const Icon(Icons.autorenew),
-          title: Text(s.renew),
-          subtitle: Text(PlatformDetection.isTV ? s.renewOnPhone : s.renewInBrowserSignedIn),
-          // Portal ya con la sesión iniciada: navegador, o QR en la tele.
-          onTap: () => openFluxerPortal(context, 'plans', title: s.renew),
-        ),
-      if (server != null)
-        ListTile(
-          leading: Icon(
-            server['status'] == 'operational' ? Icons.check_circle_outline : Icons.warning_amber_rounded,
-            color: server['status'] == 'operational' ? AppColorScheme.statusAvailable : AppColorScheme.statusRequested,
+  // A pantalla completa (sin la vista previa de Ajustes): a la izquierda la
+  // suscripción en grande (plan, estado, fechas, saldo, email, servidor, con
+  // «Renovar» y «Mi cuenta»); a la derecha invitar, test de velocidad y
+  // diagnóstico. En pantallas estrechas, uno debajo del otro.
+  Widget _linkedBody(FluxerStrings s) {
+    const card = FluxerSubscriptionCard(fill: true, autofocus: true);
+    final options = _optionTiles(s);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < 760) {
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            children: [card, const SizedBox(height: 8), ...options],
+          );
+        }
+        return SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(flex: 5, child: card),
+              const SizedBox(width: 28),
+              Expanded(
+                flex: 6,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: options),
+              ),
+            ],
           ),
-          title: Text(server['name'] as String? ?? ''),
-          subtitle: Text(server['status_label'] as String? ?? ''),
-        ),
+        );
+      },
+    );
+  }
+
+  List<Widget> _optionTiles(FluxerStrings s) {
+    final referral = _map('referral');
+    return [
+      _header(s.speedTestSection),
+      FluxerTile(
+        leading: const Icon(Icons.speed),
+        title: Text(s.speedTest),
+        subtitle: Text(s.speedTestSubtitle),
+        onTap: () => context.pushSettingsScreen(const FluxerSpeedTestScreen()),
+      ),
       if (referral != null) ...[
         _header(s.inviteSection),
         // Solo el código; al pulsar se copia el enlace (en la tele, donde
         // copiar no sirve, se enseña su QR).
-        ListTile(
+        FluxerTile(
           leading: const Icon(Icons.card_giftcard),
           title: Text(s.inviteCode(_inviteCode(referral['share_url'] as String))),
           subtitle: Text(
             '${s.inviteHelp(referral['reward_amount'] as num?)} '
             '${PlatformDetection.isTV ? s.inviteTapForQr : s.inviteTapToCopy}',
           ),
+          trailing: Icon(PlatformDetection.isTV ? Icons.qr_code_2 : Icons.copy_rounded),
           onTap: () async {
             final url = referral['share_url'] as String;
             if (PlatformDetection.isTV) {
@@ -246,16 +255,19 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
     _header(s.diagnosticSection),
     ListenableBuilder(
       listenable: _prefs,
-      builder: (context, _) => SwitchListTile(
-        secondary: const Icon(Icons.troubleshoot),
-        title: Text(s.recordDiagnostic),
-        subtitle: Text(s.recordDiagnosticHelp),
-        value: _prefs.get(UserPreferences.diagnosticLoggingEnabled),
-        onChanged: (v) => _prefs.set(UserPreferences.diagnosticLoggingEnabled, v),
-      ),
+      builder: (context, _) {
+        final on = _prefs.get(UserPreferences.diagnosticLoggingEnabled);
+        return FluxerTile(
+          leading: const Icon(Icons.troubleshoot),
+          title: Text(s.recordDiagnostic),
+          subtitle: Text(s.recordDiagnosticHelp),
+          trailing: ExcludeFocus(child: IgnorePointer(child: Switch(value: on, onChanged: (_) {}))),
+          onTap: () => _prefs.set(UserPreferences.diagnosticLoggingEnabled, !on),
+        );
+      },
     ),
     if (linked)
-      ListTile(
+      FluxerTile(
         enabled: !_sendingDiagnostic,
         leading: _sendingDiagnostic
             ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))

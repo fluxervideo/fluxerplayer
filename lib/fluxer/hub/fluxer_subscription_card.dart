@@ -6,7 +6,8 @@
 // renueva solo, saldo, email y servidor. «Renovar» y «Mi cuenta» abren el
 // portal ya con la sesión iniciada (fluxer_portal.dart). Sin vincular, nada.
 //
-// Enganche: lib/ui/widgets/user_menu_dialog.dart (`// FLUXER:`).
+// Enganches: lib/ui/widgets/user_menu_dialog.dart y left_sidebar.dart
+// (`// FLUXER:`); también Ajustes → Mi cuenta Fluxer (fluxer_account_screen.dart).
 
 import 'package:flutter/material.dart';
 import 'package:moonfin_design/moonfin_design.dart';
@@ -16,13 +17,25 @@ import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
 
 class FluxerSubscriptionCard extends StatefulWidget {
-  const FluxerSubscriptionCard({super.key, this.compact = false, this.sidebar = false});
+  const FluxerSubscriptionCard({
+    super.key,
+    this.compact = false,
+    this.sidebar = false,
+    this.fill = false,
+    this.autofocus = false,
+  });
 
   /// Móvil: líneas bajo el nombre, sin caja ni botones grandes.
   final bool compact;
 
   /// Barra lateral (tele/ordenador): bloque pequeño bajo el usuario, sin botones.
   final bool sidebar;
+
+  /// Ocupa todo el ancho que le den (Ajustes → Mi cuenta Fluxer).
+  final bool fill;
+
+  /// «Renovar» con el foco al abrir (mando de la tele).
+  final bool autofocus;
 
   @override
   State<FluxerSubscriptionCard> createState() => _FluxerSubscriptionCardState();
@@ -81,11 +94,19 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
       if (server?['name'] != null) (Icons.dns_outlined, '${server!['name']} · ${server['status_label'] ?? ''}'),
     ];
 
-    if (widget.sidebar) return _sidebar(s, plan, tone, label, endsAt, renewsAlone || plan?['auto_renew'] == true);
+    if (widget.sidebar) return _sidebar(s, plan, tone, label, endsAt, renewsAlone || plan?['auto_renew'] == true, balance);
     return widget.compact ? _compact(s, plan, tone, label, rows) : _wide(s, plan, tone, label, rows);
   }
 
-  Widget _sidebar(FluxerStrings s, Map<String, dynamic>? plan, Color tone, String label, DateTime? endsAt, bool renews) {
+  Widget _sidebar(
+    FluxerStrings s,
+    Map<String, dynamic>? plan,
+    Color tone,
+    String label,
+    DateTime? endsAt,
+    bool renews,
+    double? balance,
+  ) {
     final muted = Colors.white.withValues(alpha: 0.6);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 0, 12, 12),
@@ -117,6 +138,18 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
               style: TextStyle(color: tone == AppColorScheme.statusAvailable ? muted : tone, fontSize: 12),
             ),
           ),
+          if (balance != null) ...[
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(
+                s.balanceLine(balance),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(color: muted, fontSize: 12),
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -135,7 +168,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
   Widget _wide(FluxerStrings s, Map<String, dynamic>? plan, Color tone, String label, List<(IconData, String)> rows) {
     final muted = AppColorScheme.onSurface.withValues(alpha: 0.75);
     return Container(
-      width: 380,
+      width: widget.fill ? null : 380,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColorScheme.surface.withValues(alpha: 0.85),
@@ -180,6 +213,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
             children: [
               Expanded(
                 child: FilledButton.icon(
+                  autofocus: widget.autofocus,
                   onPressed: () => openFluxerPortal(context, 'plans', title: s.renew),
                   icon: const Icon(Icons.autorenew, size: 18),
                   label: Text(s.renew),

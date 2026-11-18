@@ -10,9 +10,12 @@
 //
 // Para fijar otra opción: añadir su clave y su valor a [_locked].
 
+import 'package:flutter/widgets.dart';
+
 import '../preference/preference_constants.dart';
 import '../preference/user_preferences.dart';
 import 'home/fluxer_home_layout.dart';
+import 'fluxer_strings.dart';
 import 'hub/fluxer_servers.dart';
 
 /// clave de la preferencia de Moonfin → valor que fija Fluxer.
@@ -38,7 +41,9 @@ final Map<String, Object> _locked = {
   // que manda Emby). Las demás opciones de filas no salen en Ajustes.
   'pref_merge_recent_rows_by_type': false,
   'mediaBarEnabled': true,
-  'mediaBarMode': UserPreferences.mediaBarMode.defaultValue,
+  // Siempre la imagen grande (en el móvil Moonfin pone por defecto «galería»,
+  // con carátulas): igual en el móvil que en el ordenador y la tele.
+  'mediaBarMode': UserPreferences.mediaBarModeMoonfin,
 };
 
 /// El valor fijado para [key] si la sesión activa es de Fluxer; si no, null.
@@ -57,3 +62,8 @@ bool fluxerHidesSettingsSection(String slug) =>
 
 /// ¿Está fijada esta opción ahora mismo (cuenta de Fluxer)?
 bool fluxerIsLocked(String key) => fluxerLockedValue(key) != null;
+
+/// Categorías de Ajustes que, en tele y ordenador, ocupan todo el ancho sin
+/// la vista previa (no cambian nada de lo que se ve): «Mi cuenta Fluxer».
+bool fluxerSettingsFullWidth(BuildContext context, String? categoryTitle) =>
+    categoryTitle != null && categoryTitle == FluxerStrings.of(context).fluxerAccount;

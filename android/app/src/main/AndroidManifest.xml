@@ -157,5 +157,15 @@
         <intent>
             <action android:name="android.speech.RecognitionService"/>
         </intent>
+        <!-- FLUXER: abrir la web de Fluxer al entrar (url_launcher): ver los
+             navegadores y las pestañas del navegador (Custom Tabs) en Android 11+. -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.BROWSABLE"/>
+            <data android:scheme="https"/>
+        </intent>
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService"/>
+        </intent>
     </queries>
 </manifest>

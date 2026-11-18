@@ -100,6 +100,7 @@ class FluxerStrings {
         'until ${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}',
       );
   String get autoRenewOn => _t('renovación automática', 'auto-renew');
+  String balanceLine(double v) => _t('Saldo: ${v.toStringAsFixed(2)} €', 'Balance: €${v.toStringAsFixed(2)}');
   String balance(double v) => _t('saldo ${v.toStringAsFixed(2)} €', 'balance €${v.toStringAsFixed(2)}');
   String get renewInBrowser => _t('Abre los planes en el navegador', 'Opens the plans in your browser');
   String get renewOnPhone => _t('Escanea el código con el móvil para renovar', 'Scan the code with your phone to renew');
@@ -194,11 +195,58 @@ class FluxerStrings {
   String get optionWithPhone => _t('Con tu móvil', 'With your phone');
   String get optionWithPhoneTv => _t('Entra con tu móvil', 'Sign in with your phone');
   String get optionOtherDevice => _t('Desde otro aparato', 'From another device');
-  String get scanQr => _t('Escanéalo con la cámara', 'Scan it with the camera');
+  String get scanQr => _t('o escanea con la cámara', 'or scan with the camera');
+  String get codeCopied => _t('Código copiado', 'Code copied');
+  String get tapToCopy => _t('Toca para copiar', 'Tap to copy');
+  String get openLinkFailed => _t('No se ha podido abrir el navegador', 'Could not open the browser');
   String get serverMessageTitle => _t('Mensaje de Fluxer', 'Message from Fluxer');
   String get gotIt => _t('Entendido', 'Got it');
   String serverUnreachable(String name) => _t(
         'Acceso aceptado, pero no se ha podido conectar con $name. Inténtalo de nuevo.',
         'Access granted, but $name could not be reached. Please try again.',
       );
+
+  // Test de velocidad (Mi cuenta Fluxer).
+  String get speedTest => _t('Test de velocidad', 'Speed test');
+  String get speedTestSection => _t('Conexión', 'Connection');
+  String get speedTestSubtitle => _t(
+        'Comprueba si a este aparato le llega bien lo que ves',
+        'Check whether this device gets what you watch smoothly',
+      );
+  String get speedTestIntro => _t(
+        'Elige algo que hayas visto: se descarga un trozo de ese mismo archivo desde tu servidor y te decimos si a este aparato le llega de sobra, justo o no le llega. Tarda unos 15 segundos.',
+        'Pick something you watched: a piece of that same file is downloaded from your server and we tell you whether this device gets it with room to spare, just enough or not enough. Takes about 15 seconds.',
+      );
+  String speedTestPick(int days) => _t('Lo que has visto estos $days días', 'What you watched in the last $days days');
+  String get speedTestSample => _t('Probar con el vídeo de prueba', 'Test with the sample video');
+  String get speedTestUnavailable =>
+      _t('El test de velocidad no está disponible ahora mismo.', 'The speed test is not available right now.');
+  String get speedTestLatency => _t('Midiendo la respuesta del servidor…', 'Measuring server response…');
+  String get speedTestDownloading => _t('Descargando de tu servidor…', 'Downloading from your server…');
+  String get speedTestSending => _t('Calculando el resultado…', 'Working out the result…');
+  String get speedTestDontLeave => _t('No salgas de esta pantalla', 'Stay on this screen');
+  String get speedTestAgain => _t('Hacer otra prueba', 'Run another test');
+  String get speedTestFailed => _t('No se ha podido medir', 'Could not measure');
+  String get speedTestDone => _t('Prueba hecha', 'Test done');
+  String get verdictPlenty => _t('Te llega de sobra', 'Plenty of speed');
+  String get verdictPlentyHelp => _t(
+        'Este aparato recibe el vídeo con margen: se debería ver sin cortes.',
+        'This device receives the video with room to spare: it should play without stalls.',
+      );
+  String get verdictTight => _t('Te llega justo', 'Just enough');
+  String get verdictTightHelp => _t(
+        'Puede pararse a ratos en las escenas con más movimiento. Si puedes, conecta el aparato por cable o acércalo al router.',
+        'It may stall now and then in busy scenes. If you can, use a cable or move closer to the router.',
+      );
+  String get verdictInsufficient => _t('No te llega', 'Not enough');
+  String get verdictInsufficientHelp => _t(
+        'Tu conexión en este aparato no llega a lo que pide este archivo: se parará a menudo. Prueba por cable, acércate al router o revisa tu conexión. Si sigue igual, escríbenos desde Soporte.',
+        'Your connection on this device is below what this file needs: it will stall often. Try a cable, move closer to the router or check your connection. If it persists, contact Support.',
+      );
+  String get speedAverage => _t('Velocidad media', 'Average speed');
+  String speedNeeded(String? quality) =>
+      quality == null ? _t('Lo que pide el archivo', 'What the file needs') : _t('Lo que pide el archivo ($quality)', 'What the file needs ($quality)');
+  String get speedMinMax => _t('Mínima / máxima', 'Min / max');
+  String get speedLatency => _t('Respuesta del servidor', 'Server response');
+  String get speedServer => _t('Lo que da tu servidor ahora', 'What your server gives now');
 }

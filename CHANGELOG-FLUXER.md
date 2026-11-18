@@ -3,6 +3,21 @@
 Cada versión publicada (etiqueta `vX.Y.Z`) usa como notas la sección con su
 número. Lo que llega de Moonfin al actualizar se resume en «De Moonfin».
 
+## 1.0.4 — Test de velocidad y mejor con el mando
+
+Basada en Moonfin 3.1.0.
+
+- **Test de velocidad** en Ajustes → Mi cuenta Fluxer: elige algo que hayas
+  visto y te dice si a ese aparato le llega de sobra, justo o no le llega.
+- **Mi cuenta Fluxer** a pantalla completa, con la suscripción en grande.
+- Con el mando de la tele ya se llega a «Invita y gana», al diagnóstico y,
+  al reportar un problema, se puede elegir qué pasa y llegar a «Enviar».
+- En el móvil, la barra de inicio con la imagen grande, como en el ordenador.
+- Pantalla de entrar: el enlace del paso 1 se abre al pulsarlo, el código se
+  copia al tocarlo y queda más claro que es el código o el QR.
+- «Entrar con mi cuenta de Fluxer» en Android abre la web dentro de la app.
+- El saldo, también en la barra lateral.
+
 ## 1.0.3 — Tu suscripción a la vista y entrar más fácil
 
 Basada en Moonfin 3.1.0.

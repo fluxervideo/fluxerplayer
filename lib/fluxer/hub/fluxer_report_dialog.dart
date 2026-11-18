@@ -10,6 +10,9 @@ import 'package:get_it/get_it.dart';
 
 import '../../data/models/aggregated_item.dart';
 import '../../data/services/log_service.dart';
+import '../../ui/widgets/settings/preference_tiles.dart';
+import '../../util/platform_detection.dart';
+import '../widgets/fluxer_tile.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
@@ -145,40 +148,35 @@ class _ReportDialogState extends State<_ReportDialog> {
               Text(_title(), style: const TextStyle(fontWeight: FontWeight.w600)),
               const SizedBox(height: 12),
               Text(s.reportWhatHappens),
-              RadioGroup<String>(
-                groupValue: _symptom,
-                onChanged: (v) => setState(() => _symptom = v ?? _symptom),
-                child: Column(
-                  children: [
-                    for (final (i, key) in _symptoms.indexed)
-                      RadioListTile<String>(
-                        autofocus: i == 0,
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        value: key,
-                        title: Text(s.symptom(key)),
-                      ),
-                  ],
+              // Opciones de Ajustes (SettingsPickerOption), no RadioListTile:
+              // en la tele el grupo de radios se quedaba con ↑/↓ y el botón
+              // central no elegía, así que no se llegaba al comentario ni a Enviar.
+              for (final (i, key) in _symptoms.indexed)
+                SettingsPickerOption(
+                  autofocus: i == 0,
+                  label: s.symptom(key),
+                  selected: _symptom == key,
+                  onTap: () => setState(() => _symptom = key),
                 ),
-              ),
               const SizedBox(height: 8),
-              TextField(
-                controller: _comment,
-                maxLines: 3,
-                maxLength: 2000,
-                decoration: InputDecoration(
-                  labelText: s.reportCommentHint,
-                  border: const OutlineInputBorder(),
+              FluxerTvTextFieldEscape(
+                enabled: PlatformDetection.isTV,
+                child: TextField(
+                  controller: _comment,
+                  maxLines: 3,
+                  maxLength: 2000,
+                  decoration: InputDecoration(
+                    labelText: s.reportCommentHint,
+                    border: const OutlineInputBorder(),
+                  ),
                 ),
               ),
               if (_canAttach)
-                CheckboxListTile(
-                  value: _attachDiagnostic,
-                  onChanged: (v) => setState(() => _attachDiagnostic = v ?? false),
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                  controlAffinity: ListTileControlAffinity.leading,
+                FluxerTile(
+                  leading: Icon(_attachDiagnostic ? Icons.check_box : Icons.check_box_outline_blank),
                   title: Text(s.attachDiagnostic),
+                  trailing: const SizedBox.shrink(),
+                  onTap: () => setState(() => _attachDiagnostic = !_attachDiagnostic),
                 ),
               if (_error != null) ...[
                 const SizedBox(height: 8),
