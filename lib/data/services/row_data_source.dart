@@ -29,6 +29,7 @@ import '../viewmodels/seerr_discover_view_model.dart';
 import '../viewmodels/live_tv_guide_view_model.dart';
 import 'custom_external_lists_service.dart';
 import 'plugin_sync_service.dart';
+import '../../fluxer/home/fluxer_home_layout.dart'; // FLUXER:
 
 /// What a home row's See All card opens: the library a Latest row comes from,
 /// or a pinned collection. Null for any other row, merged ones included.
@@ -2564,6 +2565,12 @@ class RowDataSource {
       // A row the server curates itself (Silo's home sections). The server
       // sends the whole row at once.
       case HomeSectionPluginSource.server:
+        // FLUXER: filas de las secciones de inicio de Emby (Home Screen Companion).
+        final fluxerRow = await FluxerHomeLayout.serverRowItems(_client, section, additionalData);
+        if (fluxerRow != null) {
+          final fluxerItems = _parseItems(fluxerRow, serverId);
+          return HomeRow(id: rowId, title: title, rowType: HomeRowType.pluginDynamic, items: fluxerItems, totalCount: fluxerItems.length);
+        }
         final api = _client.itemsApi;
         if (api is! ServerHomeSectionsApi) {
           return HomeRow(

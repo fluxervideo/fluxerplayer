@@ -24,6 +24,7 @@ import '../../auth/repositories/session_repository.dart';
 import '../../ui/navigation/app_router.dart';
 import '../fluxer_strings.dart';
 import '../server_message/fluxer_server_message.dart';
+import '../home/fluxer_home_layout.dart';
 import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
 
@@ -53,6 +54,8 @@ class FluxerHubWatcher {
     _running = true;
     try {
       if (GetIt.instance<SessionRepository>().activeUserId == null) return;
+      // Las filas de inicio que manda Emby (no necesita el Hub).
+      await FluxerHomeLayout.refresh();
       if (!await FluxerHubClient.instance.isLinked) return;
       final me = await FluxerHubClient.instance.me();
       if (me == null) return;

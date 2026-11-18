@@ -26,6 +26,8 @@ Basada en Moonfin 3.1.0.
 - Invita y gana enseña solo tu código; al pulsarlo se copia el enlace.
 - La barra grande de inicio enseña siempre **Tendencias de hoy**: lo más
   visto hoy, en orden.
+- La pantalla de inicio es la misma que tienes en Fluxer (mismas filas y en
+  el mismo orden): la preparamos nosotros para ti.
 
 ## 1.0.1 — Android y Mi cuenta Fluxer
 

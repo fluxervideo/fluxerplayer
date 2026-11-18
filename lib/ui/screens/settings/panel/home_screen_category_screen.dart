@@ -209,6 +209,7 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
           _SectionHeader(l10n.settingsContentsSection),
           adaptiveListSection(
             children: [
+              if (!fluxerHidesSettingsSection('home-sections')) // FLUXER: las filas las manda Emby
               _TvSettingsListTile(
                 autofocus: true,
                 leading: const Icon(Icons.list),

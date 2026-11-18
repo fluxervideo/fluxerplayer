@@ -71,7 +71,8 @@ Todo lo demás de FluxerPlayer vive en ficheros propios (`lib/fluxer/`, `fluxer/
 | `lib/ui/screens/detail/item_detail_screen.dart`, `lib/ui/screens/playback/video_player_screen.dart` | botón «Reportar un problema» |
 | `lib/ui/screens/settings/settings_side_panel.dart` | sección «Mi cuenta Fluxer» (además de lo oculto) |
 | `lib/preference/user_preferences.dart` (`get`), `lib/ui/widgets/navigation_layout.dart`, `lib/ui/screens/settings/panel/navigation_category_screen.dart` | opciones fijadas en cuentas de Fluxer (barra lateral) |
-| `lib/ui/screens/settings/panel/home_screen_category_screen.dart`, `panel/settings_search_index.dart` | sin la sección «Barra de medios» en cuentas de Fluxer |
+| `lib/ui/screens/settings/panel/home_screen_category_screen.dart`, `panel/settings_search_index.dart` | sin «Barra de medios» ni «Filas» en cuentas de Fluxer |
+| `lib/data/services/row_data_source.dart` | filas «del servidor» de Fluxer (secciones de inicio de Emby) |
 | `lib/data/repositories/media_bar_repository.dart` | barra de inicio con «Tendencias de hoy» (Hub `api/app/trending`) en cuentas de Fluxer |
 | `lib/util/platform_detection.dart` (`supportsOfflineDownloads`) | sin descargas ni modo sin conexión |
 | `lib/data/services/push_messaging_service.dart` | sin notificaciones push de Moonfin (Firebase) |
@@ -155,6 +156,17 @@ del servidor, Emby Connect, Plex) redirigen a `/fluxer-login`
 (`fluxerAuthRedirect`). Si la app ya está vinculada, ahí sale «Continuar con
 mi cuenta de Fluxer» (sesión nueva desde el Hub, sin contraseña).
 
+## Pantalla de inicio = la de Emby
+
+`lib/fluxer/home/fluxer_home_layout.dart`: en cuentas de Fluxer, las filas
+de inicio y su orden son las secciones de inicio de Emby del usuario
+(`/Users/{id}/HomeSections`, las que configura Home Screen Companion),
+traducidas a filas de Moonfin (spotlight → barra grande; resume, nextup,
+userviews, latestmedia → filas nativas; boxset/collections/items → filas
+«del servidor» con el nombre, contenido y orden de Emby). Se fija como
+`home_sections_config` y «Filas» no sale en Ajustes. Se refresca al arrancar,
+cada 30 min y al entrar con Fluxer.
+
 ## Opciones fijadas en cuentas de Fluxer
 
 `lib/fluxer/fluxer_locks.dart`: con una cuenta de Fluxer (entró con «Entrar
@@ -162,8 +174,10 @@ con Fluxer», `FluxerServers`), esas opciones valen lo que fija Fluxer y en
 Ajustes salen como «la fija Fluxer». Con cualquier otra cuenta, como en
 Moonfin. Ahora: barra de navegación = lateral izquierda; tasa de bits = 200
 Mbps; sin TV en vivo directo; barra de medios siempre activa con su estilo
-por defecto y «Tendencias de hoy» (su sección no sale en Ajustes:
-`fluxerHidesSettingsSection`). Para fijar otra:
+por defecto y «Tendencias de hoy»; filas de inicio = las de Emby; sin la
+sincronización de ajustes del plugin de Moonfin (no se mezcla con el Moonfin
+oficial del usuario). Las secciones de Ajustes que manda el servidor no salen
+(`fluxerHidesSettingsSection`). Para fijar otra:
 añadir su clave y valor a `_locked` (y, si tiene pantalla en Ajustes,
 enseñarla como fijada).
 

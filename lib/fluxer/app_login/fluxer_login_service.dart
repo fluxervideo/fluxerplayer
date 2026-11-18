@@ -6,6 +6,8 @@
 // (lib/auth/repositories/emby_connect_repository.dart, connectToServer), así
 // que no hace falta tocar auth_repository.dart.
 
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:server_core/server_core.dart';
@@ -19,6 +21,7 @@ import '../hub/fluxer_hub_client.dart';
 import '../hub/fluxer_servers.dart';
 import '../../preference/user_preferences.dart';
 import '../../ui/widgets/navigation_layout.dart';
+import '../home/fluxer_home_layout.dart';
 
 /// Código que enseña la app mientras espera.
 class FluxerLoginCode {
@@ -190,6 +193,9 @@ class FluxerLoginService {
     // entrar en una cuenta de Fluxer: la barra se coloca ya, sin reiniciar.
     NavigationLayout.positionNotifier.value =
         NavigationLayout.sanitizeNavbarPosition(getIt<UserPreferences>().get(UserPreferences.navbarPosition));
+
+    // Las filas de inicio que manda Emby para esta cuenta.
+    unawaited(FluxerHomeLayout.refresh());
 
     return FluxerLoginResult(serverId: server.id, switched: switched);
   }

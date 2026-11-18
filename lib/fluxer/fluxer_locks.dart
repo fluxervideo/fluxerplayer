@@ -12,6 +12,7 @@
 
 import '../preference/preference_constants.dart';
 import '../preference/user_preferences.dart';
+import 'home/fluxer_home_layout.dart';
 import 'hub/fluxer_servers.dart';
 
 /// clave de la preferencia de Moonfin → valor que fija Fluxer.
@@ -39,6 +40,8 @@ final Map<String, Object> _locked = {
 
 /// El valor fijado para [key] si la sesión activa es de Fluxer; si no, null.
 Object? fluxerLockedValue(String key) {
+  // Filas de inicio: las que manda Emby (fluxer_home_layout.dart).
+  if (key == 'home_sections_config') return FluxerHomeLayout.lockedJson;
   final value = _locked[key];
   if (value == null) return null;
   return FluxerServers.activeIsFluxer ? value : null;
@@ -47,7 +50,7 @@ Object? fluxerLockedValue(String key) {
 /// Secciones de Ajustes que no salen en cuentas de Fluxer (las manda el
 /// servidor). Buscador de ajustes: por el prefijo de su id.
 bool fluxerHidesSettingsSection(String slug) =>
-    FluxerServers.activeIsFluxer && const {'media-bar', 'plugin-sync', 'settings-sync'}.contains(slug);
+    FluxerServers.activeIsFluxer && const {'media-bar', 'plugin-sync', 'settings-sync', 'home-sections'}.contains(slug);
 
 /// ¿Está fijada esta opción ahora mismo (cuenta de Fluxer)?
 bool fluxerIsLocked(String key) => fluxerLockedValue(key) != null;
