@@ -127,6 +127,21 @@ class FluxerHubClient {
     return id is int ? id : (id is num ? id.toInt() : 0);
   }
 
+  /// Sesión de Emby nueva, sin contraseña, para la cuenta con la que se
+  /// vinculó la app. Null si la app no está vinculada (o ya no lo está) o
+  /// el Hub no puede dársela (cuenta inactiva, sin conexión…).
+  Future<Map<String, dynamic>?> session() async {
+    try {
+      final response = await _request(
+        (options) => _dio.post<Map<String, dynamic>>('session', options: options),
+        rethrowErrors: true,
+      );
+      return response?.data;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> logout() async {
     await _request((options) => _dio.post<dynamic>('logout', options: options));
     await clearToken();

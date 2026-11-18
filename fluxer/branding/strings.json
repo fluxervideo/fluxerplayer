@@ -1,23 +1,23 @@
 {
   "_comment": "Textos de Moonfin que FluxerPlayer cambia. Clave = la del .arb oficial (lib/l10n/app_en.arb). 'es' se usa en todos los idiomas es_*, 'en' en el resto. Lo aplica fluxer/apply_branding.py al compilar.",
   "addServerButtonSubtitle": {
-    "es": "Con la dirección que te hemos dado en tu cuenta de Fluxer",
-    "en": "With the address from your Fluxer account"
+    "es": "Cualquier servidor Emby, con su dirección",
+    "en": "Any Emby server, by its address"
   },
   "addServerChooseHow": {
     "es": "Elige cómo quieres conectarte.",
     "en": "Choose how you'd like to connect."
   },
   "addServerAddressChoice": {
-    "es": "La dirección de tu servidor de Fluxer",
-    "en": "Your Fluxer server address"
+    "es": "Un servidor Emby, con su dirección",
+    "en": "An Emby server, by its address"
   },
   "addServerAddressHelp": {
-    "es": "Escribe la dirección que te hemos asignado. La tienes en tu cuenta de Fluxer: hub.fluxer.video → Mi cuenta.",
-    "en": "Enter the address we gave you. You'll find it in your Fluxer account: hub.fluxer.video → My account."
+    "es": "La dirección del servidor, como la abrirías en el navegador (con el puerto si lo lleva).",
+    "en": "The server address, as you'd open it in a browser (including the port if it has one)."
   },
   "addServerDetectNote": {
-    "es": "¿No la tienes a mano? Usa «Entrar con Fluxer»: no tendrás que escribir nada.",
-    "en": "Don't have it handy? Use “Sign in with Fluxer”: nothing to type."
+    "es": "¿Es tu servidor de Fluxer? Mejor usa «Entrar con Fluxer»: no tendrás que escribir nada.",
+    "en": "Is it your Fluxer server? Use “Sign in with Fluxer” instead: nothing to type."
   }
 }

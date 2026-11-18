@@ -17,9 +17,14 @@ class FluxerStrings {
 
   String get signInWithFluxer => _t('Entrar con Fluxer', 'Sign in with Fluxer');
   String get signInWithFluxerSubtitle => _t(
-        'Sin escribir servidor, usuario ni contraseña',
-        'No server, username or password to type',
+        'Con tu cuenta de Fluxer: un código o la web, sin contraseñas',
+        'With your Fluxer account: a code or the web, no passwords',
       );
+  String get continueWithFluxer => _t('Continuar con Fluxer', 'Continue with Fluxer');
+  String continueWithFluxerSubtitle(String server) =>
+      _t('$server · con tu cuenta de Fluxer', '$server · with your Fluxer account');
+  String get addOtherServer => _t('Añadir otro servidor', 'Add another server');
+  String get orWithPassword => _t('o con contraseña', 'or with a password');
   String get stepOpen => _t('En tu móvil u ordenador, entra en', 'On your phone or computer, go to');
   String get stepCode => _t('Escribe este código', 'Enter this code');
   String get stepAccept => _t(

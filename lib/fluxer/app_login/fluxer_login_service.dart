@@ -16,6 +16,7 @@ import '../../auth/repositories/session_repository.dart';
 import '../../auth/store/authentication_store.dart';
 import '../fluxer_config.dart';
 import '../hub/fluxer_hub_client.dart';
+import '../hub/fluxer_servers.dart';
 
 /// Código que enseña la app mientras espera.
 class FluxerLoginCode {
@@ -139,12 +140,28 @@ class FluxerLoginService {
     }
   }
 
+  /// Sesión de Emby nueva sin contraseña desde FluxerHub (app ya vinculada).
+  /// Null si no puede (sin vincular, cuenta inactiva, sin conexión).
+  Future<FluxerLoginSession?> sessionFromHub() async {
+    final data = await FluxerHubClient.instance.session();
+    if (data == null || data['access_token'] == null) return null;
+    return FluxerLoginSession(
+      serverUrl: data['server_url'] as String,
+      serverName: data['server_name'] as String? ?? '',
+      userId: data['user_id'] as String,
+      userName: data['user_name'] as String? ?? '',
+      accessToken: data['access_token'] as String,
+    );
+  }
+
   /// Guarda servidor + usuario y abre la sesión (igual que Emby Connect).
   /// Devuelve null si no se puede conectar con el servidor.
   Future<FluxerLoginResult?> complete(FluxerLoginSession session) async {
     final getIt = GetIt.instance;
     final server = await getIt<ServerRepository>().addServer(session.serverUrl);
     if (server == null) return null;
+
+    await FluxerServers.add(server.id);
 
     final hubToken = session.hubToken;
     if (hubToken != null && hubToken.isNotEmpty) {

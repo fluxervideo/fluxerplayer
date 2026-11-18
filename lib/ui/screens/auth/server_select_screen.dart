@@ -32,9 +32,8 @@ import '../../widgets/login_scaffold.dart';
 import '../../widgets/overlay_sheet.dart';
 import '../../widgets/server_type_icon.dart';
 import 'add_server_dialog.dart';
-import '../../../fluxer/fluxer_routes.dart'; // FLUXER:
+import '../../../fluxer/app_login/fluxer_sign_in_card.dart'; // FLUXER:
 import '../../../fluxer/fluxer_features.dart'; // FLUXER:
-import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
 
 final _kAccent = AppColorScheme.accent;
 
@@ -565,6 +564,9 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // FLUXER: «Entrar con Fluxer» / «Continuar con Fluxer», lo primero.
+          SizedBox(width: double.infinity, child: FluxerSignInCard(autofocus: servers.isEmpty)),
+          const SizedBox(height: 24),
           if (servers.isNotEmpty) ...[
             Text(
               l10n.savedServers,
@@ -647,18 +649,10 @@ class _ServerSelectScreenState extends State<ServerSelectScreen> {
                 );
               }
 
-              // FLUXER: entrar con un código aceptado en FluxerHub.
-              actions.add(
-                _buildFooterActionButton(
-                  onPressed: _isConnecting ? null : () => context.go(fluxerLoginPath),
-                  icon: Image.asset('assets/icons/app_icon.png', width: 20, height: 20),
-                  label: FluxerStrings.of(context).signInWithFluxer,
-                ),
-              );
-
               if (!_isWebPluginMode) {
                 actions.add(
-                  AddServerButton(
+                  // FLUXER: «Añadir otro servidor» discreto; lo principal es Fluxer.
+                  FluxerAddServerLink(
                     onPressed: _isConnecting ? null : _showAddServerDialog,
                     focusNode: _addServerFocus,
                   ),

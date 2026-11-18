@@ -38,6 +38,7 @@ import '../../widgets/login_scaffold.dart';
 import '../../widgets/pin_entry_dialog.dart';
 import '../../widgets/sign_in_qr_code.dart';
 import 'silo_password_change_dialog.dart';
+import '../../../fluxer/app_login/fluxer_sign_in_card.dart'; // FLUXER:
 
 final _kAccent = AppColorScheme.accent;
 
@@ -1239,6 +1240,7 @@ class _LoginScreenState extends State<LoginScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        FluxerLoginShortcut(serverId: widget.serverId), // FLUXER: entrar sin contraseña
         if (!_hasUsername) ...[
           _buildTextField(
             controller: _usernameController,
