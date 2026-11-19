@@ -549,7 +549,8 @@ class _NavigationLayoutState extends State<NavigationLayout>
         Expanded(
           child: Stack(
             children: [
-              Positioned.fill(child: content),
+              // FLUXER: en el móvil el contenido no queda bajo los botones de Android.
+              Positioned.fill(child: SafeArea(top: false, child: content)),
               Positioned.fill(
                 child: sidebar,
               ),
