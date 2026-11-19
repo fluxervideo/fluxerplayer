@@ -110,9 +110,8 @@ sub("android/app/src/main/AndroidManifest.xml", [
 ])
 
 # --- Android (móvil y tele) --------------------------------------------------
-# Identificador propio (convive con Moonfin instalado), nombre, versión también
-# para el APK de tele, y sin Firebase: su google-services.json es el de Moonfin
-# y con otro identificador la compilación falla («No matching client»). Solo
+# Identificador propio (convive con Moonfin instalado), nombre y sin Firebase:
+# su google-services.json es el de Moonfin y con otro identificador la compilación falla («No matching client»). Solo
 # lo usaban las notificaciones push del plugin de Moonfin; la app ya maneja
 # que Firebase no arranque (push_messaging_service.dart, try/catch).
 
@@ -122,10 +121,6 @@ sub("android/app/build.gradle.kts", [
     (r'val baseAppName = "Moonfin"', f'val baseAppName = "{NAME}"'),
     (r'id\("com\.google\.gms\.google-services"\)\s*\n\s*\.apply\(System\.getenv\("MOONFIN_TEST_ID_SUFFIX"\)\.isNullOrEmpty\(\)\)',
      'id("com.google.gms.google-services").apply(false) // FluxerPlayer: sin Firebase'),
-])
-sub("pubspec.yaml", [
-    (r"(?m)^(\s*)android_tv_version:\s*\S+", rf"\g<1>android_tv_version: {VERSION['version']}"),
-    (r"(?m)^(\s*)android_tv_build_number:\s*\S+", rf"\g<1>android_tv_build_number: {build_number}"),
 ])
 sub("build-android.sh", [
     (r'APP_NAME="Moonfin"', f'APP_NAME="{NAME}"'),

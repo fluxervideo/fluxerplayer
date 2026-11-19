@@ -22,7 +22,7 @@ const _fileName = 'FluxerPlayer-update.apk';
 bool get fluxerAndroidInAppUpdate =>
     !kIsWeb &&
     Platform.isAndroid &&
-    (AppDistribution.channel == DistributionChannel.apk || AppDistribution.channel == DistributionChannel.androidTvApk);
+    AppDistribution.channel == DistributionChannel.apk;
 
 /// Descarga el APK de [update] y abre el instalador de Android.
 Future<void> fluxerDownloadAndInstallApk(BuildContext context, DesktopUpdateInfo update) async {

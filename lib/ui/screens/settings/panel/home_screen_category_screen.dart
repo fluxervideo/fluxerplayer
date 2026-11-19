@@ -174,6 +174,7 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
       switch (style) {
         HomeRowsStyle.v1 => l10n.homeRowsStyleClassic,
         HomeRowsStyle.v2 => l10n.homeRowsStyleModern,
+        HomeRowsStyle.carousel => l10n.homeRowsStyleCarousel,
       };
 
   void _reloadHomeRows() {
@@ -239,6 +240,7 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
           _SectionHeader(l10n.settingsLooksSection),
           adaptiveListSection(
             children: [
+              if (!fluxerIsLocked(UserPreferences.homeRowsStyle.key)) // FLUXER: fijada
               EnumPreferenceTile<HomeRowsStyle>(
                 preference: UserPreferences.homeRowsStyle,
                 title: l10n.rowsType,
@@ -252,7 +254,7 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
                   setState(() {});
                 },
               ),
-              if (rowsStyle == HomeRowsStyle.v2)
+              if (rowsStyle.usesModernCards)
                 SwitchPreferenceTile(
                   preference: UserPreferences.modernCardsOnMyMediaRow,
                   title: l10n.modernCardsOnMyMediaRow,
@@ -265,7 +267,7 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
                     setState(() {});
                   },
                 ),
-              if (rowsStyle == HomeRowsStyle.v2 && !isMobileUi) ...[
+              if (rowsStyle.usesModernCards && !isMobileUi) ...[
                 EnumPreferenceTile<ModernCardTransitionSpeed>(
                   preference: UserPreferences.modernCardTransitionSpeed,
                   title: l10n.modernCardsTransitionSpeed,
@@ -289,15 +291,15 @@ class _HomeScreenCategoryScreenState extends State<_HomeScreenCategoryScreen> {
                 ),
               ],
               SliderPreferenceTile(
-                preference: rowsStyle == HomeRowsStyle.v2
+                preference: rowsStyle.usesModernCards
                     ? UserPreferences.modernHomeRowsPadding
                     : UserPreferences.classicHomeRowsPadding,
                 title: l10n.homeRowsPadding,
                 description: l10n.homeRowsPaddingDescription,
                 icon: Icons.unfold_more,
-                min: rowsStyle == HomeRowsStyle.v2 ? 360 : 10,
-                max: rowsStyle == HomeRowsStyle.v2 ? 560 : 130,
-                divisions: rowsStyle == HomeRowsStyle.v2 ? 10 : 6,
+                min: rowsStyle.usesModernCards ? 360 : 10,
+                max: rowsStyle.usesModernCards ? 560 : 130,
+                divisions: rowsStyle.usesModernCards ? 10 : 6,
                 enabled: isPaddingEnabled,
                 onChangeEnd: _pushPersonalizationSync,
               ),
