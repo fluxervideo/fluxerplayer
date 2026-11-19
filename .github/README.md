@@ -43,21 +43,6 @@ versiones se instalan desde la propia app.
 ¿Dudas o problemas? Escríbenos desde tu cuenta de
 [hub.fluxer.video](https://hub.fluxer.video) (Mi cuenta → Soporte).
 
-## Code signing policy
-
-Free code signing provided by [SignPath.io](https://about.signpath.io),
-certificate by [SignPath Foundation](https://signpath.org).
-
-- Autores y revisores: [miembros](https://github.com/orgs/fluxervideo/people)
-- Aprobadores: [propietarios](https://github.com/orgs/fluxervideo/people?query=role%3Aowner)
-
-Solo se firma el instalador de Windows que compila GitHub Actions desde este
-repositorio, y cada versión se aprueba a mano.
-
-**Privacidad:** FluxerPlayer solo se conecta a los servidores de Fluxer en los
-que inicias sesión y a GitHub para buscar actualizaciones. No envía
-información a ningún otro sistema.
-
 ## Créditos y licencia
 
 FluxerPlayer es una versión personalizada para Fluxer de

@@ -224,9 +224,7 @@ jobs:
           **Descargas**
           - Windows: `FluxerPlayer_Windows_v{v}.exe`. Si Windows avisa, «Más información» → «Ejecutar de todas formas».
           - Móvil o tablet Android: `FluxerPlayer_Android_v{v}.apk`.
-          - Android TV, Google TV y Fire TV: `FluxerPlayer_AndroidTV_v{v}.apk`.
-
-          Free code signing provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).""".replace("\n          ", "\n"))
+          - Android TV, Google TV y Fire TV: `FluxerPlayer_AndroidTV_v{v}.apk`.""".replace("\n          ", "\n"))
           PY
           title="$(grep -m1 -E "^## ${v//./\\.}\b" CHANGELOG-FLUXER.md | sed 's/^## *//')"
           ls -la dist
