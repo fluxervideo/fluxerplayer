@@ -1,4 +1,3 @@
-import '../../../fluxer/fluxer_locks.dart'; // FLUXER:
 import 'package:get_it/get_it.dart';
 import 'package:server_core/server_core.dart';
 
@@ -26,21 +25,10 @@ List<SetupStep> visibleSetupSteps(
 ) =>
     [
       for (final step in steps)
-        if ((step != SetupStep.navbarStyle ||
-                effectivePosition == NavbarPosition.bottom) &&
-            !fluxerSetupStepLocked(step)) // FLUXER: sin preguntar lo que fija Fluxer
+        if (step != SetupStep.navbarStyle ||
+            effectivePosition == NavbarPosition.bottom)
           step,
     ];
-
-// FLUXER: en cuentas de Fluxer estas opciones están fijadas, así que el
-// asistente no las pregunta.
-bool fluxerSetupStepLocked(SetupStep step) => switch (step) {
-  SetupStep.navbar || SetupStep.navbarStyle =>
-    fluxerIsLocked(UserPreferences.navbarPosition.key),
-  SetupStep.mediaBar => fluxerIsLocked(UserPreferences.mediaBarMode.key),
-  SetupStep.homeRows => fluxerIsLocked(UserPreferences.homeRowsStyle.key),
-  _ => false,
-};
 
 /// Decides whether the wizard runs, and for which steps.
 ///
@@ -134,9 +122,7 @@ class SetupWizardGate {
     if (_rerunning) {
       return [
         for (final step in SetupStep.values)
-          if ((step != SetupStep.navbarStyle || offerStyle) &&
-              !fluxerSetupStepLocked(step)) // FLUXER:
-            step,
+          if (step != SetupStep.navbarStyle || offerStyle) step,
       ];
     }
 
@@ -160,7 +146,6 @@ class SetupWizardGate {
     ];
     // The tour only pays for itself alongside something else. On its own it is
     // a splash screen between the user and the app they came to open.
-    steps.removeWhere(fluxerSetupStepLocked); // FLUXER: lo fijado no cuenta
     if (steps.isEmpty) return const [];
     return [...steps, SetupStep.tour];
   }
