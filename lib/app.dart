@@ -80,6 +80,7 @@ import 'util/focus/gamepad/gamepad_key_synthesizer.dart';
 import 'util/focus/open_popup.dart';
 import 'package:custom_tv_text_field/custom_tv_text_field.dart';
 import 'fluxer/hub/fluxer_hub_watcher.dart'; // FLUXER:
+import 'fluxer/update/fluxer_update_gate.dart'; // FLUXER:
 
 class MoonfinApp extends StatefulWidget {
   const MoonfinApp({super.key});
@@ -292,8 +293,10 @@ class _MoonfinAppState extends State<MoonfinApp> {
                             Expanded(
                               child: Stack(
                                 children: [
-                                  _ConnectivityListener(
+                                  FluxerUpdateGate( // FLUXER: pantalla de actualizar al abrir
+                                  child: _ConnectivityListener(
                                     child: child ?? const SizedBox.shrink(),
+                                  ),
                                   ),
                                   const Align(
                                     alignment: Alignment.topCenter,

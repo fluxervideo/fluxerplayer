@@ -82,6 +82,13 @@ Future<void> showAppUpdateDialog(
   await launchUrl(uri, mode: LaunchMode.externalApplication);
 }
 
+// FLUXER: «Actualizar» de la pantalla de inicio: lo mismo que «Descargar».
+Future<void> fluxerStartUpdate(BuildContext context, DesktopUpdateInfo update) async {
+  if (fluxerAndroidInAppUpdate && update.downloadUri.isScheme('https') && update.downloadUri.path.toLowerCase().endsWith('.apk')) return fluxerDownloadAndInstallApk(context, update);
+  if (Platform.isWindows && update.downloadUri.isScheme('https')) return _downloadAndInstallWindowsUpdate(context, update);
+  await launchUrl(update.downloadUri, mode: LaunchMode.externalApplication);
+}
+
 Future<void> _downloadAndInstallWindowsUpdate(
   BuildContext context,
   DesktopUpdateInfo update,

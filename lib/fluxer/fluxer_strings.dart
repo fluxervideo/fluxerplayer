@@ -327,4 +327,12 @@ class FluxerStrings {
         'Could not download or open the update. Please try again later.',
       );
   String get cancel => _t('Cancelar', 'Cancel');
+
+  // Pantalla de actualizar al abrir la app (update/fluxer_update_gate.dart).
+  String get updateScreenTitle => _t('Hay una versión nueva', 'A new version is available');
+  String updateScreenBody(String version) => _t(
+        'FluxerPlayer $version ya está disponible. Actualiza para tener las últimas mejoras.',
+        'FluxerPlayer $version is available. Update to get the latest improvements.',
+      );
+  String get updateNow => _t('Actualizar', 'Update');
 }

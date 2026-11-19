@@ -66,10 +66,11 @@ class _AppUpdateBannerState extends State<AppUpdateBanner>
   }
 
   Future<void> _check() async {
+    if (widget.checkForUpdate == null) return; // FLUXER: lo hace la pantalla completa (fluxer_update_gate.dart)
     try {
       final check =
           widget.checkForUpdate ??
-          GetIt.instance<AppUpdateService>().checkForUpdateIfDue;
+          GetIt.instance<AppUpdateService>().fluxerCheckOnLaunch; // FLUXER: siempre al abrir
       final update = await check();
       if (!mounted || update == null) return;
       if (fluxerAndroidInAppUpdate && PlatformDetection.useLeanbackUi && fluxerOfferAndroidUpdate(update, fromButton: false)) return; // FLUXER: en la tele, diálogo con el mando

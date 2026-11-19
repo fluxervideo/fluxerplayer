@@ -87,6 +87,17 @@ class AppUpdateService {
     return result.update;
   }
 
+  // FLUXER: al abrir la app se busca siempre, aunque ya se haya buscado o
+  // descartado el aviso de esa versión (respeta el interruptor de avisos).
+  Future<DesktopUpdateInfo?> fluxerCheckOnLaunch() async {
+    final result = await _checkForUpdate(
+      enforceCooldown: false,
+      respectNotificationPreference: true,
+      suppressIfAlreadyNotified: false,
+    );
+    return result.update;
+  }
+
   Future<DesktopUpdateInfo?> checkForUpdateNow() async {
     final result = await checkForUpdateNowDetailed();
     return result.update;
