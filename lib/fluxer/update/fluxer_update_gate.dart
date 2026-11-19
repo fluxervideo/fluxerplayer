@@ -35,7 +35,8 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
   Future<void> _check() async {
     try {
       if (!GetIt.instance.isRegistered<AppUpdateService>()) return;
-      final update = await GetIt.instance<AppUpdateService>().fluxerCheckOnLaunch();
+      final update = await GetIt.instance<AppUpdateService>()
+          .fluxerCheckOnLaunch();
       if (mounted && update != null) setState(() => _update = update);
     } catch (_) {}
   }
@@ -49,7 +50,9 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
     // La descarga usa los diálogos de la app, que necesitan el navegador.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = appRouter.routerDelegate.navigatorKey.currentContext;
-      if (context != null && context.mounted) unawaited(fluxerStartUpdate(context, update));
+      if (context != null && context.mounted) {
+        unawaited(fluxerStartUpdate(context, update));
+      }
     });
   }
 
@@ -61,7 +64,11 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
         ExcludeFocus(excluding: update != null, child: widget.child),
         if (update != null)
           Positioned.fill(
-            child: _UpdateScreen(version: update.version, onAccept: _accept, onCancel: _cancel),
+            child: _UpdateScreen(
+              version: update.version.replaceFirst(RegExp('^[vV]'), ''),
+              onAccept: _accept,
+              onCancel: _cancel,
+            ),
           ),
       ],
     );
@@ -69,7 +76,11 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
 }
 
 class _UpdateScreen extends StatelessWidget {
-  const _UpdateScreen({required this.version, required this.onAccept, required this.onCancel});
+  const _UpdateScreen({
+    required this.version,
+    required this.onAccept,
+    required this.onCancel,
+  });
 
   final String version;
   final VoidCallback onAccept;
@@ -106,14 +117,26 @@ class _UpdateScreen extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Center(child: Image.asset('assets/images/logo_and_text.png', height: mobile ? 56 : 72)),
+                    Center(
+                      child: Image.asset(
+                        'assets/images/logo_and_text.png',
+                        height: mobile ? 56 : 72,
+                      ),
+                    ),
                     const SizedBox(height: 36),
-                    Icon(Icons.system_update_alt_rounded, size: 56, color: AppColorScheme.accent),
+                    Icon(
+                      Icons.system_update_alt_rounded,
+                      size: 56,
+                      color: AppColorScheme.accent,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       s.updateScreenTitle,
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: mobile ? 24 : 30, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: mobile ? 24 : 30,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -122,42 +145,73 @@ class _UpdateScreen extends StatelessWidget {
                       style: TextStyle(fontSize: 16, color: muted),
                     ),
                     const SizedBox(height: 32),
-                    FilledButton.icon(
-                      autofocus: true,
-                      onPressed: onAccept,
-                      icon: const Icon(Icons.download_rounded),
-                      label: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        child: Text(s.updateNow, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                      ),
-                      style: ButtonStyle(
-                        side: WidgetStateProperty.resolveWith(
-                          (states) => states.contains(WidgetState.focused)
-                              ? const BorderSide(color: Colors.white, width: 3)
-                              : BorderSide.none,
+                    _OkKey(
+                      onOk: onAccept,
+                      child: FilledButton.icon(
+                        autofocus: true,
+                        onPressed: onAccept,
+                        icon: const Icon(Icons.download_rounded),
+                        label: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          child: Text(
+                            s.updateNow,
+                            style: const TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        style: ButtonStyle(
+                          side: WidgetStateProperty.resolveWith(
+                            (states) => states.contains(WidgetState.focused)
+                                ? const BorderSide(
+                                    color: Colors.white,
+                                    width: 3,
+                                  )
+                                : BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
                     const SizedBox(height: 10),
-                    OutlinedButton(
-                      onPressed: onCancel,
-                      style: ButtonStyle(
-                        side: WidgetStateProperty.resolveWith((states) {
-                          if (states.contains(WidgetState.focused) || states.contains(WidgetState.hovered)) {
-                            return BorderSide(color: AppColorScheme.accent, width: 2);
-                          }
-                          return BorderSide(color: AppColorScheme.onSurface.withValues(alpha: 0.25));
-                        }),
-                        foregroundColor: WidgetStateProperty.resolveWith((states) {
-                          if (states.contains(WidgetState.focused) || states.contains(WidgetState.hovered)) {
-                            return AppColorScheme.accent;
-                          }
-                          return AppColorScheme.onSurface.withValues(alpha: 0.85);
-                        }),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Text(s.cancel, style: const TextStyle(fontSize: 16)),
+                    _OkKey(
+                      onOk: onCancel,
+                      child: OutlinedButton(
+                        onPressed: onCancel,
+                        style: ButtonStyle(
+                          side: WidgetStateProperty.resolveWith((states) {
+                            if (states.contains(WidgetState.focused) ||
+                                states.contains(WidgetState.hovered)) {
+                              return BorderSide(
+                                color: AppColorScheme.accent,
+                                width: 2,
+                              );
+                            }
+                            return BorderSide(
+                              color: AppColorScheme.onSurface.withValues(
+                                alpha: 0.25,
+                              ),
+                            );
+                          }),
+                          foregroundColor: WidgetStateProperty.resolveWith((
+                            states,
+                          ) {
+                            if (states.contains(WidgetState.focused) ||
+                                states.contains(WidgetState.hovered)) {
+                              return AppColorScheme.accent;
+                            }
+                            return AppColorScheme.onSurface.withValues(
+                              alpha: 0.85,
+                            );
+                          }),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Text(
+                            s.cancel,
+                            style: const TextStyle(fontSize: 16),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -169,4 +223,31 @@ class _UpdateScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+/// OK del mando (y Intro) sobre el botón de dentro, sin depender de los
+/// atajos de la app: igual que las filas de los diálogos del reproductor.
+class _OkKey extends StatelessWidget {
+  const _OkKey({required this.onOk, required this.child});
+
+  final VoidCallback onOk;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Focus(
+    canRequestFocus: false,
+    skipTraversal: true,
+    onKeyEvent: (_, event) {
+      if (event is KeyDownEvent &&
+          (event.logicalKey == LogicalKeyboardKey.select ||
+              event.logicalKey == LogicalKeyboardKey.enter ||
+              event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+              event.logicalKey == LogicalKeyboardKey.gameButtonA)) {
+        onOk();
+        return KeyEventResult.handled;
+      }
+      return KeyEventResult.ignored;
+    },
+    child: child,
+  );
 }

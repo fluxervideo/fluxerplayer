@@ -101,7 +101,7 @@ class _AppUpdateBannerState extends State<AppUpdateBanner>
     final pill = StatusBannerPill(
       icon: Icons.system_update_alt_rounded,
       tint: tint,
-      title: l10n.updateAvailableVersion(update.version),
+      title: l10n.updateAvailableVersion(update.version.replaceFirst(RegExp('^[vV]'), '')), // FLUXER: sin «vv»
       trailing: [
         if (isTv)
           BannerCountdownBar(duration: _autoDismissDuration, color: tint)

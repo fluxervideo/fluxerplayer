@@ -51,8 +51,47 @@ void main() {
     await tester.pumpAndSettle();
     expect(focusedLabel(), 'Download');
 
+    expect(find.text('v9.9.9 Available'), findsOneWidget);
+
     await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
     await tester.pumpAndSettle();
     expect(focusedLabel(), 'Read Release Notes');
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    expect(focusedLabel(), 'Cancel');
+
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowUp);
+    await tester.pumpAndSettle();
+    expect(focusedLabel(), 'Download');
+  });
+
+  testWidgets('OK on an option picks it', (tester) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: const [Locale('en')],
+      home: Builder(builder: (c) {
+        ctx = c;
+        return const Scaffold(body: SizedBox());
+      }),
+    ));
+    showAppUpdateDialog(
+      ctx,
+      DesktopUpdateInfo(
+        version: 'v9.9.9',
+        downloadUri: Uri.parse('https://example.com/a.apk'),
+        releaseNotesUrl: 'https://example.com',
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.arrowDown);
+    await tester.pumpAndSettle();
+    await tester.sendKeyEvent(LogicalKeyboardKey.select);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    tester.takeException();
+    expect(find.text('Cancel'), findsNothing);
   });
 }

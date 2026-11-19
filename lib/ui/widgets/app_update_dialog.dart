@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // FLUXER:
 import 'package:get_it/get_it.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,7 +47,7 @@ Future<void> showAppUpdateDialog(
 
   final choice = await showStyledPlayerDialog<String>(
     context,
-    title: l10n.updateAvailableTitle(update.version),
+    title: l10n.updateAvailableTitle(update.version.replaceFirst(RegExp('^[vV]'), '')), // FLUXER: sin «vv»
     showCancel: true,
     builder: (ctx) => Column(
       mainAxisSize: MainAxisSize.min,
@@ -202,7 +203,9 @@ Future<void> _downloadAndInstallWindowsUpdate(
   }
 }
 
-class _UpdateOption extends StatelessWidget {
+// FLUXER: hecha como la fila «Cancelar» del diálogo (Focus + OK + resaltado),
+// que sí funciona con el mando de la tele; «Descargar» ya seleccionada.
+class _UpdateOption extends StatefulWidget {
   final IconData icon;
   final String label;
   final String value;
@@ -214,22 +217,69 @@ class _UpdateOption extends StatelessWidget {
   });
 
   @override
+  State<_UpdateOption> createState() => _UpdateOptionState();
+}
+
+class _UpdateOptionState extends State<_UpdateOption> {
+  final _focusNode = FocusNode();
+  bool _focused = false;
+
+  bool get _autofocus => widget.value == 'download';
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(() => setState(() => _focused = _focusNode.hasFocus));
+    if (_autofocus) {
+      // En la tele, la app enfoca lo primero que encuentra en el diálogo
+      // después del autofocus: se recupera aquí.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _focusNode.requestFocus();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  void _choose() => Navigator.of(context).pop(widget.value);
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      autofocus: value == 'download', // FLUXER: con el mando, «Descargar» ya seleccionada
-      focusColor: Colors.white.withValues(alpha: 0.18), // FLUXER: que se vea qué está seleccionado
-      onTap: () => Navigator.of(context).pop(value),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        child: Row(
-          children: [
-            Icon(icon, size: 22, color: Colors.white70),
-            const SizedBox(width: 16),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 15, color: Colors.white),
-            ),
-          ],
+    return Focus(
+      focusNode: _focusNode,
+      autofocus: _autofocus,
+      onKeyEvent: (_, event) {
+        if (event is KeyDownEvent &&
+            (event.logicalKey == LogicalKeyboardKey.select ||
+                event.logicalKey == LogicalKeyboardKey.enter ||
+                event.logicalKey == LogicalKeyboardKey.numpadEnter ||
+                event.logicalKey == LogicalKeyboardKey.gameButtonA)) {
+          _choose();
+          return KeyEventResult.handled;
+        }
+        return KeyEventResult.ignored;
+      },
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _choose,
+        child: Container(
+          width: double.infinity,
+          color: _focused ? Colors.white.withValues(alpha: 0.18) : Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          child: Row(
+            children: [
+              Icon(widget.icon, size: 22, color: Colors.white70),
+              const SizedBox(width: 16),
+              Text(
+                widget.label,
+                style: TextStyle(fontSize: 16, color: Colors.white.withValues(alpha: _focused ? 0.95 : 0.8)),
+              ),
+            ],
+          ),
         ),
       ),
     );
