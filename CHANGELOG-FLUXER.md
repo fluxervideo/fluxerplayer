@@ -1,5 +1,16 @@
 # Novedades de FluxerPlayer
 
+## 1.0.9 — Inicio en carrusel
+
+- En la tele y el ordenador, las filas del inicio pasan a ser un carrusel con
+  los detalles de cada título debajo.
+- Al abrir la app, si hay una versión nueva, se ofrece actualizar en una
+  pantalla propia.
+- En el móvil, los botones de Android ya no tapan la app.
+- Un solo archivo de Android para móvil, tablet y tele.
+- Basada en Moonfin 3.1.1: arreglos de reproducción y subtítulos, bibliotecas
+  más rápidas y mejor uso con el mando.
+
 ## 1.0.8 — Tu cuenta, más clara
 
 - La barra lateral enseña tu plan y tu saldo en una tarjeta.
