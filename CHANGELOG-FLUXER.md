@@ -1,5 +1,11 @@
 # Novedades de FluxerPlayer
 
+## 1.0.10 — Actualizar con el mando
+
+- En la tele, el aviso de actualización se abre con «Descargar» ya
+  seleccionada y se ve qué opción está marcada.
+- Android: un solo archivo para móvil, tablet y tele.
+
 ## 1.0.9 — Inicio en carrusel
 
 - En la tele y el ordenador, las filas del inicio pasan a ser un carrusel con
