@@ -1,6 +1,6 @@
 # FluxerPlayer
 
-Cliente de Fluxer basado en [Moonfin](https://github.com/Moonfin-Client/Moonfin-Core) (GPLv3).
+Cliente de Fluxer basado en [Moonfin](https://github.com/Moonfin-Client/Moonfin-Core) (GPL-2.0 o posterior).
 
 - Rama `fluxer`, construida sobre una versión publicada de Moonfin.
 - El código propio está en `lib/fluxer/`, `fluxer/` y
