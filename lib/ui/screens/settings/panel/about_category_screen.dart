@@ -100,7 +100,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                     const _KeyboardShortcutsScreen(),
                   ),
                 ),
-              if (FluxerFeatures.rerunSetup) // FLUXER:
+              if (FluxerFeatures.setupWizard) // FLUXER:
               _TvSettingsListTile(
                 leading: const Icon(Icons.auto_awesome),
                 title: Text(l10n.runSetupAgain),

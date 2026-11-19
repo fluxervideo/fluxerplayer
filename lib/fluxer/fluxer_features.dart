@@ -52,8 +52,9 @@ abstract final class FluxerFeatures {
   /// FluxerPlayer la versión va arriba y el código fuente es un enlace.
   static const moonfinAboutTiles = false;
 
-  /// "Acerca de": «Run setup again» (volver a pasar el asistente inicial).
-  static const rerunSetup = false;
+  /// Asistente inicial de Moonfin (y «Volver a pasar el asistente» en
+  /// «Acerca de»). En FluxerPlayer casi todo lo que pregunta viene fijado.
+  static const setupWizard = false;
 
   /// Notificaciones push de Moonfin (Firebase de Moonfin, para su plugin de
   /// servidor y Seerr). Apagadas: no se registran los aparatos en el Firebase

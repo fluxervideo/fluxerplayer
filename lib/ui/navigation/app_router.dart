@@ -104,6 +104,7 @@ const _authRoutes = {
 /// answers false for anything it can't decide cheaply, since letting somebody
 /// through to Home costs nothing next to stranding them outside it.
 bool _shouldRunSetupWizard() {
+  if (!FluxerFeatures.setupWizard) return false; // FLUXER: sin asistente inicial
   try {
     final client = SetupWizardGate.activeClient();
     if (client == null) return false;
