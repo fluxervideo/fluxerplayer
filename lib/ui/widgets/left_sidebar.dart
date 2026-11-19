@@ -54,6 +54,7 @@ import 'adaptive/sf_symbol.dart';
 import 'user_avatar_image.dart';
 import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
 import '../../fluxer/hub/fluxer_subscription_card.dart'; // FLUXER:
+import '../../fluxer/widgets/fluxer_sidebar_version.dart'; // FLUXER:
 
 const _kExpandedWidthDesktop = 240.0;
 const _kExpandedWidthMobile = 260.0;
@@ -1309,6 +1310,7 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
           isExpanded: _showLabels,
           focusNode: _musicCardFocusNode,
         ),
+        FluxerSidebarVersion(expanded: _showLabels), // FLUXER: versión y aviso de actualizar
         if (showClock)
           Visibility(
             visible: _showLabels,

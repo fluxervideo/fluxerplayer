@@ -80,6 +80,8 @@ class FluxerStrings {
         'audio' => _t('Problemas con el sonido o los subtítulos', 'Sound or subtitle problems'),
         _ => _t('Otra cosa', 'Something else'),
       };
+  String sidebarUpdateTitle(String version) => _t('Versión $version disponible', 'Version $version available');
+  String get sidebarUpdateAction => _t('Pulsa para actualizar', 'Press to update');
   String basedOnMoonfin(String moonfin) => _t('Basada en Moonfin $moonfin', 'Based on Moonfin $moonfin');
   String updateToVersion(String version) => _t('Actualizar a la versión $version', 'Update to version $version');
   String get updateToVersionSubtitle => _t('Descargar e instalar la versión nueva', 'Download and install the new version');
