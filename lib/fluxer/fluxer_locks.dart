@@ -25,11 +25,10 @@ final Map<String, Object> _locked = {
   // cada aparato (grande en ordenador/tele, galería en el móvil) y con
   // «Tendencias de hoy» (fluxer_media_bar.dart). Su sección no sale en Ajustes:
   // lo que se ve lo manda la configuración del servidor (Home Screen Companion).
-  // Sin la sincronización de ajustes del plugin de Moonfin: se activaba sola
-  // y mezclaba los ajustes de FluxerPlayer con el Moonfin oficial del mismo
-  // usuario (y subía al servidor lo que fija Fluxer). En FluxerPlayer manda
-  // la configuración de Emby (secciones de inicio de Home Screen Companion).
-  'pref_plugin_sync_enabled': false,
+  // Sincronización con el plugin de Moonfin siempre activa, pero solo de la
+  // apariencia (fluxer_sync.dart): lo demás lo fija FluxerPlayer o se queda en
+  // el aparato, y no se mezcla con el Moonfin oficial del mismo usuario.
+  'pref_plugin_sync_enabled': true,
   // Filas de inicio: sin unir las de «Lo último en…» por tipo (cambiaría lo
   // que manda Emby). Las demás opciones de filas no salen en Ajustes.
   'pref_merge_recent_rows_by_type': false,

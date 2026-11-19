@@ -31,6 +31,7 @@ import '../../preference/user_preferences.dart';
 import '../../util/platform_detection.dart';
 import '../../util/signed_in_server_features.dart';
 import '../../fluxer/fluxer_features.dart'; // FLUXER:
+import '../../fluxer/fluxer_sync.dart'; // FLUXER:
 
 enum _PluginAvailabilityStatus { available, unavailable, unknown }
 
@@ -1788,6 +1789,14 @@ class PluginSyncService extends ChangeNotifier {
   Future<void> _applyServerSettingsUnbatched(
     Map<String, dynamic> resolved,
   ) async {
+    // FLUXER: en cuentas de Fluxer solo se lee la apariencia.
+    if (fluxerAppearanceOnlySync) {
+      for (final field in syncedFields) {
+        if (fluxerSyncedKeys.contains(field.serverKey)) _applySyncedField(resolved, field);
+      }
+      _clearMissingCustomThemeSelection();
+      return;
+    }
     final serverId = (_store.getString('pref_last_server_id') ?? '').trim();
     if (serverId.isNotEmpty) {
       // When the server profile carries no API key, keep the locally stored
@@ -2497,7 +2506,7 @@ class PluginSyncService extends ChangeNotifier {
       payload['homeRowImageTypes'] = homeRowImageTypes;
     }
 
-    return payload;
+    return fluxerFilterProfile(payload); // FLUXER: solo la apariencia
   }
 
   void _onPrefsChanged() {
