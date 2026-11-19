@@ -1,5 +1,13 @@
 # Novedades de FluxerPlayer
 
+## 1.0.8 — Tu cuenta, más clara
+
+- La barra lateral enseña tu plan y tu saldo en una tarjeta.
+- «Recargar saldo» se ve mejor; con la prueba gratis, un aviso te lleva a
+  elegir un plan.
+- Los mensajes salen arriba a la derecha, sin parar lo que estés viendo.
+- Ajustes más sencillos: solo lo que sirve para vídeo.
+
 ## 1.0.7 — Actualizar desde la app en Android
 
 - En Android (móvil y tele), las próximas actualizaciones se instalan desde
