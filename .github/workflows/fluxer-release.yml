@@ -93,8 +93,7 @@ jobs:
           if-no-files-found: error
 
   # Un solo APK para móvil, tablet y tele: la app elige el diseño de tele al
-  # arrancar. Se publica también con el nombre de tele para que las copias de
-  # tele ya instaladas lo encuentren al actualizar.
+  # arrancar.
   android:
     name: android
     runs-on: ubuntu-latest
@@ -171,7 +170,6 @@ jobs:
           apk="$(find build/app/outputs/flutter-apk -iname 'app-mobile-release.apk' | head -1)"
           test -n "$apk" || { find build/app/outputs -name '*.apk'; exit 1; }
           cp "$apk" "FluxerPlayer_Android_v$v.apk"
-          cp "$apk" "FluxerPlayer_AndroidTV_v$v.apk"
 
       - uses: actions/upload-artifact@v6
         with:
@@ -209,7 +207,7 @@ jobs:
           ---
           **Descargas**
           - Windows: `FluxerPlayer_Windows_v{v}.exe`. Si Windows avisa, «Más información» → «Ejecutar de todas formas».
-          - Android (móvil, tablet, Android TV, Google TV y Fire TV): `FluxerPlayer_Android_v{v}.apk`. `FluxerPlayer_AndroidTV_v{v}.apk` es el mismo archivo.""".replace("\n          ", "\n"))
+          - Android (móvil, tablet, Android TV, Google TV y Fire TV): `FluxerPlayer_Android_v{v}.apk`.""".replace("\n          ", "\n"))
           PY
           title="$(grep -m1 -E "^## ${v//./\\.}\b" CHANGELOG-FLUXER.md | sed 's/^## *//')"
           ls -la dist
