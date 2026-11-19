@@ -7,7 +7,6 @@ import 'package:get_it/get_it.dart';
 import '../../data/models/aggregated_item.dart';
 import '../../data/services/log_service.dart';
 import '../../ui/widgets/settings/preference_tiles.dart';
-import '../../util/platform_detection.dart';
 import '../widgets/fluxer_tile.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
@@ -55,18 +54,11 @@ class _ReportDialog extends StatefulWidget {
 
 class _ReportDialogState extends State<_ReportDialog> {
   String _symptom = 'wont_start';
-  final _comment = TextEditingController();
   // Solo si el cliente tiene activado «Grabar diagnóstico» (Mi cuenta Fluxer).
   final bool _canAttach = GetIt.instance<LogService>().isEnabled;
   bool _attachDiagnostic = true;
   bool _sending = false;
   String? _error;
-
-  @override
-  void dispose() {
-    _comment.dispose();
-    super.dispose();
-  }
 
   /// «Serie · T2E5 · Título» o «Película (2021)».
   String _title() {
@@ -93,7 +85,6 @@ class _ReportDialogState extends State<_ReportDialog> {
       final id = await FluxerHubClient.instance.report(
         type: 'technical_issue',
         title: _title(),
-        comment: _comment.text.trim().isEmpty ? null : _comment.text.trim(),
         symptom: _symptom,
         embyItemId: item.id,
         embyItemType: item.type,
@@ -155,18 +146,6 @@ class _ReportDialogState extends State<_ReportDialog> {
                   onTap: () => setState(() => _symptom = key),
                 ),
               const SizedBox(height: 8),
-              FluxerTvTextFieldEscape(
-                enabled: PlatformDetection.isTV,
-                child: TextField(
-                  controller: _comment,
-                  maxLines: 3,
-                  maxLength: 2000,
-                  decoration: InputDecoration(
-                    labelText: s.reportCommentHint,
-                    border: const OutlineInputBorder(),
-                  ),
-                ),
-              ),
               if (_canAttach)
                 FluxerTile(
                   leading: Icon(_attachDiagnostic ? Icons.check_box : Icons.check_box_outline_blank),

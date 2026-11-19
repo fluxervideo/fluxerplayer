@@ -87,39 +87,17 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
 
   Future<void> _sendDiagnostic() async {
     final s = FluxerStrings.of(context);
-    final comment = TextEditingController();
     final send = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text(s.sendDiagnostic),
-        content: SizedBox(
-          width: 480,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(s.sendDiagnosticHelp),
-              const SizedBox(height: 12),
-              FluxerTvTextFieldEscape(
-                enabled: PlatformDetection.isTV,
-                child: TextField(
-                  controller: comment,
-                  maxLines: 3,
-                  maxLength: 2000,
-                  decoration: InputDecoration(labelText: s.reportCommentHint, border: const OutlineInputBorder()),
-                ),
-              ),
-            ],
-          ),
-        ),
+        content: SizedBox(width: 480, child: Text(s.sendDiagnosticHelp)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(s.back)),
-          FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(s.send)),
+          FilledButton(autofocus: true, onPressed: () => Navigator.pop(ctx, true), child: Text(s.send)),
         ],
       ),
     );
-    final text = comment.text.trim();
-    comment.dispose();
     if (send != true || !mounted) return;
 
     setState(() => _sendingDiagnostic = true);
@@ -127,7 +105,6 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
     try {
       final id = await _client.diagnostics(
         GetIt.instance<LogService>().exportText(maxEntries: 5000),
-        comment: text.isEmpty ? null : text,
       );
       message = id == null ? s.reportNeedsFluxerLogin : s.reportSent;
     } catch (_) {

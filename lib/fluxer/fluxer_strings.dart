@@ -63,8 +63,6 @@ class FluxerStrings {
 
   String get reportProblem => _t('Reportar un problema', 'Report a problem');
   String get reportWhatHappens => _t('¿Qué pasa?', 'What happens?');
-  String get reportCommentHint =>
-      _t('Cuéntanos algo más (opcional)', 'Tell us more (optional)');
   String get reportSent => _t('Enviado. Lo revisaremos pronto, gracias.', 'Sent. We will look into it soon, thanks.');
   String get reportFailed =>
       _t('No se ha podido enviar. Inténtalo en un momento.', 'Could not send it. Please try again shortly.');
@@ -128,8 +126,8 @@ class FluxerStrings {
   String get sendDiagnosticSubtitle =>
       _t('Nos ayuda a encontrar el fallo', 'Helps us find the problem');
   String get sendDiagnosticHelp => _t(
-        'Mandaremos el registro de la app a Fluxer. Cuéntanos qué pasaba:',
-        'We will send the app log to Fluxer. Tell us what was happening:',
+        'Mandaremos el registro de la app a Fluxer para ver qué ha pasado.',
+        'We will send the app log to Fluxer to see what happened.',
       );
   String get attachDiagnostic => _t('Adjuntar el diagnóstico de la app', 'Attach the app diagnostics');
   String get fluxerSessionSection => _t('Sesión', 'Session');
