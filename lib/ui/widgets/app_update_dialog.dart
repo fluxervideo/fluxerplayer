@@ -216,6 +216,8 @@ class _UpdateOption extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      autofocus: value == 'download', // FLUXER: con el mando, «Descargar» ya seleccionada
+      focusColor: Colors.white.withValues(alpha: 0.18), // FLUXER: que se vea qué está seleccionado
       onTap: () => Navigator.of(context).pop(value),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
