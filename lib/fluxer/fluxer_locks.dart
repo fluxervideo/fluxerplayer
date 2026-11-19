@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 
 import '../preference/preference_constants.dart';
 import '../preference/user_preferences.dart';
-import '../util/platform_detection.dart';
 import 'home/fluxer_home_layout.dart';
 import 'fluxer_strings.dart';
 import 'hub/fluxer_servers.dart';
@@ -38,17 +37,14 @@ final Map<String, Object> _locked = {
   // Siempre la imagen grande (en el móvil Moonfin pone por defecto «galería»,
   // con carátulas): igual en el móvil que en el ordenador y la tele.
   'mediaBarMode': UserPreferences.mediaBarModeMoonfin,
+  // Filas de inicio en carrusel (con panel de detalles) en todos los aparatos.
+  'pref_home_rows_style': HomeRowsStyle.carousel,
 };
 
 /// El valor fijado para [key] si la sesión activa es de Fluxer; si no, null.
 Object? fluxerLockedValue(String key) {
   // Filas de inicio: las que manda Emby (fluxer_home_layout.dart).
   if (key == 'home_sections_config') return FluxerHomeLayout.lockedJson;
-  // Filas en carrusel (con panel de detalles) en tele y ordenador; en el móvil,
-  // lo de Moonfin. Se mira cada vez: la tele se detecta al arrancar.
-  if (key == 'pref_home_rows_style') {
-    return FluxerServers.activeIsFluxer && !PlatformDetection.useMobileUi ? HomeRowsStyle.carousel : null;
-  }
   final value = _locked[key];
   if (value == null) return null;
   return FluxerServers.activeIsFluxer ? value : null;
