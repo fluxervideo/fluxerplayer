@@ -971,19 +971,34 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
         clockBehavior == ClockBehavior.inMenus;
     return Column(
       children: [
-        Visibility(
-          visible: _isExpanded,
-          maintainSize: true,
-          maintainAnimation: true,
-          maintainState: true,
-          child: _buildUserSection(),
-        ),
-        // FLUXER: la suscripción de Fluxer bajo el usuario (tele/ordenador).
+        // FLUXER: usuario y suscripción de Fluxer en una tarjeta (tele/ordenador).
         if (FluxerServers.activeIsFluxer)
+          fluxerSidebarAccountBox(
+            expanded: _isExpanded,
+            child: Column(
+              children: [
+                Visibility(
+                  visible: _isExpanded,
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  child: _buildUserSection(),
+                ),
+                Visibility(
+                  visible: _isExpanded,
+                  maintainState: true,
+                  child: const FluxerSubscriptionCard(sidebar: true),
+                ),
+              ],
+            ),
+          )
+        else
           Visibility(
             visible: _isExpanded,
+            maintainSize: true,
+            maintainAnimation: true,
             maintainState: true,
-            child: const FluxerSubscriptionCard(sidebar: true),
+            child: _buildUserSection(),
           ),
         Expanded(
           child: LayoutBuilder(

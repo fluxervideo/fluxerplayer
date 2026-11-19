@@ -102,17 +102,18 @@ class FluxerHubWatcher {
     if (text == null) return;
 
     await prefs.setString(_planWarnedKey, today);
+    final action = plan['is_trial'] == true ? s.choosePlan : s.renew;
     final renew = await showFluxerCard(
       title: s.planTitle,
       text: text,
-      actionLabel: plansUrl == null ? null : s.renew,
+      actionLabel: plansUrl == null ? null : action,
       icon: Icons.event_busy_outlined,
     );
     if (renew == true) {
       final context = appRouter.routerDelegate.navigatorKey.currentContext;
       if (context != null && context.mounted) {
         // Portal ya con la sesión iniciada: navegador, o QR en la tele.
-        await openFluxerPortal(context, 'plans', title: s.renew);
+        await openFluxerPortal(context, 'plans', title: action);
       }
     }
   }

@@ -21,8 +21,14 @@ abstract final class FluxerFeatures {
   /// Logros, amigos y chat.
   static const achievements = false;
 
-  /// Lector de libros y cómics.
+  /// Lector de libros y cómics, y las opciones de libros de Ajustes.
   static const books = false;
+
+  /// Música: lo que Moonfin enseña solo si el servidor tiene música
+  /// (enganche: musicOnAnySignedInServer: filas de audio, letras, ajustes de
+  /// filas) y las opciones de música de Ajustes (estilo de la biblioteca,
+  /// tiempo en el reproductor de música, salvapantallas con audio).
+  static const music = false;
 
   /// Peticiones por Seerr.
   static const seerr = false;
@@ -41,6 +47,9 @@ abstract final class FluxerFeatures {
   /// GitHub de Moonfin y su política de privacidad. (El código fuente y las
   /// licencias se quedan siempre: los exige la GPL.)
   static const moonfinCommunityLinks = false;
+
+  /// "Acerca de": «Run setup again» (volver a pasar el asistente inicial).
+  static const rerunSetup = false;
 
   /// Notificaciones push de Moonfin (Firebase de Moonfin, para su plugin de
   /// servidor y Seerr). Apagadas: no se registran los aparatos en el Firebase

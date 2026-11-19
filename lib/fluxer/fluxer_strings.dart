@@ -87,7 +87,7 @@ class FluxerStrings {
   // Mi cuenta Fluxer
   String get fluxerAccount => _t('Mi cuenta Fluxer', 'My Fluxer account');
   String get fluxerAccountSubtitle =>
-      _t('Plan, renovar, invitar y diagnóstico', 'Plan, renew, invite and diagnostics');
+      _t('Plan, saldo, invitar y diagnóstico', 'Plan, balance, invite and diagnostics');
   String get fluxerAccountUnlinked => _t(
         'Esta app no está vinculada a tu cuenta de Fluxer. Vincúlala con «Entrar con Fluxer» para ver tu plan, renovarlo y recibir avisos.',
         'This app is not linked to your Fluxer account. Link it with “Sign in with Fluxer” to see and renew your plan and get notices.',
@@ -100,6 +100,8 @@ class FluxerStrings {
       );
   String get autoRenewOn => _t('renovación automática', 'auto-renew');
   String balanceLine(double v) => _t('Saldo: ${v.toStringAsFixed(2)} €', 'Balance: €${v.toStringAsFixed(2)}');
+  String get availableBalance => _t('Saldo disponible', 'Available balance');
+  String money(double v) => _t('${v.toStringAsFixed(2).replaceAll('.', ',')} €', '€${v.toStringAsFixed(2)}');
   String balance(double v) => _t('saldo ${v.toStringAsFixed(2)} €', 'balance €${v.toStringAsFixed(2)}');
   String get renewInBrowser => _t('Abre los planes en el navegador', 'Opens the plans in your browser');
   String get renewOnPhone => _t('Escanea el código con el móvil para renovar', 'Scan the code with your phone to renew');
@@ -177,6 +179,16 @@ class FluxerStrings {
   String get autoRenewYes => _t('Renovación automática', 'Auto-renew on');
   String get autoRenewNo => _t('Sin renovación automática', 'Auto-renew off');
   String get myAccount => _t('Mi cuenta', 'My account');
+  String get choosePlan => _t('Elegir plan', 'Choose a plan');
+  String get changePlan => _t('Cambiar de plan', 'Change plan');
+  String get trialNotice => _t(
+        'Estás en la prueba gratis. Para seguir cuando acabe, recarga saldo y elige un plan.',
+        'You are on the free trial. To keep watching after it ends, top up your balance and choose a plan.',
+      );
+  String get noPlanNotice => _t(
+        'No tienes un plan activo. Recarga saldo y elige un plan para seguir viendo.',
+        'You have no active plan. Top up your balance and choose a plan to keep watching.',
+      );
   // Pantalla de entrar
   String get loginTitle => _t('Inicia sesión en Fluxer', 'Sign in to Fluxer');
   String get loginSubtitle => _t('Elige una opción para entrar', 'Choose how to sign in');

@@ -33,6 +33,7 @@ class _QualityDecodingScreen extends StatelessWidget {
                   '1': '1 Mbps',
                 },
               ),
+              if (!fluxerIsLocked(UserPreferences.maxVideoResolution.key)) // FLUXER: fijada en automática
               EnumPreferenceTile<MaxVideoResolution>(
                 preference: UserPreferences.maxVideoResolution,
                 title: l10n.maxResolution,

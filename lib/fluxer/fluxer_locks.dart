@@ -15,6 +15,9 @@ final Map<String, Object> _locked = {
   // Calidad: tasa de bits máxima siempre la más alta (Moonfin trae 120 Mbps
   // por defecto). La opción no sale en Ajustes.
   'pref_max_bitrate': '200',
+  // Resolución máxima: automática (en Fluxer no se transcodifica). La opción
+  // no sale en Ajustes.
+  'pref_max_video_resolution': MaxVideoResolution.auto,
   // TV en vivo: reproducción directa desactivada (lo de Moonfin por defecto).
   // La opción no sale en Ajustes.
   'pref_live_direct': false,

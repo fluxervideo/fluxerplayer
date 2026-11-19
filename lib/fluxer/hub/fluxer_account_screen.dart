@@ -168,7 +168,7 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
 
   // A pantalla completa (sin la vista previa de Ajustes): a la izquierda la
   // suscripción en grande (plan, estado, fechas, saldo, email, servidor, con
-  // «Renovar» y «Mi cuenta»); a la derecha invitar, test de velocidad y
+  // «Recargar saldo», plan y «Mi cuenta»); a la derecha invitar, test de velocidad y
   // diagnóstico. En pantallas estrechas, uno debajo del otro.
   Widget _linkedBody(FluxerStrings s) {
     const card = FluxerSubscriptionCard(fill: true, autofocus: true);

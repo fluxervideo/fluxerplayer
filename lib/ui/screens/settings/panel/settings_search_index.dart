@@ -957,6 +957,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
         l10n.dimmingLevel,
         keywords: ['brightness'],
       ),
+      if (FluxerFeatures.music) // FLUXER:
       screensaver.leaf(
         'pref_screensaver_during_audio',
         l10n.screensaverDuringAudio,
@@ -1276,12 +1277,14 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       l10n.multiServerLibraries,
       subtitle: l10n.showLibrariesFromAllServers,
     ),
+    if (FluxerFeatures.books) // FLUXER:
     libraries.leaf(
       'pref_show_book_discover_tab',
       l10n.showBookDiscoverTab,
       subtitle: l10n.showBookDiscoverTabDescription,
       keywords: ['books', 'audiobooks', 'open library', 'librivox'],
     ),
+    if (FluxerFeatures.books) // FLUXER:
     libraries.leaf(
       'pref_book_folders_as_series',
       l10n.bookFoldersAsSeries,
@@ -1295,6 +1298,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       'header',
       'toolbar',
     ]),
+    if (FluxerFeatures.books) // FLUXER:
     libraries.leaf('pref_book_library_style', l10n.bookLibraryStyle, keywords: [
       'books',
       'audiobooks',
@@ -1302,6 +1306,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       'reading room',
       'bookstore',
     ]),
+    if (FluxerFeatures.music) // FLUXER:
     libraries.leaf('pref_music_library_style', l10n.musicLibraryStyle, keywords: [
       'music',
       'albums',
@@ -1565,6 +1570,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       l10n.playbackTimeBelowBarRight,
       subtitle: l10n.playbackTimeSlotDescription,
     ),
+    if (FluxerFeatures.music) // FLUXER:
     playbackTime.leaf(
       'music_playback_time_display',
       l10n.playbackTimeMusicSection,
@@ -1665,6 +1671,7 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       'bandwidth',
       'transcode',
     ]),
+    if (!fluxerIsLocked('pref_max_video_resolution')) // FLUXER: fijada
     quality.leaf('pref_max_video_resolution', l10n.maxResolution, keywords: [
       '4k',
       '1080p',
@@ -2087,23 +2094,23 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       ),
     ],
 
-    if (canToggleGameBackend && gamesOnAnyServer)
+    if (FluxerFeatures.games && canToggleGameBackend && gamesOnAnyServer) // FLUXER:
       playback.leaf(
         'pref_use_native_emulator',
         l10n.useNativeEmulator,
         subtitle: l10n.useNativeEmulatorSubtitle,
         keywords: ['games', 'retroarch'],
       ),
-    if (usesOnScreenControls)
+    if (FluxerFeatures.games && usesOnScreenControls) // FLUXER:
       playback.leaf(
         'pref_game_playback_orientation',
         l10n.gameOrientation,
         subtitle: l10n.gameOrientationSubtitle,
         keywords: ['rotate', 'landscape', 'portrait', 'games'],
       ),
-    if (supportsCoreDownloads && usesNativeGameBackend && gamesOnAnyServer)
+    if (FluxerFeatures.games && supportsCoreDownloads && usesNativeGameBackend && gamesOnAnyServer) // FLUXER:
       emulatorCores.screen(keywords: ['retroarch', 'games', 'systems']),
-    if (usesNativeGameBackend)
+    if (FluxerFeatures.games && usesNativeGameBackend) // FLUXER:
       downloadedGames.screen(keywords: ['roms', 'storage']),
 
     syncplay.screen(
@@ -2319,12 +2326,14 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
         l10n.settingsCheckForUpdates,
         subtitle: l10n.settingsCheckForUpdatesSubtitle,
       ),
+    if (FluxerFeatures.moonfinCommunityLinks) // FLUXER:
     about.leaf(
       'report_issue',
       l10n.settingsReportAnIssue,
       subtitle: l10n.settingsReportAnIssueSubtitle,
       keywords: ['bug', 'github'],
     ),
+    if (FluxerFeatures.rerunSetup) // FLUXER:
     about.leaf(
       'run_setup_again',
       l10n.runSetupAgain,

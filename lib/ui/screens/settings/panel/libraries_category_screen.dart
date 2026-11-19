@@ -34,6 +34,7 @@ class _LibrariesCategoryScreen extends StatelessWidget {
                 icon: Icons.dns,
                 onChanged: _pushPersonalizationSync,
               ),
+              if (FluxerFeatures.books) // FLUXER:
               SwitchPreferenceTile(
                 preference: UserPreferences.showBookDiscoverTab,
                 title: l10n.showBookDiscoverTab,
@@ -41,6 +42,7 @@ class _LibrariesCategoryScreen extends StatelessWidget {
                 icon: Icons.explore,
                 onChanged: _pushPersonalizationSync,
               ),
+              if (FluxerFeatures.books) // FLUXER:
               SwitchPreferenceTile(
                 preference: UserPreferences.bookFoldersAsSeries,
                 title: l10n.bookFoldersAsSeries,
@@ -68,6 +70,7 @@ class _LibrariesCategoryScreen extends StatelessWidget {
                 },
                 onChanged: _pushPersonalizationSync,
               ),
+              if (FluxerFeatures.books) // FLUXER:
               EnumPreferenceTile<BookLibraryStyle>(
                 key: const ValueKey('pref_book_library_style'),
                 preference: UserPreferences.bookLibraryStyle,
@@ -82,6 +85,7 @@ class _LibrariesCategoryScreen extends StatelessWidget {
                 },
                 onChanged: _pushPersonalizationSync,
               ),
+              if (FluxerFeatures.music) // FLUXER:
               EnumPreferenceTile<MusicLibraryStyle>(
                 key: const ValueKey('pref_music_library_style'),
                 preference: UserPreferences.musicLibraryStyle,

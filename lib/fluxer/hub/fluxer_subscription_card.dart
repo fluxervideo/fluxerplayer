@@ -8,6 +8,25 @@ import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
 import 'fluxer_recharge_screen.dart';
 
+/// Barra lateral: el usuario y la suscripción juntos en una tarjeta; el
+/// fondo solo se ve con la barra abierta.
+Widget fluxerSidebarAccountBox({required bool expanded, required Widget child}) => AnimatedContainer(
+  duration: const Duration(milliseconds: 150),
+  // Sin margen a los lados con la barra cerrada: la fila del usuario no cabría.
+  margin: EdgeInsets.fromLTRB(expanded ? 10 : 0, 10, expanded ? 10 : 0, 6),
+  decoration: BoxDecoration(
+    color: expanded ? const Color(0xFF262B33).withValues(alpha: 0.92) : Colors.transparent,
+    borderRadius: BorderRadius.circular(20),
+    border: Border.all(color: expanded ? Colors.white.withValues(alpha: 0.08) : Colors.transparent),
+  ),
+  child: child,
+);
+
+/// Fecha de fin que tiene sentido enseñar: los planes indefinidos llevan una
+/// muy lejana.
+DateTime? _visibleEnd(DateTime? endsAt) =>
+    endsAt != null && endsAt.difference(DateTime.now()).inDays < 3650 ? endsAt : null;
+
 class FluxerSubscriptionCard extends StatefulWidget {
   const FluxerSubscriptionCard({
     super.key,
@@ -26,7 +45,7 @@ class FluxerSubscriptionCard extends StatefulWidget {
   /// Ocupa todo el ancho que le den (Ajustes → Mi cuenta Fluxer).
   final bool fill;
 
-  /// «Renovar» con el foco al abrir (mando de la tele).
+  /// «Recargar saldo» con el foco al abrir (mando de la tele).
   final bool autofocus;
 
   @override
@@ -56,7 +75,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     final server = _map('server');
 
     final status = plan?['status'] as String? ?? '';
-    final endsAt = DateTime.tryParse(plan?['ends_at'] as String? ?? '')?.toLocal();
+    final endsAt = _visibleEnd(DateTime.tryParse(plan?['ends_at'] as String? ?? '')?.toLocal());
     final days = endsAt == null ? null : (endsAt.difference(DateTime.now()).inHours / 24).ceil();
     final renewsAlone = (plan?['auto_renew'] as bool? ?? false) &&
         (plan?['balance_covers_next_renewal'] as bool? ?? false);
@@ -86,9 +105,19 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
       if (server?['name'] != null) (Icons.dns_outlined, '${server!['name']} · ${server['status_label'] ?? ''}'),
     ];
 
-    if (widget.sidebar) return _sidebar(s, plan, tone, label, endsAt, renewsAlone || plan?['auto_renew'] == true, balance);
-    return widget.compact ? _compact(s, plan, tone, label, rows) : _wide(s, plan, tone, label, rows);
+    if (widget.sidebar) {
+      return _sidebar(s, plan, tone, label, endsAt, renewsAlone || plan?['auto_renew'] == true, balance, email);
+    }
+
+    // Con la prueba, sin plan o caducado: hay que recargar y elegir plan.
+    final trial = plan?['is_trial'] == true;
+    final notice = trial ? s.trialNotice : (status != 'active' ? s.noPlanNotice : null);
+    return widget.compact
+        ? _compact(s, plan, tone, label, rows, notice)
+        : _wide(s, plan, tone, label, rows, notice);
   }
+
+  void _openPlans(String title) => openFluxerPortal(context, 'plans', title: title);
 
   Widget _sidebar(
     FluxerStrings s,
@@ -98,52 +127,92 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     DateTime? endsAt,
     bool renews,
     double? balance,
+    String? email,
   ) {
     final muted = Colors.white.withValues(alpha: 0.6);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 12, 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
+    final trial = plan?['is_trial'] == true;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // El email bajo el nombre (avatar de 40 + márgenes de la fila del usuario).
+        if (email != null && email.isNotEmpty)
+          Transform.translate(
+            offset: const Offset(0, -12),
+            child: Padding(
+              padding: const EdgeInsets.only(left: 66, right: 12),
+              child: Text(email, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: muted, fontSize: 12)),
+            ),
+          ),
+        Container(
+          margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.05),
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(width: 8, height: 8, decoration: BoxDecoration(color: tone, shape: BoxShape.circle)),
-              const SizedBox(width: 8),
-              Flexible(
-                child: Text(
-                  plan?['name'] as String? ?? s.noPlan,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: Colors.white.withValues(alpha: 0.9), fontSize: 13, fontWeight: FontWeight.w600),
-                ),
+              Row(
+                children: [
+                  Icon(
+                    trial ? Icons.hourglass_bottom_rounded : Icons.workspace_premium_outlined,
+                    size: 18,
+                    color: const Color(0xFFF5C451),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      plan?['name'] as String? ?? s.noPlan,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: tone.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Text(label, style: TextStyle(color: tone, fontSize: 11, fontWeight: FontWeight.w700)),
+                  ),
+                ],
               ),
+              if (endsAt != null) ...[
+                const SizedBox(height: 4),
+                Padding(
+                  padding: const EdgeInsets.only(left: 26),
+                  child: Text(
+                    renews ? s.renewsOn(endsAt) : s.endsOn(endsAt),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(color: tone == AppColorScheme.statusAvailable ? muted : tone, fontSize: 12),
+                  ),
+                ),
+              ],
+              if (balance != null) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Divider(height: 1, thickness: 1, color: Colors.white.withValues(alpha: 0.08)),
+                ),
+                Row(
+                  children: [
+                    Expanded(child: Text(s.availableBalance, style: TextStyle(color: muted, fontSize: 12))),
+                    Text(
+                      s.money(balance),
+                      style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
-          const SizedBox(height: 2),
-          Padding(
-            padding: const EdgeInsets.only(left: 16),
-            child: Text(
-              endsAt == null ? label : (renews ? s.renewsOn(endsAt) : s.endsOn(endsAt)),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(color: tone == AppColorScheme.statusAvailable ? muted : tone, fontSize: 12),
-            ),
-          ),
-          if (balance != null) ...[
-            const SizedBox(height: 2),
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Text(
-                s.balanceLine(balance),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(color: muted, fontSize: 12),
-              ),
-            ),
-          ],
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -157,7 +226,16 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     child: Text(label, style: TextStyle(color: tone, fontWeight: FontWeight.w600, fontSize: 13)),
   );
 
-  Widget _wide(FluxerStrings s, Map<String, dynamic>? plan, Color tone, String label, List<(IconData, String)> rows) {
+  Widget _wide(
+    FluxerStrings s,
+    Map<String, dynamic>? plan,
+    Color tone,
+    String label,
+    List<(IconData, String)> rows,
+    String? notice,
+  ) {
+    final accent = AppColorScheme.accent;
+    const bigText = TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
     final muted = AppColorScheme.onSurface.withValues(alpha: 0.75);
     return Container(
       width: widget.fill ? null : 380,
@@ -201,25 +279,54 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
               ),
             ),
           const SizedBox(height: 8),
+          if (notice != null) ...[
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: accent.withValues(alpha: 0.45)),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline, size: 20, color: accent),
+                  const SizedBox(width: 10),
+                  Expanded(child: Text(notice, style: TextStyle(fontSize: 14, height: 1.35, color: AppColorScheme.onSurface))),
+                ],
+              ),
+            ),
+            const SizedBox(height: 14),
+          ],
           // Recargar saldo dentro de la app (fluxer_recharge_screen.dart);
           // planes y cuenta, en el portal.
           FilledButton.icon(
             autofocus: widget.autofocus,
             onPressed: () => openFluxerRecharge(context),
-            icon: const Icon(Icons.account_balance_wallet_outlined, size: 18),
-            label: Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Text(s.recharge)),
+            icon: const Icon(Icons.account_balance_wallet_outlined, size: 22),
+            label: Padding(padding: const EdgeInsets.symmetric(vertical: 14), child: Text(s.recharge, style: bigText)),
           ),
           const SizedBox(height: 10),
+          if (notice != null) ...[
+            FilledButton.tonalIcon(
+              onPressed: () => _openPlans(s.choosePlan),
+              icon: const Icon(Icons.playlist_add_check, size: 22),
+              label: Padding(padding: const EdgeInsets.symmetric(vertical: 14), child: Text(s.choosePlan, style: bigText)),
+            ),
+            const SizedBox(height: 10),
+          ],
           Row(
             children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => openFluxerPortal(context, 'plans', title: s.renew),
-                  icon: const Icon(Icons.autorenew, size: 18),
-                  label: Text(s.renew),
+              if (notice == null) ...[
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () => _openPlans(s.changePlan),
+                    icon: const Icon(Icons.swap_horiz, size: 18),
+                    label: Text(s.changePlan),
+                  ),
                 ),
-              ),
-              const SizedBox(width: 10),
+                const SizedBox(width: 10),
+              ],
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () => openFluxerPortal(context, 'account', title: s.fluxerAccount),
@@ -234,7 +341,14 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     );
   }
 
-  Widget _compact(FluxerStrings s, Map<String, dynamic>? plan, Color tone, String label, List<(IconData, String)> rows) {
+  Widget _compact(
+    FluxerStrings s,
+    Map<String, dynamic>? plan,
+    Color tone,
+    String label,
+    List<(IconData, String)> rows,
+    String? notice,
+  ) {
     final muted = AppColorScheme.onSurface.withValues(alpha: 0.7);
     return Padding(
       padding: const EdgeInsets.only(top: 8),
@@ -266,19 +380,35 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
                 ],
               ),
             ),
+          if (notice != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(notice, textAlign: TextAlign.center, style: TextStyle(fontSize: 12, height: 1.3, color: AppColorScheme.accent)),
+            ),
+          const SizedBox(height: 8),
           Wrap(
             alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
             children: [
-              TextButton.icon(
+              FilledButton.icon(
                 onPressed: () => openFluxerRecharge(context),
                 icon: const Icon(Icons.account_balance_wallet_outlined, size: 16),
                 label: Text(s.recharge),
               ),
-              TextButton.icon(
-                onPressed: () => openFluxerPortal(context, 'plans', title: s.renew),
-                icon: const Icon(Icons.autorenew, size: 16),
-                label: Text(s.renew),
-              ),
+              if (notice != null)
+                FilledButton.tonalIcon(
+                  onPressed: () => _openPlans(s.choosePlan),
+                  icon: const Icon(Icons.playlist_add_check, size: 16),
+                  label: Text(s.choosePlan),
+                )
+              else
+                TextButton.icon(
+                  onPressed: () => _openPlans(s.changePlan),
+                  icon: const Icon(Icons.swap_horiz, size: 16),
+                  label: Text(s.changePlan),
+                ),
             ],
           ),
         ],

@@ -1307,7 +1307,7 @@ class SessionRepository {
       case 'displaymessage':
         final text = message.arguments['Text'];
         if (text != null && text.trim().isNotEmpty) {
-          // FLUXER: mensaje grande, centrado y durante TimeoutMs.
+          // FLUXER: aviso arriba a la derecha durante TimeoutMs.
           final shown = showFluxerServerMessage(
             text: text,
             header: message.arguments['Header'],

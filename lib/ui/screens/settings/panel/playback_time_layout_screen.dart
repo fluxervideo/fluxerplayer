@@ -81,6 +81,7 @@ class _PlaybackTimeLayoutScreen extends StatelessWidget {
               ),
             ],
           ),
+          if (FluxerFeatures.music) ...[ // FLUXER:
           _SectionHeader(l10n.playbackTimeMusicSection),
           adaptiveListSection(
             children: [
@@ -98,6 +99,7 @@ class _PlaybackTimeLayoutScreen extends StatelessWidget {
               ),
             ],
           ),
+          ], // FLUXER:
         ],
       ),
     );

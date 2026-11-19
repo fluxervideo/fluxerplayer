@@ -17,6 +17,7 @@ import '../../widgets/settings/preference_tiles.dart';
 import '../../widgets/settings/settings_preview_scope.dart';
 import '../../widgets/settings/settings_section_header.dart';
 import 'settings_app_bar.dart';
+import '../../../fluxer/fluxer_features.dart'; // FLUXER:
 
 class ScreensaverSettingsScreen extends StatefulWidget {
   const ScreensaverSettingsScreen({super.key});
@@ -230,6 +231,7 @@ class _ScreensaverSettingsScreenState extends State<ScreensaverSettingsScreen> {
                     divisions: 9,
                     labelOf: (value) => value == 0 ? l10n.off : '$value%',
                   ),
+                  if (FluxerFeatures.music) // FLUXER:
                   SwitchPreferenceTile(
                     preference: UserPreferences.screensaverDuringAudio,
                     title: l10n.screensaverDuringAudio,

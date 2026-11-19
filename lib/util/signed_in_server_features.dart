@@ -51,6 +51,7 @@ bool liveTvOnAnySignedInServer({AuthenticationStore? store}) =>
 /// Music: libraries, artists, albums, songs and their lyrics
 /// ([FeatureDetector.supportsMusic]).
 bool musicOnAnySignedInServer({AuthenticationStore? store}) =>
+    FluxerFeatures.music && // FLUXER:
     anySignedInServerSupports((f) => f.supportsMusic, store: store);
 
 bool playlistsOnAnySignedInServer({AuthenticationStore? store}) =>
