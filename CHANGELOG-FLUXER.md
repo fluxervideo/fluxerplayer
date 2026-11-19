@@ -1,5 +1,14 @@
 # Novedades de FluxerPlayer
 
+## 1.0.12 — Tu tema en todas partes
+
+- El tema y los colores se guardan en el servidor: al reinstalar vuelven solos.
+- Abajo en la barra lateral, la versión y un aviso para actualizar si hay
+  una nueva.
+- Reportar un problema sin escribir: eliges qué pasa y envías.
+- Filas del inicio en carrusel también en el móvil.
+- Sin asistente al entrar por primera vez.
+
 ## 1.0.11 — Actualizar con el mando
 
 - En la tele, el aviso de actualización se maneja bien con el mando:
