@@ -82,6 +82,10 @@ class FluxerStrings {
         'audio' => _t('Problemas con el sonido o los subtítulos', 'Sound or subtitle problems'),
         _ => _t('Otra cosa', 'Something else'),
       };
+  String basedOnMoonfin(String moonfin) => _t('Basada en Moonfin $moonfin', 'Based on Moonfin $moonfin');
+  String updateToVersion(String version) => _t('Actualizar a la versión $version', 'Update to version $version');
+  String get updateToVersionSubtitle => _t('Descargar e instalar la versión nueva', 'Download and install the new version');
+  String get checkUpdatesSubtitle => _t('Comprobar si hay una versión nueva', 'Check whether a new version is out');
   String versionWithBase(String version, String moonfin) =>
       _t('$version · basada en Moonfin $moonfin', '$version · based on Moonfin $moonfin');
   // Mi cuenta Fluxer

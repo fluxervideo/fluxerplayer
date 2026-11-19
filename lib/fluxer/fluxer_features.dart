@@ -48,6 +48,10 @@ abstract final class FluxerFeatures {
   /// licencias se quedan siempre: los exige la GPL.)
   static const moonfinCommunityLinks = false;
 
+  /// "Acerca de" de Moonfin: fila «Versión» y fila «Código fuente». En
+  /// FluxerPlayer la versión va arriba y el código fuente es un enlace.
+  static const moonfinAboutTiles = false;
+
   /// "Acerca de": «Run setup again» (volver a pasar el asistente inicial).
   static const rerunSetup = false;
 

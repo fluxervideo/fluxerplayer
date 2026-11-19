@@ -22,11 +22,30 @@ class _AboutCategoryScreen extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
+          // FLUXER: base de Moonfin y código fuente como enlace, bajo la versión.
+          if (!FluxerFeatures.moonfinAboutTiles) ...[
+            const SizedBox(height: 2),
+            Center(
+              child: Text(
+                FluxerStrings.of(context).basedOnMoonfin(fluxerMoonfinBase),
+                style: TextStyle(fontSize: 12, color: AppColorScheme.onSurface.withValues(alpha: 0.5)),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Center(
+              child: FluxerLink(
+                icon: Icons.code,
+                label: l10n.sourceCode,
+                onTap: () => showQrOrLaunch(context, url: l10n.sourceCodeUrl, title: l10n.sourceCode),
+              ),
+            ),
+          ],
           const SizedBox(height: 16),
           const Divider(),
           _SectionHeader(l10n.settingsAppInfo),
           adaptiveListSection(
             children: [
+              if (FluxerFeatures.moonfinAboutTiles) // FLUXER: la versión ya va arriba
               _TvSettingsListTile(
                 autofocus: true,
                 leading: const Icon(Icons.info_outline),
@@ -39,6 +58,7 @@ class _AboutCategoryScreen extends StatelessWidget {
               ),
               if (AppDistribution.supportsInAppUpdates)
                 const _CheckForUpdatesTile(),
+              if (FluxerFeatures.moonfinAboutTiles) // FLUXER: enlace bajo la versión
               _TvSettingsListTile(
                 leading: const Icon(Icons.code),
                 title: Text(l10n.sourceCode),
@@ -163,18 +183,35 @@ class _CheckForUpdatesTileState extends State<_CheckForUpdatesTile> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    return _TvSettingsListTile(
-      leading: _checking
-          ? const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            )
-          : const Icon(Icons.system_update_alt),
-      title: Text(l10n.settingsCheckForUpdates),
-      subtitle: Text(l10n.settingsCheckForUpdatesSubtitle),
-      onTap: _checking ? null : _check,
+    // FLUXER: si al abrir la app se vio una versión nueva, «Actualizar a la
+    // versión X» directamente; si no, «Buscar actualizaciones».
+    return ValueListenableBuilder<DesktopUpdateInfo?>(
+      valueListenable: fluxerKnownUpdate,
+      builder: (context, known, _) {
+        final s = FluxerStrings.of(context);
+        if (known != null) {
+          return _TvSettingsListTile(
+            autofocus: true,
+            leading: Icon(Icons.system_update_alt, color: AppColorScheme.accent),
+            title: Text(s.updateToVersion(known.version.replaceFirst(RegExp('^[vV]'), ''))),
+            subtitle: Text(s.updateToVersionSubtitle),
+            onTap: () => fluxerStartUpdate(context, known),
+          );
+        }
+        return _TvSettingsListTile(
+          autofocus: true,
+          leading: _checking
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.system_update_alt),
+          title: Text(AppLocalizations.of(context).settingsCheckForUpdates),
+          subtitle: Text(s.checkUpdatesSubtitle),
+          onTap: _checking ? null : _check,
+        );
+      },
     );
   }
 }

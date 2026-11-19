@@ -14,6 +14,10 @@ import '../../ui/widgets/app_update_dialog.dart';
 import '../../util/platform_detection.dart';
 import '../fluxer_strings.dart';
 
+/// La versión nueva encontrada al abrir la app (aunque se haya cancelado):
+/// «Acerca de» ofrece entonces «Actualizar a la versión X».
+final fluxerKnownUpdate = ValueNotifier<DesktopUpdateInfo?>(null);
+
 class FluxerUpdateGate extends StatefulWidget {
   const FluxerUpdateGate({super.key, required this.child});
 
@@ -37,6 +41,7 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
       if (!GetIt.instance.isRegistered<AppUpdateService>()) return;
       final update = await GetIt.instance<AppUpdateService>()
           .fluxerCheckOnLaunch();
+      fluxerKnownUpdate.value = update;
       if (mounted && update != null) setState(() => _update = update);
     } catch (_) {}
   }
