@@ -11,6 +11,7 @@ import '../../ui/navigation/app_router.dart';
 import '../fluxer_strings.dart';
 import '../server_message/fluxer_server_message.dart';
 import '../home/fluxer_home_layout.dart';
+import 'fluxer_direct_paths.dart';
 import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
 
@@ -30,6 +31,7 @@ class FluxerHubWatcher {
   /// Arranca la vigilancia (una sola vez).
   static void start() {
     if (_timer != null) return;
+    FluxerDirectPaths.install();
     Timer(const Duration(seconds: 8), check);
     _timer = Timer.periodic(_interval, (_) => check());
   }

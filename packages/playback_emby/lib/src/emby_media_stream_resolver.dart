@@ -7,6 +7,11 @@ class EmbyMediaStreamResolver implements MediaStreamResolver {
 
   EmbyMediaStreamResolver(this._client);
 
+  // FLUXER: lectura directa (lib/fluxer/hub/fluxer_direct_paths.dart).
+  /// Maps a server file path to a URL this client reads directly, sending
+  /// the user's token in `X-Emby-Token`. Null keeps it on the server.
+  static String? Function(String serverBaseUrl, String path)? directPathUrl;
+
   @override
   Future<StreamResolutionResult> resolve(
     dynamic mediaItem, {
@@ -114,6 +119,17 @@ class EmbyMediaStreamResolver implements MediaStreamResolver {
       enableDirectPlay: enableDirectPlay,
     );
 
+    // FLUXER: lectura directa.
+    final directUrl = _directPathUrl(source, enableDirectPlay: enableDirectPlay);
+    if (directUrl != null) {
+      url = directUrl;
+      playMethod = StreamPlayMethod.directPlay;
+    }
+    final token = _client.accessToken;
+    final requestHeaders = directUrl != null && token != null && token.isNotEmpty
+        ? {'X-Emby-Token': token}
+        : const <String, String>{};
+
     if (playMethod == StreamPlayMethod.transcode || playMethod == StreamPlayMethod.directStream) {
       url = MediaStreamResolver.applyStreamIndices(url, audioStreamIndex, subtitleStreamIndex);
       url = url
@@ -185,7 +201,18 @@ class EmbyMediaStreamResolver implements MediaStreamResolver {
       serverOfferedDirectPlay: source.supportsDirectPlay,
       directPlayRequested: enableDirectPlay,
       sourceBitrate: source.bitrate,
+      requestHeaders: requestHeaders, // FLUXER: lectura directa
     );
+  }
+
+  // FLUXER: lectura directa.
+  String? _directPathUrl(PlaybackMediaSource source, {required bool enableDirectPlay}) {
+    final map = directPathUrl;
+    final path = source.path;
+    if (map == null || !enableDirectPlay || path == null) return null;
+    if (source.protocol?.toLowerCase() != 'file' || source.isRemote) return null;
+    if (source.liveStreamId != null && source.liveStreamId!.isNotEmpty) return null;
+    return map(_client.baseUrl, path);
   }
 
   String _appendAuth(String url) {

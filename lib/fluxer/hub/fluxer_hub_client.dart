@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../auth/repositories/session_repository.dart';
 import '../fluxer_config.dart';
+import 'fluxer_direct_paths.dart';
 import 'fluxer_servers.dart';
 
 class FluxerHubClient {
@@ -125,6 +126,9 @@ class FluxerHubClient {
     );
     final data = response?.data;
     _meCache = data == null || current == null ? null : (current, DateTime.now(), data);
+    if (data != null && owner == _activeOwner) {
+      await FluxerDirectPaths.save((data['server'] as Map?)?.cast<String, dynamic>());
+    }
     return data;
   }
 
