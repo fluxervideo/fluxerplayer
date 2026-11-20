@@ -1,5 +1,9 @@
 # Novedades de FluxerPlayer
 
+## 1.0.16 — Mantenimiento
+
+- Sin cambios visibles.
+
 ## 1.0.15 — Aviso de actualización
 
 - Con la app abierta, busca versión nueva cada 30 minutos y avisa en la
