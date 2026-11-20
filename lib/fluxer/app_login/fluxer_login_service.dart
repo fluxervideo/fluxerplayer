@@ -165,7 +165,7 @@ class FluxerLoginService {
 
     final hubToken = session.hubToken;
     if (hubToken != null && hubToken.isNotEmpty) {
-      await FluxerHubClient.instance.saveToken(hubToken);
+      await FluxerHubClient.instance.saveToken(hubToken, serverId: server.id, userId: session.userId);
     }
 
     await getIt<AuthenticationStore>().putUser(

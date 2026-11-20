@@ -42,6 +42,9 @@ class FluxerServers {
     await _prefs?.set(_usersPref, current.join(','));
   }
 
+  /// Usuarios que entraron con Fluxer, como `<servidor>:<usuario>`.
+  static Set<String> get users => _users;
+
   static bool isFluxerUser(String serverId, String userId) => _users.contains('$serverId:$userId');
 
   /// ¿Hay algún usuario apuntado? (Quien entró con una versión anterior no

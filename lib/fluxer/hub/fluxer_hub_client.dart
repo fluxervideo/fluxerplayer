@@ -1,16 +1,22 @@
 // FluxerPlayer: Cliente de la API de la app en la cuenta de Fluxer (token propio).
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
 
+import '../../auth/repositories/session_repository.dart';
 import '../fluxer_config.dart';
+import 'fluxer_servers.dart';
 
 class FluxerHubClient {
   FluxerHubClient._();
 
   static final FluxerHubClient instance = FluxerHubClient._();
 
-  static const _tokenKey = 'fluxer_hub_app_token';
+  /// Token de cada usuario: `fluxer_hub_app_token:<servidor>:<usuario>`.
+  /// La clave sola guarda el último vinculado, para entrar sin sesión abierta.
+  static const _lastKey = 'fluxer_hub_app_token';
 
   final _storage = const FlutterSecureStorage();
   final _dio = Dio(
@@ -22,40 +28,76 @@ class FluxerHubClient {
     ),
   );
 
-  String? _token;
-  bool _loaded = false;
+  final Map<String, String?> _tokens = {};
 
-  Future<String?> token() async {
-    if (!_loaded) {
-      try {
-        _token = await _storage.read(key: _tokenKey);
-      } catch (_) {
-        _token = null;
-      }
-      _loaded = true;
-    }
-    return _token;
+  @visibleForTesting
+  void forgetCachedTokens() {
+    _tokens.clear();
+    _meCache = null;
   }
 
-  Future<bool> get isLinked async => (await token()) != null;
+  static String? get _activeOwner {
+    final getIt = GetIt.instance;
+    if (!getIt.isRegistered<SessionRepository>()) return null;
+    final session = getIt<SessionRepository>();
+    final serverId = session.activeServerId;
+    final userId = session.activeUserId;
+    return serverId == null || userId == null ? null : '$serverId:$userId';
+  }
 
-  Future<void> saveToken(String token) async {
-    _token = token;
-    _loaded = true;
+  static String _keyFor(String? owner) => owner == null ? _lastKey : '$_lastKey:$owner';
+
+  Future<String?> _read(String key) async {
+    if (_tokens.containsKey(key)) return _tokens[key];
+    String? value;
     try {
-      await _storage.write(key: _tokenKey, value: token);
+      value = await _storage.read(key: key);
+    } catch (_) {}
+    return _tokens[key] = value;
+  }
+
+  Future<void> _write(String key, String? value) async {
+    _tokens[key] = value;
+    try {
+      if (value == null) {
+        await _storage.delete(key: key);
+      } else {
+        await _storage.write(key: key, value: value);
+      }
     } catch (_) {
       // Sin almacén seguro (llavero bloqueado): vale para esta sesión.
     }
   }
 
+  /// El token del usuario activo; sin sesión abierta, el último vinculado.
+  Future<String?> token() async {
+    final owner = _activeOwner;
+    if (owner == null) return _read(_lastKey);
+    final own = await _read(_keyFor(owner));
+    if (own != null) return own;
+    // Antes había un solo token para todos: pasa al usuario si es el único
+    // que entró con Fluxer; con varios no se sabe de quién es.
+    final legacy = await _read(_lastKey);
+    if (legacy != null && FluxerServers.users.length == 1 && FluxerServers.users.contains(owner)) {
+      await _write(_keyFor(owner), legacy);
+      return legacy;
+    }
+    return null;
+  }
+
+  Future<bool> get isLinked async => (await token()) != null;
+
+  Future<void> saveToken(String token, {required String serverId, required String userId}) async {
+    await _write(_keyFor('$serverId:$userId'), token);
+    await _write(_lastKey, token);
+  }
+
   Future<void> clearToken() async {
-    _token = null;
+    final current = await token();
     _meCache = null;
-    _loaded = true;
-    try {
-      await _storage.delete(key: _tokenKey);
-    } catch (_) {}
+    final owner = _activeOwner;
+    if (owner != null) await _write(_keyFor(owner), null);
+    if (current != null && await _read(_lastKey) == current) await _write(_lastKey, null);
   }
 
   /// Estado del plan, servidor, avisos y URLs del portal. Null si la app no
@@ -63,17 +105,19 @@ class FluxerHubClient {
   Future<Map<String, dynamic>?> me({bool fresh = false}) async {
     // Lo piden varias pantallas a la vez (lateral, menú del usuario, avisos):
     // 1 minuto de caché.
+    final current = await token();
     final cached = _meCache;
-    if (!fresh && cached != null && DateTime.now().difference(cached.$1) < const Duration(minutes: 1)) {
-      return cached.$2;
+    if (!fresh && cached != null && cached.$1 == current &&
+        DateTime.now().difference(cached.$2) < const Duration(minutes: 1)) {
+      return cached.$3;
     }
     final response = await _request((options) => _dio.get<Map<String, dynamic>>('me', options: options));
     final data = response?.data;
-    _meCache = data == null ? null : (DateTime.now(), data);
+    _meCache = data == null || current == null ? null : (current, DateTime.now(), data);
     return data;
   }
 
-  (DateTime, Map<String, dynamic>)? _meCache;
+  (String, DateTime, Map<String, dynamic>)? _meCache;
 
   Future<void> acknowledgeNotice(int id) async {
     await _request((options) => _dio.post<dynamic>('notices/$id/acknowledge', options: options));

@@ -1,5 +1,9 @@
 # Novedades de FluxerPlayer
 
+## 1.0.14 — Cada usuario, su suscripción
+
+- Con varios usuarios, cada uno ve los datos de su propia suscripción.
+
 ## 1.0.13 — Efectos estacionales
 
 - Los efectos estacionales (nieve, hojas…) vuelven a verse en el inicio.
