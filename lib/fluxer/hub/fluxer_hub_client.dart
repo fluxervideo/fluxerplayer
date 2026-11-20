@@ -70,8 +70,9 @@ class FluxerHubClient {
   }
 
   /// El token del usuario activo; sin sesión abierta, el último vinculado.
-  Future<String?> token() async {
-    final owner = _activeOwner;
+  Future<String?> token() => _tokenOf(_activeOwner);
+
+  Future<String?> _tokenOf(String? owner) async {
     if (owner == null) return _read(_lastKey);
     final own = await _read(_keyFor(owner));
     if (own != null) return own;
@@ -92,26 +93,32 @@ class FluxerHubClient {
     await _write(_lastKey, token);
   }
 
-  Future<void> clearToken() async {
-    final current = await token();
+  Future<void> clearToken() => _clearTokenOf(_activeOwner);
+
+  Future<void> _clearTokenOf(String? owner) async {
+    final current = await _tokenOf(owner);
     _meCache = null;
-    final owner = _activeOwner;
     if (owner != null) await _write(_keyFor(owner), null);
     if (current != null && await _read(_lastKey) == current) await _write(_lastKey, null);
   }
 
   /// Estado del plan, servidor, avisos y URLs del portal. Null si la app no
-  /// está vinculada o no hay conexión.
-  Future<Map<String, dynamic>?> me({bool fresh = false}) async {
+  /// está vinculada o no hay conexión. Con [serverId] y [userId], los de ese
+  /// usuario en vez del activo («Cambiar de usuario»).
+  Future<Map<String, dynamic>?> me({bool fresh = false, String? serverId, String? userId}) async {
     // Lo piden varias pantallas a la vez (lateral, menú del usuario, avisos):
     // 1 minuto de caché.
-    final current = await token();
+    final owner = serverId != null && userId != null ? '$serverId:$userId' : _activeOwner;
+    final current = await _tokenOf(owner);
     final cached = _meCache;
     if (!fresh && cached != null && cached.$1 == current &&
         DateTime.now().difference(cached.$2) < const Duration(minutes: 1)) {
       return cached.$3;
     }
-    final response = await _request((options) => _dio.get<Map<String, dynamic>>('me', options: options));
+    final response = await _request(
+      (options) => _dio.get<Map<String, dynamic>>('me', options: options),
+      owner: owner,
+    );
     final data = response?.data;
     _meCache = data == null || current == null ? null : (current, DateTime.now(), data);
     return data;
@@ -309,14 +316,16 @@ class FluxerHubClient {
   Future<Response<T>?> _request<T>(
     Future<Response<T>> Function(Options options) send, {
     bool rethrowErrors = false,
+    String? owner,
   }) async {
-    final current = await token();
+    owner ??= _activeOwner;
+    final current = await _tokenOf(owner);
     if (current == null) return null;
     try {
       return await send(Options(headers: {'X-App-Token': current}));
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
-        await clearToken();
+        await _clearTokenOf(owner);
         return null;
       }
       if (rethrowErrors) rethrow;

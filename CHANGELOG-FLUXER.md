@@ -1,5 +1,10 @@
 # Novedades de FluxerPlayer
 
+## 1.0.17 — Suscripción de cada perfil
+
+- En «Cambiar de usuario», la suscripción es la del perfil seleccionado.
+- La barra lateral muestra la suscripción del usuario actual al cambiar.
+
 ## 1.0.16 — Mantenimiento
 
 - Sin cambios visibles.

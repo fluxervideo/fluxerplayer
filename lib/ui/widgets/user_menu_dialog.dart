@@ -456,9 +456,16 @@ class _AccountDialogState extends State<_AccountDialog> {
                         ),
                       ),
                     ),
-                    if (FluxerServers.activeIsFluxer) ...[
+                    if (_accounts.isNotEmpty && FluxerServers.contains(_accounts[_selected].server.id)) ...[
                       const SizedBox(width: 32),
-                      const Center(child: SingleChildScrollView(child: FluxerSubscriptionCard())),
+                      Center(
+                        child: SingleChildScrollView(
+                          child: FluxerSubscriptionCard(
+                            serverId: _accounts[_selected].server.id,
+                            userId: _accounts[_selected].user.id,
+                          ),
+                        ),
+                      ),
                     ],
                   ],
                 ),
@@ -520,7 +527,12 @@ class _AccountDialogState extends State<_AccountDialog> {
                     : null,
               ),
               // FLUXER: la suscripción de Fluxer debajo del nombre.
-              if (FluxerServers.activeIsFluxer) const FluxerSubscriptionCard(compact: true),
+              if (FluxerServers.contains(selected.server.id))
+                FluxerSubscriptionCard(
+                  compact: true,
+                  serverId: selected.server.id,
+                  userId: selected.user.id,
+                ),
               const SizedBox(height: 24),
             ],
             ProfileStrip(

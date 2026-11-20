@@ -1,8 +1,12 @@
 // FluxerPlayer: Tarjeta con los datos de la suscripción.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:moonfin_design/moonfin_design.dart';
 
+import '../../auth/repositories/session_repository.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
 import 'fluxer_portal.dart';
@@ -34,6 +38,8 @@ class FluxerSubscriptionCard extends StatefulWidget {
     this.sidebar = false,
     this.fill = false,
     this.autofocus = false,
+    this.serverId,
+    this.userId,
   });
 
   /// Móvil: líneas bajo el nombre, sin caja ni botones grandes.
@@ -48,6 +54,11 @@ class FluxerSubscriptionCard extends StatefulWidget {
   /// «Recargar saldo» con el foco al abrir (mando de la tele).
   final bool autofocus;
 
+  /// La suscripción de este usuario en vez de la del activo
+  /// («Cambiar de usuario»).
+  final String? serverId;
+  final String? userId;
+
   @override
   State<FluxerSubscriptionCard> createState() => _FluxerSubscriptionCardState();
 }
@@ -55,11 +66,53 @@ class FluxerSubscriptionCard extends StatefulWidget {
 class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
   Map<String, dynamic>? _me;
 
+  int _load = 0;
+  StreamSubscription<Object?>? _sessionChanges;
+  String? _owner;
+
+  static String? get _activeOwner {
+    if (!GetIt.instance.isRegistered<SessionRepository>()) return null;
+    final session = GetIt.instance<SessionRepository>();
+    return '${session.activeServerId}:${session.activeUserId}';
+  }
+
   @override
   void initState() {
     super.initState();
-    FluxerHubClient.instance.me().then((me) {
-      if (mounted && me != null) setState(() => _me = me);
+    _owner = _activeOwner;
+    _fetch();
+    // Sin usuario fijo sigue al activo: la barra lateral no se vuelve a
+    // crear al cambiar de usuario.
+    if (GetIt.instance.isRegistered<SessionRepository>()) {
+      _sessionChanges = GetIt.instance<SessionRepository>().stateStream.listen((_) {
+        final owner = _activeOwner;
+        if (widget.userId != null || owner == _owner) return;
+        _owner = owner;
+        if (mounted) setState(() => _me = null);
+        _fetch();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    unawaited(_sessionChanges?.cancel());
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(FluxerSubscriptionCard old) {
+    super.didUpdateWidget(old);
+    if (old.serverId != widget.serverId || old.userId != widget.userId) {
+      setState(() => _me = null);
+      _fetch();
+    }
+  }
+
+  void _fetch() {
+    final load = ++_load;
+    FluxerHubClient.instance.me(serverId: widget.serverId, userId: widget.userId).then((me) {
+      if (mounted && load == _load && me != null) setState(() => _me = me);
     });
   }
 
