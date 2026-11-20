@@ -1,5 +1,9 @@
 # Novedades de FluxerPlayer
 
+## 1.0.13 — Efectos estacionales
+
+- Los efectos estacionales (nieve, hojas…) vuelven a verse en el inicio.
+
 ## 1.0.12 — Tu tema en todas partes
 
 - El tema y los colores se guardan en el servidor: al reinstalar vuelven solos.

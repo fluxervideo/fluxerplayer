@@ -906,7 +906,7 @@ class UserPreferences extends ChangeNotifier {
 
   T get<T>(Preference<T> pref) {
     final fluxerLocked = fluxerLockedValue(pref.key); // FLUXER: opciones fijadas en cuentas de Fluxer
-    if (fluxerLocked is T) return fluxerLocked;
+    if (fluxerLocked is T && fluxerLocked != null) return fluxerLocked as T;
     if (_isScopedPreference(pref)) {
       final scoped = _scopedPreference(pref);
       if (scoped != null && _store.containsKey(scoped.key)) {
