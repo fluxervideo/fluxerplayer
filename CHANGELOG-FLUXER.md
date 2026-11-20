@@ -1,5 +1,10 @@
 # Novedades de FluxerPlayer
 
+## 1.0.15 — Aviso de actualización
+
+- Con la app abierta, busca versión nueva cada 30 minutos y avisa en la
+  barra lateral.
+
 ## 1.0.14 — Cada usuario, su suscripción
 
 - Con varios usuarios, cada uno ve los datos de su propia suscripción.

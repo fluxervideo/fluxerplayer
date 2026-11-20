@@ -1,5 +1,7 @@
 // FluxerPlayer: al abrir la app, si hay versión nueva, pantalla completa con
 // «Actualizar» o «Cancelar» por encima de todo (no se ve lo de detrás).
+// Con la app abierta se vuelve a buscar cada 30 minutos; lo que se encuentre
+// entonces solo sale en la barra lateral, sin pantalla completa.
 
 import 'dart:async';
 
@@ -28,12 +30,32 @@ class FluxerUpdateGate extends StatefulWidget {
 }
 
 class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
+  static const _recheckEvery = Duration(minutes: 30);
+
   DesktopUpdateInfo? _update;
+  Timer? _recheck;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_check()));
+    _recheck = Timer.periodic(_recheckEvery, (_) => unawaited(_recheckQuietly()));
+  }
+
+  @override
+  void dispose() {
+    _recheck?.cancel();
+    super.dispose();
+  }
+
+  /// Solo avisa en la barra lateral; un fallo de red no borra el aviso.
+  Future<void> _recheckQuietly() async {
+    try {
+      if (!GetIt.instance.isRegistered<AppUpdateService>()) return;
+      final update = await GetIt.instance<AppUpdateService>()
+          .fluxerCheckOnLaunch();
+      if (update != null) fluxerKnownUpdate.value = update;
+    } catch (_) {}
   }
 
   Future<void> _check() async {
