@@ -1,5 +1,12 @@
 # Novedades de FluxerPlayer
 
+## 1.0.18 — Sesión de Fluxer obligatoria
+
+- Sin sesión de Fluxer en el aparato, hay que volver a entrar con Fluxer
+  para seguir. También si se desvincula el aparato desde el portal.
+- Sin conexión con Fluxer no se bloquea nada.
+- Incluye lo de la 1.0.17.
+
 ## 1.0.17 — Suscripción de cada perfil
 
 - En «Cambiar de usuario», la suscripción es la del perfil seleccionado.

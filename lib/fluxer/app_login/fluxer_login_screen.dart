@@ -5,11 +5,15 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:moonfin_design/moonfin_design.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../auth/repositories/session_repository.dart';
+import '../../ui/navigation/app_router.dart';
 import '../../ui/navigation/destinations.dart';
+import '../../ui/widgets/user_menu_dialog.dart';
 import '../../ui/widgets/focus/request_initial_focus.dart';
 import '../../ui/widgets/login_scaffold.dart';
 import '../../ui/widgets/sign_in_qr_code.dart';
@@ -22,7 +26,11 @@ import 'fluxer_login_service.dart';
 enum _Phase { requesting, waiting, connecting, failed }
 
 class FluxerLoginScreen extends StatefulWidget {
-  const FluxerLoginScreen({super.key});
+  const FluxerLoginScreen({super.key, this.relinkUser});
+
+  /// Usuario abierto sin sesión de Fluxer (fluxer_link_gate.dart): hay que
+  /// volver a entrar para seguir. Va por encima de la app, fuera de las rutas.
+  final String? relinkUser;
 
   @override
   State<FluxerLoginScreen> createState() => _FluxerLoginScreenState();
@@ -52,7 +60,29 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     _loadProfile();
   }
 
+  bool get _relink => widget.relinkUser != null;
+
+  void _go(String location) {
+    if (_relink) {
+      appRouter.go(location);
+    } else {
+      context.go(location);
+    }
+  }
+
+  void _switchUser() {
+    final navigator = appRouter.routerDelegate.navigatorKey.currentContext;
+    if (navigator != null && navigator.mounted) showUserMenu(navigator);
+  }
+
+  Future<void> _signOut() async {
+    _pollTimer?.cancel();
+    await GetIt.instance<SessionRepository>().signOutSiloAccount();
+    appRouter.go(Destinations.serverSelect);
+  }
+
   Future<void> _loadProfile() async {
+    if (_relink) return;
     if (!await FluxerHubClient.instance.isLinked) return;
     if (mounted) setState(() => _linked = true);
     final me = await FluxerHubClient.instance.me();
@@ -157,7 +187,7 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
       return;
     }
     if (result.switched) {
-      context.go(Destinations.home);
+      _go(Destinations.home);
     } else if (FluxerFeatures.fluxerOnly) {
       // Solo Fluxer: no hay pantallas de Moonfin a las que mandar.
       setState(() {
@@ -165,7 +195,7 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
         _error = FluxerStrings.of(context).sessionFailed;
       });
     } else {
-      context.go('${Destinations.server}?serverId=${result.serverId}');
+      _go('${Destinations.server}?serverId=${result.serverId}');
     }
   }
 
@@ -263,12 +293,16 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     final header = Column(
       children: [
         Text(
-          s.loginTitle,
+          _relink ? s.relinkTitle : s.loginTitle,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: _isMobile ? 22 : 28, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 6),
-        Text(s.loginSubtitle, textAlign: TextAlign.center, style: TextStyle(color: _muted)),
+        Text(
+          _relink ? s.relinkSubtitle(widget.relinkUser!) : s.loginSubtitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: _muted),
+        ),
         const SizedBox(height: 24),
       ],
     );
@@ -329,6 +363,28 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
               label: Text(s.newCode),
               style: _outlined(),
             ),
+          ),
+        ],
+        if (_relink && _phase != _Phase.connecting) ...[
+          const SizedBox(height: 18),
+          Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _switchUser,
+                icon: const Icon(Icons.people_alt_outlined, size: 18),
+                label: Text(s.relinkSwitchUser),
+                style: _outlined(),
+              ),
+              OutlinedButton.icon(
+                onPressed: _signOut,
+                icon: const Icon(Icons.logout, size: 18),
+                label: Text(s.relinkSignOut),
+                style: _outlined(),
+              ),
+            ],
           ),
         ],
       ],

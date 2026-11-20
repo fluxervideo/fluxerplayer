@@ -30,6 +30,9 @@ class FluxerHubClient {
 
   final Map<String, String?> _tokens = {};
 
+  /// Cambia cada vez que se guarda o se borra un token (fluxer_link_gate.dart).
+  final linkChanges = ValueNotifier<int>(0);
+
   @visibleForTesting
   void forgetCachedTokens() {
     _tokens.clear();
@@ -58,6 +61,7 @@ class FluxerHubClient {
 
   Future<void> _write(String key, String? value) async {
     _tokens[key] = value;
+    linkChanges.value++;
     try {
       if (value == null) {
         await _storage.delete(key: key);

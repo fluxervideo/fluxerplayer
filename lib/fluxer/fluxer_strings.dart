@@ -196,6 +196,13 @@ class FluxerStrings {
   // Pantalla de entrar
   String get loginTitle => _t('Inicia sesión en Fluxer', 'Sign in to Fluxer');
   String get loginSubtitle => _t('Elige una opción para entrar', 'Choose how to sign in');
+  String get relinkTitle => _t('Vuelve a entrar con Fluxer', 'Sign in with Fluxer again');
+  String relinkSubtitle(String user) => _t(
+        'Para seguir como $user, entra otra vez con tu cuenta de Fluxer',
+        'To keep watching as $user, sign in with your Fluxer account again',
+      );
+  String get relinkSwitchUser => _t('Cambiar de usuario', 'Switch user');
+  String get relinkSignOut => _t('Cerrar sesión', 'Sign out');
   String get fluxerAccountLabel => _t('Cuenta de Fluxer', 'Fluxer account');
   String continueAs(String name) => _t('Continuar como $name', 'Continue as $name');
   String get switchAccount => _t('Cambiar de cuenta', 'Switch account');

@@ -81,6 +81,7 @@ import 'util/focus/open_popup.dart';
 import 'package:custom_tv_text_field/custom_tv_text_field.dart';
 import 'fluxer/hub/fluxer_hub_watcher.dart'; // FLUXER:
 import 'fluxer/update/fluxer_update_gate.dart'; // FLUXER:
+import 'fluxer/app_login/fluxer_link_gate.dart'; // FLUXER:
 
 class MoonfinApp extends StatefulWidget {
   const MoonfinApp({super.key});
@@ -294,8 +295,10 @@ class _MoonfinAppState extends State<MoonfinApp> {
                               child: Stack(
                                 children: [
                                   FluxerUpdateGate( // FLUXER: pantalla de actualizar al abrir
+                                  child: FluxerLinkGate( // FLUXER: sin sesión de Fluxer no se sigue
                                   child: _ConnectivityListener(
                                     child: child ?? const SizedBox.shrink(),
+                                  ),
                                   ),
                                   ),
                                   const Align(
