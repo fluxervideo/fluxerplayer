@@ -1,5 +1,10 @@
 # Novedades de FluxerPlayer
 
+## 1.0.19 — Reproducción directa
+
+- Parte del contenido se reproduce directamente desde su almacenamiento,
+  sin pasar por el servidor: arranca y avanza más rápido.
+
 ## 1.0.18 — Sesión de Fluxer obligatoria
 
 - Sin sesión de Fluxer en el aparato, hay que volver a entrar con Fluxer
