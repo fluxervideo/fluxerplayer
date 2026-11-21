@@ -205,6 +205,8 @@ jobs:
           print(m.group(2).strip())
           print(f"""
           ---
+          **Ahora tenemos reproductor propio.** Con FluxerPlayer podrás ver más contenido y más rápido.
+
           **Descargas**
           - Windows: `FluxerPlayer_Windows_v{v}.exe`. Si Windows avisa, «Más información» → «Ejecutar de todas formas».
           - Android (móvil, tablet, Android TV, Google TV y Fire TV): `FluxerPlayer_Android_v{v}.apk`.""".replace("\n          ", "\n"))
