@@ -489,17 +489,21 @@ List<_SettingsSearchEntry> _buildSettingsSearchIndex({
       ),
 
     account.screen(keywords: ['login', 'password', 'server']),
-    account.leaf('pref_auto_login_behavior', l10n.autoLogin, keywords: [
+    account.leaf(
+        'pref_auto_login_behavior',
+        FluxerFeatures.fluxerOnly ? FluxerStrings.forLanguage(l10n.localeName).autoLoginTitle : l10n.autoLogin, // FLUXER:
+        keywords: [
       'startup',
       'remember',
     ]),
+    if (!FluxerFeatures.fluxerOnly) // FLUXER: sin contraseña de Emby
     account.leaf(
       'pref_always_authenticate',
       l10n.alwaysAuthenticate,
       subtitle: l10n.requirePasswordWithToken,
       keywords: ['password'],
     ),
-    if (!PlatformDetection.isWeb) ...[
+    if (!PlatformDetection.isWeb && !FluxerFeatures.fluxerOnly) ...[ // FLUXER: sin lista de servidores
       account.leaf('pref_user_sort_by', l10n.settingsSortServersBy, keywords: [
         'server order',
       ]),

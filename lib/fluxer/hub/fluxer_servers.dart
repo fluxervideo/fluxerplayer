@@ -42,6 +42,12 @@ class FluxerServers {
     await _prefs?.set(_usersPref, current.join(','));
   }
 
+  static Future<void> removeUser(String serverId, String userId) async {
+    final current = _users;
+    if (!current.remove('$serverId:$userId')) return;
+    await _prefs?.set(_usersPref, current.join(','));
+  }
+
   /// Usuarios que entraron con Fluxer, como `<servidor>:<usuario>`.
   static Set<String> get users => _users;
 

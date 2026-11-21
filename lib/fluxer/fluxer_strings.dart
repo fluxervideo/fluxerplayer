@@ -12,6 +12,8 @@ class FluxerStrings {
     return FluxerStrings._(locale?.languageCode == 'es');
   }
 
+  static FluxerStrings forLanguage(String languageCode) => FluxerStrings._(languageCode.startsWith('es'));
+
   String _t(String es, String en) => _es ? es : en;
 
   String get signInWithFluxer => _t('Entrar con Fluxer', 'Sign in with Fluxer');
@@ -203,12 +205,22 @@ class FluxerStrings {
       );
   String get relinkSwitchUser => _t('Cambiar de usuario', 'Switch user');
   String get relinkSignOut => _t('Cerrar sesión', 'Sign out');
-  String get fluxerAccountLabel => _t('Cuenta de Fluxer', 'Fluxer account');
-  String continueAs(String name) => _t('Continuar como $name', 'Continue as $name');
-  String get switchAccount => _t('Cambiar de cuenta', 'Switch account');
+  String get autoLoginTitle => _t('Al abrir la app', 'When the app opens');
+  String get autoLoginLastUser => _t('Entrar con el último usuario', 'Continue as the last user');
+  String autoLoginUser(String name) => _t('Entrar como $name', 'Continue as $name');
+  String get autoLoginThisUser => _t('Entrar con este usuario', 'Continue as this user');
+  String get autoLoginAsk => _t('Preguntar quién va a ver', 'Ask who is watching');
+  String get whoIsWatching => _t('¿Quién va a ver?', 'Who is watching?');
+  String get addUser => _t('Añadir usuario', 'Add user');
+  String get removeUser => _t('Quitar este usuario', 'Remove this user');
+  String removeUserConfirm(String name) => _t(
+        '$name dejará de estar en este aparato. Para volver tendrá que entrar con su cuenta de Fluxer.',
+        '$name will be removed from this device. Signing in with their Fluxer account brings them back.',
+      );
+  String get remove => _t('Quitar', 'Remove');
+  String get cancel => _t('Cancelar', 'Cancel');
+  String enterAs(String name) => _t('Entrar como $name', 'Continue as $name');
   String get or => _t('o', 'or');
-  String get orOtherWay => _t('o entra con otra cuenta', 'or sign in with another account');
-  String get otherAccount => _t('¿Otra cuenta?', 'Another account?');
   String get optionThisDevice => _t('En este aparato', 'On this device');
   String get optionThisDeviceHelp => _t(
         'Se abrirá la web de Fluxer en tu navegador. Entra con tu cuenta y pulsa «Dar acceso a la app».',

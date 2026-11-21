@@ -31,6 +31,9 @@ class FluxerHubClient {
 
   final Map<String, String?> _tokens = {};
 
+  /// No se pudo leer el almacén seguro: que falte un token no significa nada.
+  bool storageUnavailable = false;
+
   /// Cambia cada vez que se guarda o se borra un token (fluxer_link_gate.dart).
   final linkChanges = ValueNotifier<int>(0);
 
@@ -56,7 +59,9 @@ class FluxerHubClient {
     String? value;
     try {
       value = await _storage.read(key: key);
-    } catch (_) {}
+    } catch (_) {
+      storageUnavailable = true;
+    }
     return _tokens[key] = value;
   }
 
@@ -92,6 +97,10 @@ class FluxerHubClient {
   }
 
   Future<bool> get isLinked async => (await token()) != null;
+
+  /// ¿Ese usuario tiene su token? Sin él cuenta como no logueado.
+  Future<bool> hasToken({required String serverId, required String userId}) async =>
+      (await _tokenOf('$serverId:$userId')) != null;
 
   Future<void> saveToken(String token, {required String serverId, required String userId}) async {
     await _write(_keyFor('$serverId:$userId'), token);
@@ -195,11 +204,12 @@ class FluxerHubClient {
   /// Sesión de Emby nueva, sin contraseña, para la cuenta con la que se
   /// vinculó la app. Null si la app no está vinculada (o ya no lo está) o
   /// el Hub no puede dársela (cuenta inactiva, sin conexión…).
-  Future<Map<String, dynamic>?> session() async {
+  Future<Map<String, dynamic>?> session({String? serverId, String? userId}) async {
     try {
       final response = await _request(
         (options) => _dio.post<Map<String, dynamic>>('session', options: options),
         rethrowErrors: true,
+        owner: serverId == null || userId == null ? null : '$serverId:$userId',
       );
       return response?.data;
     } catch (_) {
@@ -319,6 +329,13 @@ class FluxerHubClient {
   Future<void> logout() async {
     await _request((options) => _dio.post<dynamic>('logout', options: options));
     await clearToken();
+  }
+
+  /// Desvincula ese usuario (no el activo).
+  Future<void> logoutUser({required String serverId, required String userId}) async {
+    final owner = '$serverId:$userId';
+    await _request((options) => _dio.post<dynamic>('logout', options: options), owner: owner);
+    await _clearTokenOf(owner);
   }
 
   Future<Response<T>?> _request<T>(

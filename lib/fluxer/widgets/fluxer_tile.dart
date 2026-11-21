@@ -55,14 +55,26 @@ class FluxerTile extends StatelessWidget {
             focusColor: Colors.transparent,
             hoverColor: Colors.transparent,
             iconColor: soft,
-            leading: leading == null ? null : IconTheme.merge(data: IconThemeData(color: soft), child: leading!),
+            // Igual que las filas de Ajustes de Moonfin (icono en su recuadro).
+            leading: leading == null
+                ? null
+                : leading is Icon
+                    ? buildSettingsLeadingIconShell(
+                        context,
+                        icon: leading!,
+                        focused: focused,
+                        iconColor: highlighted
+                            ? AppColors.black.withValues(alpha: 0.54)
+                            : AppColorScheme.onSurface.withValues(alpha: 0.78),
+                      )
+                    : SizedBox(width: 44, height: 44, child: Center(child: leading)),
             title: DefaultTextStyle.merge(
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: ink),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: ink),
               child: title,
             ),
             subtitle: subtitle == null
                 ? null
-                : DefaultTextStyle.merge(style: TextStyle(fontSize: 13, color: soft), child: subtitle!),
+                : DefaultTextStyle.merge(style: TextStyle(fontSize: 12, color: soft), child: subtitle!),
             trailing: trailing == null && tap != null
                 ? Icon(Icons.chevron_right, color: soft)
                 : (trailing == null ? null : IconTheme.merge(data: IconThemeData(color: soft), child: trailing!)),

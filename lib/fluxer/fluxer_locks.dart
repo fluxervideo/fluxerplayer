@@ -7,6 +7,7 @@ import '../preference/user_preferences.dart';
 import 'home/fluxer_home_layout.dart';
 import 'fluxer_strings.dart';
 import 'hub/fluxer_servers.dart';
+import 'hub/fluxer_settings_pane.dart';
 
 /// clave de la preferencia de Moonfin → valor que fija Fluxer.
 final Map<String, Object> _locked = {
@@ -57,7 +58,9 @@ bool fluxerHidesSettingsSection(String slug) =>
 /// ¿Está fijada esta opción ahora mismo (cuenta de Fluxer)?
 bool fluxerIsLocked(String key) => fluxerLockedValue(key) != null;
 
-/// Categorías de Ajustes que, en tele y ordenador, ocupan todo el ancho sin
-/// la vista previa (no cambian nada de lo que se ve): «Mi cuenta Fluxer».
-bool fluxerSettingsFullWidth(BuildContext context, String? categoryTitle) =>
-    categoryTitle != null && categoryTitle == FluxerStrings.of(context).fluxerAccount;
+/// Panel de la derecha de Ajustes en tele y ordenador, en vez de la vista
+/// previa: en «Mi cuenta Fluxer», la suscripción. Null: la vista previa.
+Widget? fluxerSettingsPane(BuildContext context, String? categoryTitle) =>
+    categoryTitle != null && categoryTitle == FluxerStrings.of(context).fluxerAccount
+        ? const FluxerSettingsPane()
+        : null;

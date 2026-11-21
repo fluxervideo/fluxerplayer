@@ -141,8 +141,8 @@ class FluxerLoginService {
 
   /// Sesión de Emby nueva sin contraseña desde FluxerHub (app ya vinculada).
   /// Null si no puede (sin vincular, cuenta inactiva, sin conexión).
-  Future<FluxerLoginSession?> sessionFromHub() async {
-    final data = await FluxerHubClient.instance.session();
+  Future<FluxerLoginSession?> sessionFromHub({String? serverId, String? userId}) async {
+    final data = await FluxerHubClient.instance.session(serverId: serverId, userId: userId);
     if (data == null || data['access_token'] == null) return null;
     return FluxerLoginSession(
       serverUrl: data['server_url'] as String,

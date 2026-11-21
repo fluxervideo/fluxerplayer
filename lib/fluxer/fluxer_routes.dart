@@ -2,12 +2,13 @@
 
 import 'package:go_router/go_router.dart';
 
-import 'app_login/fluxer_login_screen.dart';
+import 'app_login/fluxer_profiles_screen.dart';
 
-/// Pantalla "Entrar con Fluxer" (código de un solo uso aceptado en el Hub).
+/// Entrada: usuarios guardados o "Entrar con Fluxer" (código aceptado en el Hub).
+/// Con `?add=1`, el código directamente («Añadir usuario»).
 const String fluxerLoginPath = '/fluxer-login';
 
 final GoRoute fluxerLoginRoute = GoRoute(
   path: fluxerLoginPath,
-  builder: (context, state) => const FluxerLoginScreen(),
+  builder: (context, state) => FluxerStartScreen(adding: state.uri.queryParameters['add'] == '1'),
 );

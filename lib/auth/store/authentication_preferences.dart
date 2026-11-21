@@ -1,6 +1,7 @@
 import 'package:jellyfin_preference/jellyfin_preference.dart';
 
 import '../../preference/preference_constants.dart';
+import '../../fluxer/fluxer_features.dart'; // FLUXER:
 
 class AuthenticationPreferences {
   final PreferenceStore _store;
@@ -51,7 +52,8 @@ class AuthenticationPreferences {
   String get savedAutoLoginUserId => _store.get(autoLoginUserId);
   String get savedLastServerId => _store.get(lastServerId);
   String get savedLastUserId => _store.get(lastUserId);
-  bool get shouldAlwaysAuthenticate => _store.get(alwaysAuthenticate);
+  // FLUXER: sin contraseña de Emby, «Siempre autenticar» no aplica (oculto en Ajustes).
+  bool get shouldAlwaysAuthenticate => !FluxerFeatures.fluxerOnly && _store.get(alwaysAuthenticate);
   UserSortBy get userSortBy => _store.get(sortBy);
 
   Future<void> setLastServerId(String id) =>

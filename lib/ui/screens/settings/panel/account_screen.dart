@@ -6,6 +6,8 @@ class _AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final fs = FluxerStrings.of(context); // FLUXER:
+    const fluxer = FluxerFeatures.fluxerOnly; // FLUXER:
 
     return Scaffold(
       appBar: buildSettingsAppBar(context, Text(l10n.account)),
@@ -17,11 +19,16 @@ class _AccountScreen extends StatelessWidget {
               EnumPreferenceTile<UserSelectBehavior>(
                 autofocus: true,
                 preference: UserPreferences.autoLoginUserBehavior,
-                title: l10n.autoLogin,
+                title: fluxer ? fs.autoLoginTitle : l10n.autoLogin, // FLUXER:
                 icon: Icons.person,
                 labelOf: (v) {
                   if (v == UserSelectBehavior.currentUser) {
                     final session = GetIt.instance<SessionRepository>();
+                    // FLUXER: «Entrar como <nombre>».
+                    if (fluxer) {
+                      final name = session.autoLoginTargetDisplayName();
+                      return name == null ? fs.autoLoginThisUser : fs.autoLoginUser(name);
+                    }
                     // If I'm the auto-login user, just say "Current User"
                     // If someone else is, show their name so it's clear
                     if (session.activeUserIsAutoLoginTarget) {
@@ -31,15 +38,15 @@ class _AccountScreen extends StatelessWidget {
                         l10n.currentUser;
                   }
                   return switch (v) {
-                    UserSelectBehavior.disabled => l10n.disabled,
-                    UserSelectBehavior.lastUser => l10n.lastUser,
+                    UserSelectBehavior.disabled => fluxer ? fs.autoLoginAsk : l10n.disabled, // FLUXER:
+                    UserSelectBehavior.lastUser => fluxer ? fs.autoLoginLastUser : l10n.lastUser, // FLUXER:
                     _ => l10n.currentUser,
                   };
                 },
                 dialogLabelOf: (v) => switch (v) {
-                  UserSelectBehavior.disabled => l10n.disabled,
-                  UserSelectBehavior.lastUser => l10n.lastUser,
-                  UserSelectBehavior.currentUser => l10n.currentUser,
+                  UserSelectBehavior.disabled => fluxer ? fs.autoLoginAsk : l10n.disabled, // FLUXER:
+                  UserSelectBehavior.lastUser => fluxer ? fs.autoLoginLastUser : l10n.lastUser, // FLUXER:
+                  UserSelectBehavior.currentUser => fluxer ? fs.autoLoginThisUser : l10n.currentUser, // FLUXER:
                 },
                 onChanged: () {
                   final behavior = GetIt.instance<PreferenceStore>().get(
@@ -50,6 +57,7 @@ class _AccountScreen extends StatelessWidget {
                   );
                 },
               ),
+              if (!fluxer) // FLUXER: sin contraseña de Emby
               SwitchPreferenceTile(
                 preference: UserPreferences.alwaysAuthenticate,
                 title: l10n.alwaysAuthenticate,
@@ -85,7 +93,7 @@ class _AccountScreen extends StatelessWidget {
           ),
           // Certificate trust is the browser's job on web, so this is
           // native-only.
-          if (!PlatformDetection.isWeb) ...[
+          if (!PlatformDetection.isWeb && !fluxer) ...[ // FLUXER: sin lista de servidores
             _SectionHeader(l10n.settingsServersSection),
             adaptiveListSection(
               children: [

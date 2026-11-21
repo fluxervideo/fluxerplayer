@@ -20,17 +20,19 @@ import '../../ui/widgets/sign_in_qr_code.dart';
 import '../../util/platform_detection.dart';
 import '../fluxer_features.dart';
 import '../fluxer_strings.dart';
-import '../hub/fluxer_hub_client.dart';
 import 'fluxer_login_service.dart';
 
 enum _Phase { requesting, waiting, connecting, failed }
 
 class FluxerLoginScreen extends StatefulWidget {
-  const FluxerLoginScreen({super.key, this.relinkUser});
+  const FluxerLoginScreen({super.key, this.relinkUser, this.onBack});
 
   /// Usuario abierto sin sesión de Fluxer (fluxer_link_gate.dart): hay que
   /// volver a entrar para seguir. Va por encima de la app, fuera de las rutas.
   final String? relinkUser;
+
+  /// «Añadir usuario» desde los perfiles guardados: volver a ellos.
+  final VoidCallback? onBack;
 
   @override
   State<FluxerLoginScreen> createState() => _FluxerLoginScreenState();
@@ -47,17 +49,10 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
   int _pollFailures = 0;
   String? _error;
 
-  /// La app ya está vinculada a una cuenta de Fluxer: se ofrece seguir con
-  /// ella de un toque (sin código).
-  bool _linked = false;
-  String? _profileName;
-  String? _avatarUrl;
-
   @override
   void initState() {
     super.initState();
     _requestCode();
-    _loadProfile();
   }
 
   bool get _relink => widget.relinkUser != null;
@@ -79,31 +74,6 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     _pollTimer?.cancel();
     await GetIt.instance<SessionRepository>().signOutSiloAccount();
     appRouter.go(Destinations.serverSelect);
-  }
-
-  Future<void> _loadProfile() async {
-    if (_relink) return;
-    if (!await FluxerHubClient.instance.isLinked) return;
-    if (mounted) setState(() => _linked = true);
-    final me = await FluxerHubClient.instance.me();
-    final customer = (me?['customer'] as Map?)?.cast<String, dynamic>();
-    if (!mounted || customer == null) return;
-    setState(() {
-      _profileName = (customer['name'] as String?)?.trim();
-      _avatarUrl = customer['avatar_url'] as String?;
-    });
-  }
-
-  /// «Cambiar de cuenta»: desvincula la guardada y deja solo las formas de entrar.
-  Future<void> _switchAccount() async {
-    await FluxerHubClient.instance.logout();
-    if (mounted) {
-      setState(() {
-        _linked = false;
-        _profileName = null;
-        _avatarUrl = null;
-      });
-    }
   }
 
   @override
@@ -200,25 +170,12 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
   }
 
   /// App ya vinculada: sesión de Emby nueva desde FluxerHub, sin contraseña.
-  Future<void> _continueWithHub() async {
-    _pollTimer?.cancel();
-    setState(() {
-      _phase = _Phase.connecting;
-      _error = null;
-    });
-    final session = await _service.sessionFromHub();
-    if (!mounted) return;
-    if (session == null) {
-      setState(() => _linked = false);
-      await _requestCode();
-      if (mounted) setState(() => _error = FluxerStrings.of(context).hubSessionFailed);
-      return;
-    }
-    await _complete(session);
-  }
-
   void _goBack() {
     if (_phase == _Phase.connecting) return;
+    if (widget.onBack != null) {
+      widget.onBack!();
+      return;
+    }
     // Solo Fluxer: esta es la pantalla de entrada, no hay adónde volver.
     if (FluxerFeatures.fluxerOnly) return;
     context.go(Destinations.serverSelect);
@@ -264,20 +221,18 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
 
   bool get _isTv => PlatformDetection.isTV;
   bool get _isMobile => PlatformDetection.useMobileUi && !_isTv;
-  bool get _showProfile => _linked && _phase != _Phase.connecting;
 
   Color get _muted => AppColorScheme.onSurface.withValues(alpha: 0.7);
   Color get _line => AppColorScheme.onSurface.withValues(alpha: 0.14);
 
   @override
   Widget build(BuildContext context) {
-    final wide = !_isMobile && _showProfile;
     return SignInBackScope(
       onBack: _goBack,
       child: RequestInitialFocus(
         targetNode: _primaryFocus,
         child: LoginScaffold(
-          maxWidth: wide ? 1080 : (_isMobile ? 560 : 860),
+          maxWidth: _isMobile ? 560 : 860,
           header: Padding(
             padding: const EdgeInsets.only(bottom: 20),
             child: Image.asset('assets/images/logo_and_text.png', height: _isMobile ? 56 : 72),
@@ -307,41 +262,7 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
       ],
     );
 
-    final Widget body;
-    if (_phase == _Phase.connecting) {
-      body = _spinner(s.connecting);
-    } else if (!_showProfile) {
-      body = _options(s, stacked: _isMobile);
-    } else if (_isMobile) {
-      body = Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _profile(s),
-          _orDivider(s.orOtherWay),
-          _options(s, stacked: true),
-        ],
-      );
-    } else {
-      // Tele y ordenador: perfil a la izquierda, otra cuenta a la derecha.
-      body = Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(flex: 4, child: _profile(s)),
-          _verticalDivider(s.or),
-          Expanded(
-            flex: 6,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(s.otherAccount, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 12),
-                _options(s, stacked: true),
-              ],
-            ),
-          ),
-        ],
-      );
-    }
+    final Widget body = _phase == _Phase.connecting ? _spinner(s.connecting) : _options(s, stacked: _isMobile);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -349,6 +270,16 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
       children: [
         header,
         body,
+        if (widget.onBack != null && _phase != _Phase.connecting) ...[
+          const SizedBox(height: 14),
+          Center(
+            child: TextButton.icon(
+              onPressed: widget.onBack,
+              icon: const Icon(Icons.arrow_back, size: 18),
+              label: Text(s.back),
+            ),
+          ),
+        ],
         if (_error != null) ...[
           const SizedBox(height: 14),
           Text(_error!, textAlign: TextAlign.center, style: TextStyle(color: AppColorScheme.statusRequested)),
@@ -357,7 +288,7 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
           const SizedBox(height: 14),
           Center(
             child: OutlinedButton.icon(
-              focusNode: _showProfile ? null : _primaryFocus,
+              focusNode: _primaryFocus,
               onPressed: _requestCode,
               icon: const Icon(Icons.refresh, size: 18),
               label: Text(s.newCode),
@@ -391,79 +322,6 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
     );
   }
 
-  // Perfil de la cuenta de Fluxer guardada.
-  Widget _profile(FluxerStrings s) {
-    final name = (_profileName?.isNotEmpty ?? false) ? _profileName! : s.fluxerAccount;
-    final first = name.split(' ').first;
-    final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
-    final size = _isMobile ? 72.0 : 104.0;
-    final avatar = Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColorScheme.accent, width: 3),
-        gradient: const LinearGradient(colors: [Color(0xFF00A4DC), Color(0xFF0057D9)]),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: _avatarUrl == null
-          ? Center(child: Text(initial, style: TextStyle(fontSize: size * 0.42, fontWeight: FontWeight.bold, color: Colors.white)))
-          : Image.network(
-              _avatarUrl!,
-              fit: BoxFit.cover,
-              errorBuilder: (_, _, _) => Center(
-                child: Text(initial, style: TextStyle(fontSize: size * 0.42, fontWeight: FontWeight.bold, color: Colors.white)),
-              ),
-            ),
-    );
-
-    return Container(
-      padding: EdgeInsets.all(_isMobile ? 18 : 28),
-      decoration: BoxDecoration(
-        color: AppColorScheme.accent.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColorScheme.accent.withValues(alpha: 0.55), width: 1.5),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Center(child: avatar),
-          const SizedBox(height: 14),
-          Text(name, textAlign: TextAlign.center, style: TextStyle(fontSize: _isMobile ? 20 : 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.person_outline, size: 16, color: _muted),
-              const SizedBox(width: 6),
-              Text(s.fluxerAccountLabel, style: TextStyle(color: _muted)),
-            ],
-          ),
-          const SizedBox(height: 22),
-          FilledButton.icon(
-            focusNode: _primaryFocus,
-            autofocus: true,
-            onPressed: _continueWithHub,
-            icon: const Icon(Icons.login),
-            label: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              child: Text(s.continueAs(first), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-            ),
-            style: _focusRing(filled: true),
-          ),
-          const SizedBox(height: 10),
-          OutlinedButton.icon(
-            onPressed: _switchAccount,
-            icon: const Icon(Icons.manage_accounts_outlined, size: 18),
-            label: Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Text(s.switchAccount)),
-            style: _outlined(),
-          ),
-        ],
-      ),
-    );
-  }
-
   // Las dos formas de entrar: «En este aparato» (no en la tele) o «Con tu móvil».
   Widget _options(FluxerStrings s, {required bool stacked}) {
     final code = _code;
@@ -485,7 +343,7 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
           const SizedBox(height: 14),
           Center(
             child: OutlinedButton.icon(
-              focusNode: _showProfile ? null : _primaryFocus,
+              focusNode: _primaryFocus,
               onPressed: _requestCode,
               icon: const Icon(Icons.refresh, size: 18),
               label: Text(s.newCode),
@@ -505,8 +363,8 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
           Text(s.optionThisDeviceHelp, style: TextStyle(color: _muted, height: 1.35)),
           const SizedBox(height: 16),
           FilledButton.icon(
-            focusNode: _showProfile ? null : _primaryFocus,
-            autofocus: !_showProfile,
+            focusNode: _primaryFocus,
+            autofocus: true,
             onPressed: _openInBrowser,
             icon: const Icon(Icons.open_in_browser),
             label: Padding(

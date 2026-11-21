@@ -10,6 +10,7 @@ import '../../data/services/log_service.dart';
 import '../../preference/user_preferences.dart';
 import '../../ui/screens/settings/settings_app_bar.dart';
 import '../../ui/widgets/settings/settings_panel.dart';
+import '../../ui/widgets/settings/settings_section_header.dart';
 import '../../ui/widgets/sign_in_qr_code.dart';
 import '../../util/platform_detection.dart';
 import '../fluxer_routes.dart';
@@ -138,49 +139,34 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
       leading: const Icon(Icons.qr_code_2),
       title: Text(s.signInWithFluxer),
       subtitle: Text(s.signInWithFluxerSubtitle),
-      onTap: () => context.go(fluxerLoginPath),
+      onTap: () => context.go('$fluxerLoginPath?add=1'),
     ),
     ..._diagnosticTiles(s, linked: false),
   ];
 
-  // A pantalla completa (sin la vista previa de Ajustes): a la izquierda la
-  // suscripción en grande (plan, estado, fechas, saldo, email, servidor, con
-  // «Recargar saldo», plan y «Mi cuenta»); a la derecha invitar, test de velocidad y
-  // diagnóstico. En pantallas estrechas, uno debajo del otro.
+  // Como las demás categorías de Ajustes: los botones en la columna. En tele
+  // y ordenador la suscripción va en el panel de la derecha
+  // (FluxerSettingsPane); en el móvil, arriba de los botones.
   Widget _linkedBody(FluxerStrings s) {
-    const card = FluxerSubscriptionCard(fill: true, autofocus: true);
-    final options = _optionTiles(s);
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < 760) {
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-            children: [card, const SizedBox(height: 8), ...options],
-          );
-        }
-        return SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(flex: 5, child: card),
-              const SizedBox(width: 28),
-              Expanded(
-                flex: 6,
-                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: options),
-              ),
-            ],
-          ),
-        );
-      },
+    final phone = PlatformDetection.useMobileUi;
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 16),
+      children: [
+        if (phone) const Padding(
+          padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
+          child: FluxerSubscriptionCard(fill: true, autofocus: true),
+        ),
+        ..._optionTiles(s, autofocus: !phone),
+      ],
     );
   }
 
-  List<Widget> _optionTiles(FluxerStrings s) {
+  List<Widget> _optionTiles(FluxerStrings s, {bool autofocus = false}) {
     final referral = _map('referral');
     return [
       _header(s.paymentsSection),
       FluxerTile(
+        autofocus: autofocus,
         leading: const Icon(Icons.account_balance_wallet_outlined),
         title: Text(s.recharge),
         subtitle: Text(s.rechargeSubtitle),
@@ -257,11 +243,5 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
     return segments.isEmpty ? url : segments.last;
   }
 
-  Widget _header(String text) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
-    child: Text(
-      text,
-      style: TextStyle(fontWeight: FontWeight.bold, color: AppColorScheme.accent),
-    ),
-  );
+  Widget _header(String text) => SettingsSectionHeader(text);
 }
