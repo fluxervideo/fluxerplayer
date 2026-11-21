@@ -169,7 +169,7 @@ jobs:
             --dart-define=DISTRIBUTION_CHANNEL=apk
           apk="$(find build/app/outputs/flutter-apk -iname 'app-mobile-release.apk' | head -1)"
           test -n "$apk" || { find build/app/outputs -name '*.apk'; exit 1; }
-          cp "$apk" "FluxerPlayer_Android_v$v.apk"
+          cp "$apk" "FluxerPlayer_Android.apk"
 
       - uses: actions/upload-artifact@v6
         with:
@@ -209,7 +209,7 @@ jobs:
 
           **Descargas**
           - Windows: `FluxerPlayer_Windows_v{v}.exe`. Si Windows avisa, «Más información» → «Ejecutar de todas formas».
-          - Android (móvil, tablet, Android TV, Google TV y Fire TV): `FluxerPlayer_Android_v{v}.apk`.""".replace("\n          ", "\n"))
+          - Android (móvil, tablet, Android TV, Google TV y Fire TV): `FluxerPlayer_Android.apk`.""".replace("\n          ", "\n"))
           PY
           title="$(grep -m1 -E "^## ${v//./\\.}\b" CHANGELOG-FLUXER.md | sed 's/^## *//')"
           ls -la dist
