@@ -1,5 +1,10 @@
 # Novedades de FluxerPlayer
 
+## 1.0.20 — Enlace de descarga fijo
+
+- El APK de Android se llama siempre `FluxerPlayer_Android.apk`, así el
+  enlace de descarga de la última versión no cambia.
+
 ## 1.0.19 — Reproducción directa
 
 - Parte del contenido se reproduce directamente desde su almacenamiento,
