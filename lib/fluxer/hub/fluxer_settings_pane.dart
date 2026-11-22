@@ -48,10 +48,10 @@ class _FluxerSettingsPaneState extends State<FluxerSettingsPane> {
     if (linked == null) {
       content = const CircularProgressIndicator();
     } else if (linked) {
-      content = const SingleChildScrollView(
-        padding: EdgeInsets.all(24),
+      content = SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: 560),
+          constraints: const BoxConstraints(maxWidth: 560),
           child: FluxerSubscriptionCard(fill: true),
         ),
       );

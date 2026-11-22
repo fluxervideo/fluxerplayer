@@ -218,7 +218,6 @@ class FluxerStrings {
         '$name will be removed from this device. Signing in with their Fluxer account brings them back.',
       );
   String get remove => _t('Quitar', 'Remove');
-  String get cancel => _t('Cancelar', 'Cancel');
   String enterAs(String name) => _t('Entrar como $name', 'Continue as $name');
   String get or => _t('o', 'or');
   String get optionThisDevice => _t('En este aparato', 'On this device');
