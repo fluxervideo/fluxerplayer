@@ -1,5 +1,14 @@
 # Novedades de FluxerPlayer
 
+## 1.0.21 — Elegir perfil
+
+- Al abrir la app sin sesión, pantalla «¿Quién va a ver?» con los usuarios
+  guardados. «Añadir usuario» entra con código.
+- Se puede quitar un usuario; los que se desvinculan se quitan solos.
+- Ajustes → Cuenta más sencillo: «Al abrir la app» elige entre el último
+  usuario, uno concreto o preguntar quién va a ver.
+- «Mi cuenta Fluxer» con el mismo aspecto que el resto de Ajustes.
+
 ## 1.0.20 — Enlace de descarga fijo
 
 - El APK de Android se llama siempre `FluxerPlayer_Android.apk`, así el
