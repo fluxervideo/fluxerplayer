@@ -992,7 +992,13 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
                 Visibility(
                   visible: _isExpanded,
                   maintainState: true,
-                  child: const FluxerSubscriptionCard(sidebar: true),
+                  child: FluxerSubscriptionCard( // FLUXER: pulsar abre Ajustes → Mi cuenta Fluxer (la primera pestaña)
+                    sidebar: true,
+                    onTap: () async {
+                      _onNavigate();
+                      await SettingsPanel.open(context, const SettingsSidePanel());
+                    },
+                  ),
                 ),
               ],
             ),

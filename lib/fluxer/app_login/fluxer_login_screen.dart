@@ -362,16 +362,32 @@ class _FluxerLoginScreenState extends State<FluxerLoginScreen> {
         children: [
           Text(s.optionThisDeviceHelp, style: TextStyle(color: _muted, height: 1.35)),
           const SizedBox(height: 16),
-          FilledButton.icon(
-            focusNode: _primaryFocus,
-            autofocus: true,
-            onPressed: _openInBrowser,
-            icon: const Icon(Icons.open_in_browser),
-            label: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(s.openFluxerAccount, style: const TextStyle(fontWeight: FontWeight.bold)),
+          // Verde con brillo, como «Dar acceso a la app» en la web.
+          DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              gradient: const LinearGradient(colors: [Color(0xFF22C55E), Color(0xFF16A34A)]),
+              boxShadow: [
+                BoxShadow(color: const Color(0xFF22C55E).withValues(alpha: 0.35), blurRadius: 18, offset: const Offset(0, 4)),
+              ],
             ),
-            style: _focusRing(filled: true),
+            child: FilledButton.icon(
+              focusNode: _primaryFocus,
+              autofocus: true,
+              onPressed: _openInBrowser,
+              icon: const Icon(Icons.open_in_browser, size: 22),
+              label: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                child: Text(s.openFluxerAccount, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              ),
+              style: _focusRing().copyWith(
+                backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
+                foregroundColor: const WidgetStatePropertyAll(Colors.white),
+                shadowColor: const WidgetStatePropertyAll(Colors.transparent),
+                overlayColor: WidgetStatePropertyAll(Colors.white.withValues(alpha: 0.12)),
+                shape: const WidgetStatePropertyAll(StadiumBorder()),
+              ),
+            ),
           ),
         ],
       ),

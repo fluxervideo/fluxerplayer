@@ -40,6 +40,7 @@ class FluxerSubscriptionCard extends StatefulWidget {
     this.autofocus = false,
     this.serverId,
     this.userId,
+    this.onTap,
   });
 
   /// Móvil: líneas bajo el nombre, sin caja ni botones grandes.
@@ -58,6 +59,9 @@ class FluxerSubscriptionCard extends StatefulWidget {
   /// («Cambiar de usuario»).
   final String? serverId;
   final String? userId;
+
+  /// Barra lateral: al pulsar el bloque del plan (abre Mi cuenta Fluxer).
+  final VoidCallback? onTap;
 
   @override
   State<FluxerSubscriptionCard> createState() => _FluxerSubscriptionCardState();
@@ -197,72 +201,78 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
               child: Text(email, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: muted, fontSize: 12)),
             ),
           ),
-        Container(
-          margin: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
-          decoration: BoxDecoration(
+        Padding(
+          padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+          child: Material(
             color: Colors.white.withValues(alpha: 0.05),
             borderRadius: BorderRadius.circular(14),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Icon(
-                    trial ? Icons.hourglass_bottom_rounded : Icons.workspace_premium_outlined,
-                    size: 18,
-                    color: const Color(0xFFF5C451),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      plan?['name'] as String? ?? s.noPlan,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: tone.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(label, style: TextStyle(color: tone, fontSize: 11, fontWeight: FontWeight.w700)),
-                  ),
-                ],
-              ),
-              if (endsAt != null) ...[
-                const SizedBox(height: 4),
-                Padding(
-                  padding: const EdgeInsets.only(left: 26),
-                  child: Text(
-                    renews ? s.renewsOn(endsAt) : s.endsOn(endsAt),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(color: tone == AppColorScheme.statusAvailable ? muted : tone, fontSize: 12),
-                  ),
-                ),
-              ],
-              if (balance != null) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Divider(height: 1, thickness: 1, color: Colors.white.withValues(alpha: 0.08)),
-                ),
-                Row(
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: widget.onTap,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 12, 12, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Expanded(child: Text(s.availableBalance, style: TextStyle(color: muted, fontSize: 12))),
-                    Text(
-                      s.money(balance),
-                      style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
+                    Row(
+                      children: [
+                        Icon(
+                          trial ? Icons.hourglass_bottom_rounded : Icons.workspace_premium_outlined,
+                          size: 18,
+                          color: const Color(0xFFF5C451),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            plan?['name'] as String? ?? s.noPlan,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w700),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: tone.withValues(alpha: 0.16),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(label, style: TextStyle(color: tone, fontSize: 11, fontWeight: FontWeight.w700)),
+                        ),
+                      ],
                     ),
+                    if (endsAt != null) ...[
+                      const SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 26),
+                        child: Text(
+                          renews ? s.renewsOn(endsAt) : s.endsOn(endsAt),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(color: tone == AppColorScheme.statusAvailable ? muted : tone, fontSize: 12),
+                        ),
+                      ),
+                    ],
+                    if (balance != null) ...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Divider(height: 1, thickness: 1, color: Colors.white.withValues(alpha: 0.08)),
+                      ),
+                      Row(
+                        children: [
+                          Expanded(child: Text(s.availableBalance, style: TextStyle(color: muted, fontSize: 12))),
+                          Text(
+                            s.money(balance),
+                            style: const TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
+                    ],
                   ],
                 ),
-              ],
-            ],
+              ),
+            ),
           ),
         ),
       ],
