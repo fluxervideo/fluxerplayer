@@ -3119,7 +3119,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get settings => 'Ajustes';
 
   @override
-  String get settingsSearchHint => 'Configuración de búsqueda';
+  String get settingsSearchHint => 'Buscar en ajustes';
 
   @override
   String get authentication => 'Autenticación';

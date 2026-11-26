@@ -125,9 +125,13 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
           ? const Center(child: CircularProgressIndicator())
           : _linked
               ? _linkedBody(s)
-              : ListView(padding: const EdgeInsets.symmetric(vertical: 8), children: _unlinkedTiles(s)),
+              : ListView(padding: EdgeInsets.only(top: 8, bottom: _bottomPad(context)), children: _unlinkedTiles(s)),
     );
   }
+
+  // Como Moonfin: deja sitio a la barra de botones del móvil.
+  double _bottomPad(BuildContext context) =>
+      (PlatformDetection.isTV ? 96.0 : 24.0) + MediaQuery.paddingOf(context).bottom;
 
   List<Widget> _unlinkedTiles(FluxerStrings s) => [
     Padding(
@@ -150,7 +154,7 @@ class _FluxerAccountScreenState extends State<FluxerAccountScreen> {
   Widget _linkedBody(FluxerStrings s) {
     final phone = PlatformDetection.useMobileUi;
     return ListView(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: EdgeInsets.only(bottom: _bottomPad(context)),
       children: [
         if (phone) const Padding(
           padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
