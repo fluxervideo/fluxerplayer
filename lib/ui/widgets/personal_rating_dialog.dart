@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:moonfin_design/moonfin_design.dart';
 
 import '../../data/models/aggregated_item.dart';
 import '../../l10n/app_localizations.dart';
@@ -297,15 +298,15 @@ class _ThumbRatingButton extends StatelessWidget {
         autofocus: icon == Icons.thumb_up,
         tooltip: label,
         onPressed: onPressed,
-        // FLUXER: el elegido, relleno con el color principal; el otro, solo
-        // el contorno. Con primaryContainer apenas se distinguía en algunos temas.
+        // FLUXER: el elegido, con los colores del botón de puntuar de la
+        // ficha cuando está marcado; el otro, solo el contorno.
         style: IconButton.styleFrom(
-          backgroundColor: selected ? colorScheme.primary : Colors.transparent,
+          backgroundColor: selected ? AppColorScheme.buttonFocused : Colors.transparent,
           foregroundColor: selected
-              ? colorScheme.onPrimary
+              ? AppColorScheme.onButtonFocused
               : colorScheme.onSurfaceVariant,
           side: BorderSide(
-            color: selected ? colorScheme.primary : colorScheme.outline,
+            color: selected ? AppColorScheme.onButtonFocused : colorScheme.outline,
             width: selected ? 2 : 1,
           ),
         ),
