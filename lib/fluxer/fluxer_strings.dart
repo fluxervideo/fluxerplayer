@@ -340,6 +340,7 @@ class FluxerStrings {
   // Actualizar desde la app en Android (update/fluxer_android_update.dart).
   String updateDownloading(String version) => _t('Descargando FluxerPlayer $version', 'Downloading FluxerPlayer $version');
   String get updatePreparing => _t('Preparando la descarga…', 'Preparing the download…');
+  String get updateInstalling => _t('Preparando la instalación…', 'Preparing the installation…');
   String get updateInstallHint => _t(
         'Al terminar, si Android lo pide, pulsa «Actualizar». La primera vez te pedirá permitir que FluxerPlayer instale apps. La app se cerrará para actualizarse.',
         'When it finishes, tap “Update” if Android asks. The first time it will ask you to allow FluxerPlayer to install apps. The app will close to update.',

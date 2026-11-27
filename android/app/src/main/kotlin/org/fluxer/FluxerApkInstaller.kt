@@ -19,12 +19,15 @@ import android.database.Cursor
 import android.database.MatrixCursor
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.os.ParcelFileDescriptor
 import android.provider.OpenableColumns
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodChannel
 import java.io.File
 import java.io.FileNotFoundException
+import java.util.concurrent.atomic.AtomicBoolean
 
 object FluxerApkInstaller {
     private const val CHANNEL = "fluxer/apk_installer"
@@ -33,6 +36,7 @@ object FluxerApkInstaller {
     const val EXTRA_NAME = "org.fluxer.apk_name"
     private const val PREFS = "fluxer_update"
     private const val KEY_NOTICE = "notice_after_update"
+    private const val SESSION_TIMEOUT_MS = 30_000L
 
     /** Marca que la próxima sustitución de la app viene de una actualización suya. */
     fun setUpdateNotice(context: Context, pending: Boolean) {
@@ -54,7 +58,7 @@ object FluxerApkInstaller {
             .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
-    private fun installWithSession(context: Context, file: File) {
+    private fun installWithSession(context: Context, file: File, onSession: (PackageInstaller.Session) -> Unit, claim: () -> Boolean) {
         val installer = context.packageManager.packageInstaller
         val params = PackageInstaller.SessionParams(PackageInstaller.SessionParams.MODE_FULL_INSTALL)
         params.setAppPackageName(context.packageName)
@@ -64,6 +68,7 @@ object FluxerApkInstaller {
         }
         val sessionId = installer.createSession(params)
         val session = installer.openSession(sessionId)
+        onSession(session)
         try {
             file.inputStream().use { input ->
                 session.openWrite("base.apk", 0, file.length()).use { out ->
@@ -77,12 +82,13 @@ object FluxerApkInstaller {
             var flags = PendingIntent.FLAG_UPDATE_CURRENT
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) flags = flags or PendingIntent.FLAG_MUTABLE
             val pending = PendingIntent.getBroadcast(context, sessionId, intent, flags)
+            if (!claim()) throw IllegalStateException("timeout")
             setUpdateNotice(context, true)
             session.commit(pending.intentSender)
             session.close()
         } catch (e: Exception) {
             setUpdateNotice(context, false)
-            session.abandon()
+            try { session.abandon() } catch (_: Exception) {}
             throw e
         }
     }
@@ -102,23 +108,37 @@ object FluxerApkInstaller {
                         return@setMethodCallHandler
                     }
                     // Copiar el APK a la sesión tarda: fuera del hilo principal.
+                    // Si tarda demasiado, el instalador de Android de siempre.
+                    val done = AtomicBoolean(false)
+                    var session: PackageInstaller.Session? = null
+                    fun openInstaller() {
+                        try {
+                            activity.startActivity(viewIntent(activity, name))
+                            result.success(true)
+                        } catch (e: Exception) {
+                            result.error("no_installer", e.message, null)
+                        }
+                    }
+                    val main = Handler(Looper.getMainLooper())
+                    main.postDelayed({
+                        if (!done.compareAndSet(false, true)) return@postDelayed
+                        setUpdateNotice(activity, false)
+                        try { session?.abandon() } catch (_: Exception) {}
+                        openInstaller()
+                    }, SESSION_TIMEOUT_MS)
                     Thread {
+                        var claimed = false
                         val sessionError = try {
-                            installWithSession(activity.applicationContext, file)
+                            installWithSession(activity.applicationContext, file, { session = it }, { done.compareAndSet(false, true).also { claimed = it } })
                             null
                         } catch (e: Exception) {
                             e
                         }
-                        activity.runOnUiThread {
+                        main.post {
                             if (sessionError == null) {
                                 result.success(true)
-                                return@runOnUiThread
-                            }
-                            try {
-                                activity.startActivity(viewIntent(activity, name))
-                                result.success(true)
-                            } catch (e: Exception) {
-                                result.error("no_installer", e.message, null)
+                            } else if (claimed || done.compareAndSet(false, true)) {
+                                openInstaller()
                             }
                         }
                     }.start()

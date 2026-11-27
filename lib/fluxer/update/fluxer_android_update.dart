@@ -29,6 +29,7 @@ Future<void> fluxerDownloadAndInstallApk(BuildContext context, DesktopUpdateInfo
   final s = FluxerStrings.of(context);
   final progress = ValueNotifier<double?>(null);
   final error = ValueNotifier<String?>(null);
+  final installing = ValueNotifier<bool>(false);
   final cancel = CancelToken();
   var dialogOpen = true;
 
@@ -40,17 +41,17 @@ Future<void> fluxerDownloadAndInstallApk(BuildContext context, DesktopUpdateInfo
       content: SizedBox(
         width: 420,
         child: AnimatedBuilder(
-          animation: Listenable.merge([progress, error]),
+          animation: Listenable.merge([progress, error, installing]),
           builder: (_, _) {
             final message = error.value;
             if (message != null) return Text(message, style: const TextStyle(color: Colors.redAccent));
-            final value = progress.value;
+            final value = installing.value ? null : progress.value;
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 LinearProgressIndicator(value: value, minHeight: 8),
                 const SizedBox(height: 12),
-                Text(value == null ? s.updatePreparing : '${(value * 100).toStringAsFixed(0)} %'),
+                Text(installing.value ? s.updateInstalling : value == null ? s.updatePreparing : '${(value * 100).toStringAsFixed(0)} %'),
                 const SizedBox(height: 8),
                 Text(s.updateInstallHint, style: const TextStyle(fontSize: 12)),
               ],
@@ -87,6 +88,7 @@ Future<void> fluxerDownloadAndInstallApk(BuildContext context, DesktopUpdateInfo
     );
     if (cancel.isCancelled) return;
 
+    installing.value = true;
     await _channel.invokeMethod<bool>('install', {'name': _fileName});
     if (dialogOpen && context.mounted) Navigator.of(context, rootNavigator: true).pop();
   } catch (e) {
