@@ -66,12 +66,10 @@ class EmbyUserLibraryApi implements UserLibraryApi, ResumeVisibilityApi {
   // server keeps underneath those routes. A server without Moonbase has no
   // such route, and there is nowhere to keep a rating anyway, so a 404 is not
   // worth failing the gesture over.
+  // FLUXER: sin el plugin (404) el voto no se guarda: que falle y la app lo
+  // diga, en vez de dar el botón por bueno.
   Future<void> _rate(Future<dynamic> Function() send) async {
-    try {
-      await send();
-    } on DioException catch (e) {
-      if (e.response?.statusCode != 404) rethrow;
-    }
+    await send();
   }
 
   @override
