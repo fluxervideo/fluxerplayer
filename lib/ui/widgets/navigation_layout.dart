@@ -524,18 +524,19 @@ class _NavigationLayoutState extends State<NavigationLayout>
             child: Stack(
               children: [
                 Positioned.fill(child: content),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  bottom: 0,
-                  child: sidebar,
-                ),
+                // FLUXER: la flecha, detrás de la barra lateral: al abrirse la tapa.
                 if (widget.showBackButton && !PlatformDetection.isTV)
                   Positioned(
                     top: 16,
                     left: 88,
                     child: _buildFloatingBackButton(),
                   ),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  bottom: 0,
+                  child: sidebar,
+                ),
               ],
             ),
           ),

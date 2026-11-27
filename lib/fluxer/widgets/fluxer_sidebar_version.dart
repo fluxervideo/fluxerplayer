@@ -29,19 +29,29 @@ class FluxerSidebarVersion extends StatelessWidget {
         if (update != null) {
           return _UpdateButton(update: update, expanded: expanded);
         }
-        if (!expanded) return const SizedBox.shrink();
         String version;
         try {
           version = AppBeta.label(GetIt.instance<DeviceInfo>().appVersion);
         } catch (_) {
           return const SizedBox.shrink();
         }
-        return Padding(
-          padding: const EdgeInsets.only(top: 4, bottom: 2),
-          child: Text(
-            'FluxerPlayer $version',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12),
+        // Oculta con la barra cerrada pero con su hueco: si no, los iconos
+        // se mueven al abrirla.
+        return Visibility(
+          visible: expanded,
+          maintainSize: true,
+          maintainAnimation: true,
+          maintainState: true,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4, bottom: 2),
+            child: Text(
+              'FluxerPlayer $version',
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              softWrap: false,
+              overflow: TextOverflow.clip,
+              style: TextStyle(color: Colors.white.withValues(alpha: 0.4), fontSize: 12),
+            ),
           ),
         );
       },

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart'; // FLUXER: medida de la tarjeta de Fluxer
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
@@ -112,6 +113,8 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
   List<AggregatedLibrary> _libraries = [];
   bool _isExpanded = false;
   bool _showLabels = false;
+  bool _showAccountCard = false; // FLUXER
+  double _fluxerUserRowHeight = 0; // FLUXER: alto de la fila del usuario en la tarjeta
   bool _librariesExpanded = false;
   bool _canExpandViaFocus = false;
   // Set when a rail item opens a screen.
@@ -125,6 +128,7 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
   bool _friendsAvailable = FriendsNavSlot.isAvailable();
   Timer? _clockTimer;
   Timer? _labelTimer;
+  Timer? _accountCardTimer; // FLUXER
   Timer? _focusExpandGateTimer;
   Timer? _focusHomeTimer;
   Timer? _librariesReloadDebounce;
@@ -245,6 +249,7 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
     }
     _clockTimer?.cancel();
     _labelTimer?.cancel();
+    _accountCardTimer?.cancel();
     _focusExpandGateTimer?.cancel();
     _focusHomeTimer?.cancel();
     _librariesReloadDebounce?.cancel();
@@ -395,14 +400,22 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
     _labelTimer = Timer(delay, () {
       if (mounted) setState(() => _showLabels = true);
     });
+    // FLUXER: la tarjeta del plan, con la barra ya abierta del todo; si no, sus
+    // textos se parten mientras se ensancha y empujan el menú.
+    _accountCardTimer?.cancel();
+    _accountCardTimer = Timer(_kExpandDuration, () {
+      if (mounted) setState(() => _showAccountCard = true);
+    });
   }
 
   void _collapse() {
     if (!_isExpanded) return;
     _labelTimer?.cancel();
+    _accountCardTimer?.cancel();
     setState(() {
       _isExpanded = false;
       _showLabels = false;
+      _showAccountCard = false;
       _librariesExpanded = false;
     });
   }
@@ -974,35 +987,15 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
     final showClock =
         clockBehavior == ClockBehavior.always ||
         clockBehavior == ClockBehavior.inMenus;
-    return Column(
+    // FLUXER: la tarjeta de Fluxer (usuario y plan) va por encima de la
+    // columna: su hueco es solo el de la fila del usuario, así al abrirse el
+    // plan no empuja los iconos.
+    final fluxerAccount = FluxerServers.activeIsFluxer;
+    final column = Column(
       children: [
-        // FLUXER: usuario y suscripción de Fluxer en una tarjeta (tele/ordenador).
-        if (FluxerServers.activeIsFluxer)
-          fluxerSidebarAccountBox(
-            expanded: _isExpanded,
-            child: Column(
-              children: [
-                Visibility(
-                  visible: _isExpanded,
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  child: _buildUserSection(),
-                ),
-                Visibility(
-                  visible: _isExpanded,
-                  maintainState: true,
-                  child: FluxerSubscriptionCard( // FLUXER: pulsar abre Ajustes → Mi cuenta Fluxer (la primera pestaña)
-                    sidebar: true,
-                    onTap: () async {
-                      _onNavigate();
-                      await SettingsPanel.open(context, const SettingsSidePanel());
-                    },
-                  ),
-                ),
-              ],
-            ),
-          )
+        if (fluxerAccount)
+          // Márgenes (10 + 6) y borde (1 + 1) de fluxerSidebarAccountBox.
+          SizedBox(height: _fluxerUserRowHeight + 18)
         else
           Visibility(
             visible: _isExpanded,
@@ -1349,6 +1342,57 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
           )
         else
           const SizedBox(height: 16),
+      ],
+    );
+    if (!fluxerAccount) return column;
+    return Stack(
+      children: [
+        Positioned.fill(child: column),
+        Positioned(
+          top: 0,
+          left: 0,
+          right: 0,
+          child:
+          fluxerSidebarAccountBox(
+            expanded: _isExpanded,
+            child: Column(
+              children: [
+                _FluxerMeasureHeight(
+                  onHeight: (h) {
+                    if (mounted && h != _fluxerUserRowHeight) setState(() => _fluxerUserRowHeight = h);
+                  },
+                  child: Visibility(
+                    visible: _isExpanded,
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: _buildUserSection(),
+                  ),
+                ),
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 150),
+                  curve: Curves.easeOut,
+                  alignment: Alignment.topCenter,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 150),
+                    opacity: _showAccountCard ? 1 : 0,
+                    child: Visibility(
+                      visible: _showAccountCard,
+                      maintainState: true,
+                      child: FluxerSubscriptionCard( // FLUXER: pulsar abre Ajustes → Mi cuenta Fluxer (la primera pestaña)
+                        sidebar: true,
+                        onTap: () async {
+                          _onNavigate();
+                          await SettingsPanel.open(context, const SettingsSidePanel());
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -2069,5 +2113,37 @@ class _SidebarMusicCardState extends State<SidebarMusicCard> {
         ),
       ),
     );
+  }
+}
+
+/// FLUXER: avisa del alto de [child] cuando cambia (hueco de la tarjeta de
+/// Fluxer en la barra lateral).
+class _FluxerMeasureHeight extends SingleChildRenderObjectWidget {
+  const _FluxerMeasureHeight({required this.onHeight, required super.child});
+
+  final ValueChanged<double> onHeight;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) => _RenderFluxerMeasureHeight(onHeight);
+
+  @override
+  void updateRenderObject(BuildContext context, _RenderFluxerMeasureHeight renderObject) {
+    renderObject.onHeight = onHeight;
+  }
+}
+
+class _RenderFluxerMeasureHeight extends RenderProxyBox {
+  _RenderFluxerMeasureHeight(this.onHeight);
+
+  ValueChanged<double> onHeight;
+  double? _last;
+
+  @override
+  void performLayout() {
+    super.performLayout();
+    final h = size.height;
+    if (h == _last) return;
+    _last = h;
+    WidgetsBinding.instance.addPostFrameCallback((_) => onHeight(h));
   }
 }
