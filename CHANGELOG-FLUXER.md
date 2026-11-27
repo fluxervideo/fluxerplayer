@@ -1,5 +1,14 @@
 # Novedades de FluxerPlayer
 
+## 1.1.2 — Reportes más sencillos y versiones beta
+
+- Reportar un problema: lista más sencilla. «Otra cosa» abre una caja para
+  escribir lo que pasa.
+- El aviso de recargar sale también en la tarjeta del plan de la barra
+  lateral, y es más corto.
+- Nuevo en Ajustes → Acerca de: «Recibir versiones beta», para probar las
+  novedades antes que nadie.
+
 ## 1.2.0-beta.1 — Versiones beta
 
 - Nuevo en Ajustes → Acerca de: «Recibir versiones beta». Con él activado,
