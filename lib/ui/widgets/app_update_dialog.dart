@@ -84,16 +84,18 @@ Future<void> showAppUpdateDialog(
 }
 
 // FLUXER: «Actualizar» de la pantalla de inicio: lo mismo que «Descargar».
-Future<void> fluxerStartUpdate(BuildContext context, DesktopUpdateInfo update) async {
+// Con [silent], en Windows el instalador va sin ventanas y vuelve a abrir la app.
+Future<void> fluxerStartUpdate(BuildContext context, DesktopUpdateInfo update, {bool silent = false}) async {
   if (fluxerAndroidInAppUpdate && update.downloadUri.isScheme('https') && update.downloadUri.path.toLowerCase().endsWith('.apk')) return fluxerDownloadAndInstallApk(context, update);
-  if (Platform.isWindows && update.downloadUri.isScheme('https')) return _downloadAndInstallWindowsUpdate(context, update);
+  if (Platform.isWindows && update.downloadUri.isScheme('https')) return _downloadAndInstallWindowsUpdate(context, update, silent: silent);
   await launchUrl(update.downloadUri, mode: LaunchMode.externalApplication);
 }
 
 Future<void> _downloadAndInstallWindowsUpdate(
   BuildContext context,
-  DesktopUpdateInfo update,
-) async {
+  DesktopUpdateInfo update, {
+  bool silent = false, // FLUXER:
+}) async {
   final l10n = AppLocalizations.of(context);
   final valueNotifier = ValueNotifier<double>(0.0);
   final errorNotifier = ValueNotifier<String?>(null);
@@ -193,7 +195,7 @@ Future<void> _downloadAndInstallWindowsUpdate(
 
     await Process.start(
       file.path,
-      [],
+      silent ? const ['/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART'] : const [], // FLUXER:
       mode: ProcessStartMode.detached,
     );
     exit(0);

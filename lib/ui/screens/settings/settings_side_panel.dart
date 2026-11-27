@@ -130,6 +130,7 @@ import '../../../fluxer/fluxer_build_info.dart'; // FLUXER:
 import '../../../fluxer/fluxer_strings.dart'; // FLUXER:
 import '../../../fluxer/hub/fluxer_account_screen.dart'; // FLUXER:
 import '../../../fluxer/update/fluxer_update_gate.dart'; // FLUXER:
+import '../../../fluxer/update/fluxer_auto_update.dart'; // FLUXER:
 import '../../../data/services/app_update_service.dart'; // FLUXER:
 import '../../../fluxer/widgets/fluxer_link.dart'; // FLUXER:
 

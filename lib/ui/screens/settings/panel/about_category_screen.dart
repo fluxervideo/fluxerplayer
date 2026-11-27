@@ -58,6 +58,8 @@ class _AboutCategoryScreen extends StatelessWidget {
               ),
               if (AppDistribution.supportsInAppUpdates)
                 const _CheckForUpdatesTile(),
+              if (AppDistribution.supportsInAppUpdates) // FLUXER:
+                const _FluxerAutoUpdateTile(),
               if (FluxerFeatures.moonfinAboutTiles) // FLUXER: enlace bajo la versión
               _TvSettingsListTile(
                 leading: const Icon(Icons.code),
@@ -212,6 +214,37 @@ class _CheckForUpdatesTileState extends State<_CheckForUpdatesTile> {
           onTap: _checking ? null : _check,
         );
       },
+    );
+  }
+}
+
+// FLUXER: «Instalar actualizaciones automáticamente».
+class _FluxerAutoUpdateTile extends StatefulWidget {
+  const _FluxerAutoUpdateTile();
+
+  @override
+  State<_FluxerAutoUpdateTile> createState() => _FluxerAutoUpdateTileState();
+}
+
+class _FluxerAutoUpdateTileState extends State<_FluxerAutoUpdateTile> {
+  bool _on = FluxerAutoUpdate.enabled;
+
+  void _toggle() {
+    setState(() => _on = !_on);
+    unawaited(FluxerAutoUpdate.setEnabled(_on));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = FluxerStrings.of(context);
+    return _TvSettingsListTile(
+      leading: const Icon(Icons.autorenew),
+      title: Text(s.autoUpdate),
+      subtitle: Text(s.autoUpdateSubtitle),
+      trailing: IgnorePointer(
+        child: Switch.adaptive(value: _on, onChanged: (_) {}),
+      ),
+      onTap: _toggle,
     );
   }
 }

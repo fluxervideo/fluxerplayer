@@ -344,6 +344,8 @@ Root: HKCU; Subkey: "Software\Classes\moonfin"; Flags: dontcreatekey uninsdelete
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "Launch {#MyAppName}"; Flags: nowait postinstall skipifsilent
+; FLUXER: tras una actualización automática (silenciosa), volver a abrir la app.
+Filename: "{app}\{#MyAppExeName}"; Flags: nowait runasoriginaluser; Check: WizardSilent
 "@
 
   Set-Content -Path $IssPath -Value $iss -Encoding UTF8

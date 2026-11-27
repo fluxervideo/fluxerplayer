@@ -151,6 +151,11 @@
             android:exported="false"
             android:grantUriPermissions="true" />
 
+        <!-- FLUXER: resultado de instalar una actualización (FluxerApkInstaller.kt). -->
+        <receiver
+            android:name="org.fluxer.FluxerInstallResultReceiver"
+            android:exported="false" />
+
         <meta-data android:name="com.google.android.gms.car.application"
                    android:resource="@xml/automotive_app_desc"/>
     </application>

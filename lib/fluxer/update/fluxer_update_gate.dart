@@ -2,6 +2,8 @@
 // «Actualizar» o «Cancelar» por encima de todo (no se ve lo de detrás).
 // Con la app abierta se vuelve a buscar cada 30 minutos; lo que se encuentre
 // entonces solo sale en la barra lateral, sin pantalla completa.
+// Con «Instalar actualizaciones automáticamente», al abrir no sale la
+// pantalla: empieza la actualización directamente.
 
 import 'dart:async';
 
@@ -15,6 +17,7 @@ import '../../ui/navigation/app_router.dart';
 import '../../ui/widgets/app_update_dialog.dart';
 import '../../util/platform_detection.dart';
 import '../fluxer_strings.dart';
+import 'fluxer_auto_update.dart';
 
 /// La versión nueva encontrada al abrir la app (aunque se haya cancelado):
 /// «Acerca de» ofrece entonces «Actualizar a la versión X».
@@ -64,7 +67,12 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
       final update = await GetIt.instance<AppUpdateService>()
           .fluxerCheckOnLaunch();
       fluxerKnownUpdate.value = update;
-      if (mounted && update != null) setState(() => _update = update);
+      if (!mounted || update == null) return;
+      if (FluxerAutoUpdate.enabled) {
+        _start(update, silent: true);
+      } else {
+        setState(() => _update = update);
+      }
     } catch (_) {}
   }
 
@@ -74,13 +82,18 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
     final update = _update;
     setState(() => _update = null);
     if (update == null) return;
+    _start(update, silent: FluxerAutoUpdate.enabled);
+  }
+
+  void _start(DesktopUpdateInfo update, {required bool silent}) {
     // La descarga usa los diálogos de la app, que necesitan el navegador.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final context = appRouter.routerDelegate.navigatorKey.currentContext;
       if (context != null && context.mounted) {
-        unawaited(fluxerStartUpdate(context, update));
+        unawaited(fluxerStartUpdate(context, update, silent: silent));
       }
     });
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   @override
@@ -241,10 +254,49 @@ class _UpdateScreen extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 16),
+                    const _AutoUpdateToggle(),
                   ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _AutoUpdateToggle extends StatefulWidget {
+  const _AutoUpdateToggle();
+
+  @override
+  State<_AutoUpdateToggle> createState() => _AutoUpdateToggleState();
+}
+
+class _AutoUpdateToggleState extends State<_AutoUpdateToggle> {
+  bool _on = FluxerAutoUpdate.enabled;
+
+  void _toggle() {
+    setState(() => _on = !_on);
+    unawaited(FluxerAutoUpdate.setEnabled(_on));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = FluxerStrings.of(context);
+    return _OkKey(
+      onOk: _toggle,
+      child: SwitchListTile.adaptive(
+        value: _on,
+        onChanged: (_) => _toggle(),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+        title: Text(s.autoUpdate, style: const TextStyle(fontSize: 15)),
+        subtitle: Text(
+          s.autoUpdateSubtitle,
+          style: TextStyle(
+            fontSize: 12,
+            color: AppColorScheme.onSurface.withValues(alpha: 0.6),
           ),
         ),
       ),

@@ -341,8 +341,8 @@ class FluxerStrings {
   String updateDownloading(String version) => _t('Descargando FluxerPlayer $version', 'Downloading FluxerPlayer $version');
   String get updatePreparing => _t('Preparando la descarga…', 'Preparing the download…');
   String get updateInstallHint => _t(
-        'Al terminar se abre el instalador de Android: pulsa «Instalar». La primera vez te pedirá permitir que FluxerPlayer instale apps.',
-        'When it finishes, the Android installer opens: tap “Install”. The first time it will ask you to allow FluxerPlayer to install apps.',
+        'Al terminar, si Android lo pide, pulsa «Actualizar». La primera vez te pedirá permitir que FluxerPlayer instale apps. La app se cerrará para actualizarse.',
+        'When it finishes, tap “Update” if Android asks. The first time it will ask you to allow FluxerPlayer to install apps. The app will close to update.',
       );
   String get updateFailed => _t(
         'No se ha podido descargar o abrir la actualización. Inténtalo de nuevo en un rato.',
@@ -357,4 +357,9 @@ class FluxerStrings {
         'FluxerPlayer $version is available. Update to get the latest improvements.',
       );
   String get updateNow => _t('Actualizar', 'Update');
+  String get autoUpdate => _t('Instalar actualizaciones automáticamente', 'Install updates automatically');
+  String get autoUpdateSubtitle => _t(
+        'Al abrir la app, si hay versión nueva se instala sin preguntar',
+        'When the app opens, a new version installs without asking',
+      );
 }
