@@ -1,9 +1,10 @@
 # Novedades de FluxerPlayer
 
-## 1.0.26 — Puntuar más claro
+## 1.0.27 — Puntuar y reportar más claro
 
 - El voto elegido (me gusta / no me gusta) se ve claramente marcado.
 - Emby: si la puntuación no se puede guardar, la app lo avisa.
+- Reportar un problema: «Otra cosa» abre una lista más detallada.
 
 ## 1.0.24 — Actualizar sin atascos
 
