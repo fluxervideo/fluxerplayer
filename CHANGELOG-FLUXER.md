@@ -1,5 +1,12 @@
 # Novedades de FluxerPlayer
 
+## 1.0.24 — Actualizar sin atascos
+
+- Android: al terminar la descarga, el aviso indica que prepara la
+  instalación. Si tarda demasiado, se abre el instalador de Android.
+- Android: tras actualizarse desde la app, aviso discreto para volver a
+  abrirla.
+
 ## 1.0.23 — Actualizaciones automáticas
 
 - Nueva opción «Instalar actualizaciones automáticamente», en Acerca de y en
