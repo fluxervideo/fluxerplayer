@@ -5,6 +5,9 @@
 package org.fluxer
 
 import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.ContentProvider
@@ -28,6 +31,20 @@ object FluxerApkInstaller {
     const val DIR = "fluxer_update"
     private const val MIME = "application/vnd.android.package-archive"
     const val EXTRA_NAME = "org.fluxer.apk_name"
+    private const val PREFS = "fluxer_update"
+    private const val KEY_NOTICE = "notice_after_update"
+
+    /** Marca que la próxima sustitución de la app viene de una actualización suya. */
+    fun setUpdateNotice(context: Context, pending: Boolean) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(KEY_NOTICE, pending).apply()
+    }
+
+    fun takeUpdateNotice(context: Context): Boolean {
+        val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val pending = prefs.getBoolean(KEY_NOTICE, false)
+        if (pending) prefs.edit().remove(KEY_NOTICE).apply()
+        return pending
+    }
 
     /** El instalador de Android de siempre, con el APK [name] de cache/fluxer_update/. */
     fun viewIntent(context: Context, name: String): Intent {
@@ -60,9 +77,11 @@ object FluxerApkInstaller {
             var flags = PendingIntent.FLAG_UPDATE_CURRENT
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) flags = flags or PendingIntent.FLAG_MUTABLE
             val pending = PendingIntent.getBroadcast(context, sessionId, intent, flags)
+            setUpdateNotice(context, true)
             session.commit(pending.intentSender)
             session.close()
         } catch (e: Exception) {
+            setUpdateNotice(context, false)
             session.abandon()
             throw e
         }
@@ -132,8 +151,12 @@ class FluxerInstallResultReceiver : BroadcastReceiver() {
                     fallback(context, intent)
                 }
             }
-            PackageInstaller.STATUS_SUCCESS, PackageInstaller.STATUS_FAILURE_ABORTED -> Unit
-            else -> fallback(context, intent)
+            PackageInstaller.STATUS_SUCCESS -> Unit
+            PackageInstaller.STATUS_FAILURE_ABORTED -> FluxerApkInstaller.setUpdateNotice(context, false)
+            else -> {
+                FluxerApkInstaller.setUpdateNotice(context, false)
+                fallback(context, intent)
+            }
         }
     }
 
@@ -143,6 +166,56 @@ class FluxerInstallResultReceiver : BroadcastReceiver() {
             context.startActivity(FluxerApkInstaller.viewIntent(context, name))
         } catch (e: Exception) {
         }
+    }
+}
+
+/**
+ * Tras actualizarse desde la app, Android la cierra y no la vuelve a abrir:
+ * aviso discreto (sin sonido) para abrirla. Solo si la actualización la
+ * empezó FluxerPlayer.
+ */
+class FluxerUpdatedReceiver : BroadcastReceiver() {
+    override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
+        if (!FluxerApkInstaller.takeUpdateNotice(context)) return
+        try {
+            val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !manager.areNotificationsEnabled()) return
+            val launch = context.packageManager.getLaunchIntentForPackage(context.packageName) ?: return
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            val open = PendingIntent.getActivity(context, 0, launch, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            val es = java.util.Locale.getDefault().language == "es"
+            val title = if (es) "FluxerPlayer actualizado" else "FluxerPlayer updated"
+            val text = if (es) "Toca para abrir" else "Tap to open"
+            val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val channel = NotificationChannel(
+                    CHANNEL,
+                    if (es) "Actualizaciones" else "Updates",
+                    NotificationManager.IMPORTANCE_LOW,
+                )
+                channel.setSound(null, null)
+                manager.createNotificationChannel(channel)
+                Notification.Builder(context, CHANNEL)
+            } else {
+                @Suppress("DEPRECATION")
+                Notification.Builder(context).setPriority(Notification.PRIORITY_LOW)
+            }
+            val notification = builder
+                .setSmallIcon(context.resources.getIdentifier("ic_notification", "drawable", context.packageName))
+                .setContentTitle(title)
+                .setContentText(text)
+                .setContentIntent(open)
+                .setAutoCancel(true)
+                .setOnlyAlertOnce(true)
+                .build()
+            manager.notify(NOTIFICATION_ID, notification)
+        } catch (e: Exception) {
+        }
+    }
+
+    private companion object {
+        const val CHANNEL = "fluxer_updates"
+        const val NOTIFICATION_ID = 4711
     }
 }
 
