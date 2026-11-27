@@ -138,6 +138,18 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
         (plan?['balance_covers_next_renewal'] as bool? ?? false);
     final email = customer?['email'] as String?;
     final balance = (customer?['balance'] as num?)?.toDouble();
+    final price = (plan?['next_renewal_price'] as num?)?.toDouble();
+    // Renueva sola en ≤7 días y el saldo no llega: aviso en rojo con lo que falta.
+    final topUpWarning = status == 'active' &&
+            plan?['auto_renew'] == true &&
+            plan?['balance_covers_next_renewal'] != true &&
+            endsAt != null &&
+            days != null &&
+            days <= 7 &&
+            price != null &&
+            price > 0
+        ? s.topUpBefore(endsAt, price - (balance ?? 0))
+        : null;
 
     // Verde activo; ámbar si caduca en ≤7 días sin renovarse solo; rojo si no está activo.
     final Color tone;
@@ -157,6 +169,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
       if (endsAt != null)
         (Icons.event, renewsAlone || plan?['auto_renew'] == true ? s.renewsOn(endsAt) : s.endsOn(endsAt)),
       (Icons.autorenew, plan?['auto_renew'] == true ? s.autoRenewYes : s.autoRenewNo),
+      if (price != null && price > 0) (Icons.sell_outlined, s.renewalPrice(price)),
       if (balance != null) (Icons.account_balance_wallet_outlined, s.balance(balance)),
       if (email != null && email.isNotEmpty) (Icons.mail_outline, email),
       if (server?['name'] != null) (Icons.dns_outlined, '${server!['name']} · ${server['status_label'] ?? ''}'),
@@ -170,8 +183,8 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     final trial = plan?['is_trial'] == true;
     final notice = trial ? s.trialNotice : (status != 'active' ? s.noPlanNotice : null);
     return widget.compact
-        ? _compact(s, plan, tone, label, rows, notice)
-        : _wide(s, plan, tone, label, rows, notice);
+        ? _compact(s, plan, tone, label, rows, notice, topUpWarning)
+        : _wide(s, plan, tone, label, rows, notice, topUpWarning);
   }
 
   void _openPlans(String title) => openFluxerPortal(context, 'plans', title: title);
@@ -289,6 +302,41 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     child: Text(label, style: TextStyle(color: tone, fontWeight: FontWeight.w600, fontSize: 13)),
   );
 
+  // «Recargar saldo» con el color principal: es lo que más importa.
+  ButtonStyle _rechargeStyle() => FilledButton.styleFrom(
+    backgroundColor: AppColorScheme.accent,
+    foregroundColor: AppColorScheme.onAccent,
+  );
+
+  static final _smallButtonStyle = OutlinedButton.styleFrom(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+  );
+
+  Widget _topUpWarning(String text, double fontSize) {
+    const red = Color(0xFFFF5252);
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: red.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: red.withValues(alpha: 0.6)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(Icons.warning_amber_rounded, size: fontSize + 4, color: red),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: fontSize, height: 1.3, color: red, fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _wide(
     FluxerStrings s,
     Map<String, dynamic>? plan,
@@ -296,6 +344,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     String label,
     List<(IconData, String)> rows,
     String? notice,
+    String? topUpWarning,
   ) {
     final accent = AppColorScheme.accent;
     const bigText = TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
@@ -341,6 +390,11 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
                 ],
               ),
             ),
+          if (topUpWarning != null) ...[
+            const SizedBox(height: 4),
+            _topUpWarning(topUpWarning, 14),
+            const SizedBox(height: 10),
+          ],
           const SizedBox(height: 8),
           if (notice != null) ...[
             Container(
@@ -365,6 +419,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
           // planes y cuenta, en el portal.
           FilledButton.icon(
             autofocus: widget.autofocus,
+            style: _rechargeStyle(),
             onPressed: () => openFluxerRecharge(context),
             icon: const Icon(Icons.account_balance_wallet_outlined, size: 22),
             label: Padding(padding: const EdgeInsets.symmetric(vertical: 14), child: Text(s.recharge, style: bigText)),
@@ -383,18 +438,20 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
               if (notice == null) ...[
                 Expanded(
                   child: OutlinedButton.icon(
+                    style: _smallButtonStyle,
                     onPressed: () => _openPlans(s.changePlan),
                     icon: const Icon(Icons.swap_horiz, size: 18),
-                    label: Text(s.changePlan),
+                    label: Text(s.changePlan, maxLines: 1, softWrap: false, overflow: TextOverflow.fade),
                   ),
                 ),
                 const SizedBox(width: 10),
               ],
               Expanded(
                 child: OutlinedButton.icon(
+                  style: _smallButtonStyle,
                   onPressed: () => openFluxerPortal(context, 'account', title: s.fluxerAccount),
                   icon: const Icon(Icons.person_outline, size: 18),
-                  label: Text(s.myAccount),
+                  label: Text(s.myAccount, maxLines: 1, softWrap: false, overflow: TextOverflow.fade),
                 ),
               ),
             ],
@@ -411,6 +468,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     String label,
     List<(IconData, String)> rows,
     String? notice,
+    String? topUpWarning,
   ) {
     final muted = AppColorScheme.onSurface.withValues(alpha: 0.7);
     return Padding(
@@ -443,6 +501,11 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
                 ],
               ),
             ),
+          if (topUpWarning != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: _topUpWarning(topUpWarning, 12),
+            ),
           if (notice != null)
             Padding(
               padding: const EdgeInsets.only(top: 8),
@@ -456,6 +519,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
             runSpacing: 4,
             children: [
               FilledButton.icon(
+                style: _rechargeStyle(),
                 onPressed: () => openFluxerRecharge(context),
                 icon: const Icon(Icons.account_balance_wallet_outlined, size: 16),
                 label: Text(s.recharge),

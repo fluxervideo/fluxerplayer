@@ -217,7 +217,12 @@ class FluxerStrings {
   String get autoRenewNo => _t('Sin renovación automática', 'Auto-renew off');
   String get myAccount => _t('Mi cuenta', 'My account');
   String get choosePlan => _t('Elegir plan', 'Choose a plan');
-  String get changePlan => _t('Cambiar de plan', 'Change plan');
+  String get changePlan => _t('Cambiar plan', 'Change plan');
+  String renewalPrice(double v) => _t('Renovación: ${money(v)}', 'Renewal: ${money(v)}');
+  String topUpBefore(DateTime d, double missing) => _t(
+        'Recarga al menos ${money(missing)} antes del ${_date(d)} para que el plan se renueve solo.',
+        'Top up at least ${money(missing)} before ${_date(d)} so the plan renews automatically.',
+      );
   String get trialNotice => _t(
         'Estás en la prueba gratis. Para seguir cuando acabe, recarga saldo y elige un plan.',
         'You are on the free trial. To keep watching after it ends, top up your balance and choose a plan.',
