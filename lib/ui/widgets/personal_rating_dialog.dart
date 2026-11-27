@@ -297,19 +297,26 @@ class _ThumbRatingButton extends StatelessWidget {
         autofocus: icon == Icons.thumb_up,
         tooltip: label,
         onPressed: onPressed,
+        // FLUXER: el elegido, relleno con el color principal; el otro, solo
+        // el contorno. Con primaryContainer apenas se distinguía en algunos temas.
         style: IconButton.styleFrom(
-          backgroundColor: selected
-              ? colorScheme.primaryContainer
-              : Colors.transparent,
+          backgroundColor: selected ? colorScheme.primary : Colors.transparent,
           foregroundColor: selected
-              ? colorScheme.onPrimaryContainer
-              : colorScheme.onSurface,
+              ? colorScheme.onPrimary
+              : colorScheme.onSurfaceVariant,
           side: BorderSide(
             color: selected ? colorScheme.primary : colorScheme.outline,
+            width: selected ? 2 : 1,
           ),
         ),
-        icon: Icon(icon, size: 28),
+        icon: Icon(selected ? icon : _outlined(icon), size: 28),
       ),
     );
+  }
+
+  static IconData _outlined(IconData icon) {
+    if (icon == Icons.thumb_up) return Icons.thumb_up_outlined;
+    if (icon == Icons.thumb_down) return Icons.thumb_down_outlined;
+    return icon;
   }
 }
