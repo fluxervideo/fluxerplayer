@@ -456,15 +456,23 @@ class _AccountDialogState extends State<_AccountDialog> {
                         ),
                       ),
                     ),
-                    if (_accounts.isNotEmpty && FluxerServers.contains(_accounts[_selected].server.id)) ...[
+                    // FLUXER: el hueco de la tarjeta (380) siempre reservado
+                    // si hay alguna cuenta de Fluxer: mientras carga o con
+                    // otra cuenta elegida, los perfiles no se mueven.
+                    if (_accounts.any((a) => FluxerServers.contains(a.server.id))) ...[
                       const SizedBox(width: 32),
-                      Center(
-                        child: SingleChildScrollView(
-                          child: FluxerSubscriptionCard(
-                            serverId: _accounts[_selected].server.id,
-                            userId: _accounts[_selected].user.id,
-                          ),
-                        ),
+                      SizedBox(
+                        width: 380,
+                        child: FluxerServers.contains(_accounts[_selected].server.id)
+                            ? Center(
+                                child: SingleChildScrollView(
+                                  child: FluxerSubscriptionCard(
+                                    serverId: _accounts[_selected].server.id,
+                                    userId: _accounts[_selected].user.id,
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
                     ],
                   ],

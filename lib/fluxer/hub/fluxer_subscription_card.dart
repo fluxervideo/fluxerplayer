@@ -145,7 +145,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
             plan?['balance_covers_next_renewal'] != true &&
             endsAt != null &&
             days != null &&
-            days <= 7 &&
+            days < 9 && // provisional para probarlo; luego 7
             price != null &&
             price > 0
         ? s.topUpBefore(endsAt, price - (balance ?? 0))

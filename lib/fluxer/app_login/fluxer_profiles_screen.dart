@@ -328,12 +328,17 @@ class _FluxerStartScreenState extends State<FluxerStartScreen> {
                   ),
                 ),
                 const SizedBox(width: 32),
-                Center(
-                  child: SingleChildScrollView(
-                    child: FluxerSubscriptionCard(
-                      key: ValueKey('${selected.server.id}:${selected.user.id}'),
-                      serverId: selected.server.id,
-                      userId: selected.user.id,
+                // Hueco fijo (380, el ancho de la tarjeta): mientras carga la
+                // del perfil elegido, los perfiles no se mueven.
+                SizedBox(
+                  width: 380,
+                  child: Center(
+                    child: SingleChildScrollView(
+                      child: FluxerSubscriptionCard(
+                        key: ValueKey('${selected.server.id}:${selected.user.id}'),
+                        serverId: selected.server.id,
+                        userId: selected.user.id,
+                      ),
                     ),
                   ),
                 ),
