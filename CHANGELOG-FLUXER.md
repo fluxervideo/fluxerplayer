@@ -1,5 +1,11 @@
 # Novedades de FluxerPlayer
 
+## 1.0.22 — Filas de Emby con filtros
+
+- Las filas de inicio creadas en Emby respetan sus filtros: una fila de
+  favoritos enseña solo los favoritos del usuario.
+- El plan de la barra lateral abre «Mi cuenta Fluxer».
+
 ## 1.0.21 — Elegir perfil
 
 - Al abrir la app sin sesión, pantalla «¿Quién va a ver?» con los usuarios
