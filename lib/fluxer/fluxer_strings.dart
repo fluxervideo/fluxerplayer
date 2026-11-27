@@ -199,8 +199,8 @@ class FluxerStrings {
   String get changePlan => _t('Cambiar plan', 'Change plan');
   String renewalPrice(double v) => _t('Renovación: ${money(v)}', 'Renewal: ${money(v)}');
   String topUpBefore(DateTime d, double missing) => _t(
-        'Recarga al menos ${money(missing)} antes del ${_date(d)} para que el plan se renueve solo.',
-        'Top up at least ${money(missing)} before ${_date(d)} so the plan renews automatically.',
+        'Recarga ${money(missing)} antes del ${_date(d)}',
+        'Top up ${money(missing)} before ${_date(d)}',
       );
   String get trialNotice => _t(
         'Estás en la prueba gratis. Para seguir cuando acabe, recarga saldo y elige un plan.',
