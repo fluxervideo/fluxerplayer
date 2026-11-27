@@ -1,5 +1,10 @@
 # Novedades de FluxerPlayer
 
+## 1.2.0-beta.2 — Barra lateral
+
+- Con Bibliotecas desplegado, la tarjeta del plan ya no tapa los menús: van
+  debajo de ella, con scroll si no caben.
+
 ## 1.1.2 — Reportes más sencillos y versiones beta
 
 - Reportar un problema: lista más sencilla. «Otra cosa» abre una caja para

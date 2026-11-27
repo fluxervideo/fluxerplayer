@@ -115,6 +115,8 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
   bool _showLabels = false;
   bool _showAccountCard = false; // FLUXER
   double _fluxerUserRowHeight = 0; // FLUXER: alto de la fila del usuario en la tarjeta
+  double _fluxerAccountBoxHeight = 0; // FLUXER: alto de toda la tarjeta (con el plan)
+  double _fluxerItemsHeight = 0; // FLUXER: alto de los menús
   bool _librariesExpanded = false;
   bool _canExpandViaFocus = false;
   // Set when a rail item opens a screen.
@@ -1289,6 +1291,26 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
                 ),
               ];
 
+              // FLUXER: los menús, centrados como siempre; si la tarjeta del
+              // plan los taparía, empiezan debajo de ella (con scroll si no caben).
+              final measuredItems = _FluxerMeasureHeight(
+                onHeight: (h) {
+                  if (mounted && h != _fluxerItemsHeight) setState(() => _fluxerItemsHeight = h);
+                },
+                child: Column(mainAxisSize: MainAxisSize.min, children: items),
+              );
+              final cardBelowRow = fluxerAccount
+                  ? math.max(0.0, _fluxerAccountBoxHeight - (_fluxerUserRowHeight + 18))
+                  : 0.0;
+              final centeredTop = 4 + (constraints.maxHeight - 8 - _fluxerItemsHeight) / 2;
+              if (cardBelowRow > 0 && centeredTop < cardBelowRow + 8) {
+                return SingleChildScrollView(
+                  controller: _scrollController,
+                  padding: EdgeInsets.only(top: cardBelowRow + 8, bottom: 4),
+                  child: measuredItems,
+                );
+              }
+
               return SingleChildScrollView(
                 controller: _scrollController,
                 padding: const EdgeInsets.symmetric(vertical: 4),
@@ -1298,7 +1320,7 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: items,
+                    children: [measuredItems],
                   ),
                 ),
               );
@@ -1352,8 +1374,11 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
           top: 0,
           left: 0,
           right: 0,
-          child:
-          fluxerSidebarAccountBox(
+          child: _FluxerMeasureHeight(
+          onHeight: (h) {
+            if (mounted && h != _fluxerAccountBoxHeight) setState(() => _fluxerAccountBoxHeight = h);
+          },
+          child: fluxerSidebarAccountBox(
             expanded: _isExpanded,
             child: Column(
               children: [
@@ -1391,6 +1416,7 @@ class _LeftSidebarState extends State<LeftSidebar> with RouteAware {
                 ),
               ],
             ),
+          ),
           ),
         ),
       ],
