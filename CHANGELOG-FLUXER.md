@@ -1,5 +1,14 @@
 # Novedades de FluxerPlayer
 
+## 1.2.0-beta.1 — Versiones beta
+
+- Nuevo en Ajustes → Acerca de: «Recibir versiones beta». Con él activado,
+  la app se actualiza también a las versiones de prueba.
+- Reportar un problema: lista más sencilla. «Otra cosa» abre una caja para
+  escribir lo que pasa.
+- El aviso de recargar sale también en la tarjeta del plan de la barra
+  lateral, y es más corto.
+
 ## 1.1.1 — Estrellas, notas de IMDb y tu plan más claro
 
 - La ficha enseña las notas de IMDb, TMDb, Rotten Tomatoes y otras.

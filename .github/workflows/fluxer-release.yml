@@ -213,5 +213,11 @@ jobs:
           PY
           title="$(grep -m1 -E "^## ${v//./\\.}\b" CHANGELOG-FLUXER.md | sed 's/^## *//')"
           ls -la dist
-          gh release create "$FLUXER_RELEASE_TAG" dist/* --verify-tag --latest \
+          # Las -beta.N salen como pre-release: solo las ve quien activa
+          # «Recibir versiones beta»; la última estable no cambia.
+          case "$v" in
+            *-beta.*) kind=--prerelease ;;
+            *) kind=--latest ;;
+          esac
+          gh release create "$FLUXER_RELEASE_TAG" dist/* --verify-tag $kind \
             --title "FluxerPlayer $title" --notes-file release-notes.md

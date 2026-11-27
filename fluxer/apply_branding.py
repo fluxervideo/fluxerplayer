@@ -54,8 +54,8 @@ import os  # noqa: E402
 
 VERSION = json.loads((ROOT / "fluxer" / "version.json").read_text(encoding="utf-8"))
 build_number = os.environ.get("FLUXER_BUILD_NUMBER", "1").strip() or "1"
-if not re.fullmatch(r"\d+\.\d+\.\d+", VERSION["version"]):
-    errors.append(f"version.json: versión no válida {VERSION['version']!r} (debe ser X.Y.Z)")
+if not re.fullmatch(r"\d+\.\d+\.\d+(-beta\.\d+)?", VERSION["version"]):
+    errors.append(f"version.json: versión no válida {VERSION['version']!r} (debe ser X.Y.Z o X.Y.Z-beta.N)")
 if not build_number.isdigit():
     errors.append(f"FLUXER_BUILD_NUMBER no es un número: {build_number!r}")
 tag = os.environ.get("FLUXER_RELEASE_TAG", "").strip()
@@ -66,6 +66,7 @@ sub("pubspec.yaml", [
 ])
 sub("lib/fluxer/fluxer_build_info.dart", [
     (r"const String fluxerMoonfinBase = '[^']*';", f"const String fluxerMoonfinBase = '{VERSION['moonfinBase']}';"),
+    (r"const String fluxerVersion = '[^']*';", f"const String fluxerVersion = '{VERSION['version']}';"),
 ])
 
 # --- Windows: ventana, propiedades del .exe e instalador -------------------

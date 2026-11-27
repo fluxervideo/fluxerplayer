@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:jellyfin_preference/jellyfin_preference.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
+import '../../fluxer/fluxer_build_info.dart'; // FLUXER:
+import '../../fluxer/update/fluxer_beta_channel.dart'; // FLUXER:
 import '../../preference/user_preferences.dart';
 import '../../util/app_distribution.dart';
 
@@ -201,6 +203,8 @@ class AppUpdateService {
   }
 
   Future<String> _currentAppVersion() async {
+    // FLUXER: la versión completa (con -beta.N); en Windows el .exe no la guarda.
+    if (fluxerVersion.isNotEmpty) return fluxerVersion;
     try {
       final packageInfo = await PackageInfo.fromPlatform();
       final version = packageInfo.version.trim();
@@ -217,7 +221,15 @@ class AppUpdateService {
       ..connectionTimeout = const Duration(seconds: 10);
 
     try {
-      final request = await client.getUrl(Uri.https(_latestReleaseHost, _latestReleasePath));
+      // FLUXER: con «Recibir versiones beta», la más alta de la lista
+      // (también las pre-release); sin él, la última estable.
+      final beta = FluxerBetaChannel.enabled;
+      final path = beta
+          ? _latestReleasePath.replaceFirst(RegExp(r'/latest$'), '')
+          : _latestReleasePath;
+      final request = await client.getUrl(
+        Uri.https(_latestReleaseHost, path, beta ? const {'per_page': '30'} : null),
+      );
       request.headers.set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
 
       final response = await request.close().timeout(const Duration(seconds: 10));
@@ -227,7 +239,8 @@ class AppUpdateService {
       }
 
       final body = await response.transform(utf8.decoder).join();
-      final decoded = jsonDecode(body);
+      var decoded = jsonDecode(body);
+      if (beta && decoded is List) decoded = _fluxerHighestRelease(decoded); // FLUXER:
       if (decoded is! Map<String, dynamic>) {
         return null;
       }
@@ -315,7 +328,25 @@ class AppUpdateService {
     return null;
   }
 
+  // FLUXER: la versión más alta que no sea borrador.
+  Map<String, dynamic>? _fluxerHighestRelease(List<dynamic> releases) {
+    Map<String, dynamic>? best;
+    for (final r in releases) {
+      if (r is! Map<String, dynamic> || r['draft'] == true) continue;
+      final tag = r['tag_name']?.toString();
+      if (tag == null || tag.trim().isEmpty) continue;
+      if (best == null || fluxerCompareVersions(tag, best['tag_name'].toString()) > 0) best = r;
+    }
+    return best;
+  }
+
   bool _isNewerVersion(String candidate, String current) {
+    // FLUXER: tiene en cuenta -beta.N (1.2.0-beta.1 < 1.2.0).
+    return fluxerCompareVersions(candidate, current) > 0;
+  }
+
+  // ignore: unused_element
+  bool _moonfinIsNewerVersion(String candidate, String current) {
     final candidateParts = _parseSemverCore(candidate);
     final currentParts = _parseSemverCore(current);
     final maxLength = candidateParts.length > currentParts.length

@@ -378,4 +378,9 @@ class FluxerStrings {
         'Al abrir la app, si hay versión nueva se instala sin preguntar',
         'When the app opens, a new version installs without asking',
       );
+  String get betaUpdates => _t('Recibir versiones beta', 'Get beta versions');
+  String get betaUpdatesSubtitle => _t(
+        'Novedades antes que nadie; pueden tener fallos',
+        'New features first; they may have bugs',
+      );
 }

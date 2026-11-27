@@ -50,7 +50,7 @@ class _AboutCategoryScreen extends StatelessWidget {
                 autofocus: true,
                 leading: const Icon(Icons.info_outline),
                 title: Text(l10n.version),
-                subtitle: Text(FluxerStrings.of(context).versionWithBase(appVersion, fluxerMoonfinBase)), // FLUXER:
+                subtitle: Text(FluxerStrings.of(context).versionWithBase(fluxerVersion, fluxerMoonfinBase)), // FLUXER:
                 trailing: const SizedBox.shrink(),
                 onTap: () {
                   if (FluxerFeatures.games) AfterHoursTrigger.press(context); // FLUXER:
@@ -60,6 +60,8 @@ class _AboutCategoryScreen extends StatelessWidget {
                 const _CheckForUpdatesTile(),
               if (AppDistribution.supportsInAppUpdates) // FLUXER:
                 const _FluxerAutoUpdateTile(),
+              if (AppDistribution.supportsInAppUpdates) // FLUXER:
+                const _FluxerBetaUpdatesTile(),
               if (FluxerFeatures.moonfinAboutTiles) // FLUXER: enlace bajo la versión
               _TvSettingsListTile(
                 leading: const Icon(Icons.code),
@@ -241,6 +243,37 @@ class _FluxerAutoUpdateTileState extends State<_FluxerAutoUpdateTile> {
       leading: const Icon(Icons.autorenew),
       title: Text(s.autoUpdate),
       subtitle: Text(s.autoUpdateSubtitle),
+      trailing: IgnorePointer(
+        child: Switch.adaptive(value: _on, onChanged: (_) {}),
+      ),
+      onTap: _toggle,
+    );
+  }
+}
+
+// FLUXER: «Recibir versiones beta».
+class _FluxerBetaUpdatesTile extends StatefulWidget {
+  const _FluxerBetaUpdatesTile();
+
+  @override
+  State<_FluxerBetaUpdatesTile> createState() => _FluxerBetaUpdatesTileState();
+}
+
+class _FluxerBetaUpdatesTileState extends State<_FluxerBetaUpdatesTile> {
+  bool _on = FluxerBetaChannel.enabled;
+
+  void _toggle() {
+    setState(() => _on = !_on);
+    unawaited(FluxerBetaChannel.setEnabled(_on));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = FluxerStrings.of(context);
+    return _TvSettingsListTile(
+      leading: const Icon(Icons.science_outlined),
+      title: Text(s.betaUpdates),
+      subtitle: Text(s.betaUpdatesSubtitle),
       trailing: IgnorePointer(
         child: Switch.adaptive(value: _on, onChanged: (_) {}),
       ),
