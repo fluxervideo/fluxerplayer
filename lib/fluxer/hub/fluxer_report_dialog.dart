@@ -7,6 +7,7 @@ import 'package:get_it/get_it.dart';
 import '../../data/models/aggregated_item.dart';
 import '../../data/services/log_service.dart';
 import '../../ui/widgets/settings/preference_tiles.dart';
+import '../../util/platform_detection.dart';
 import '../widgets/fluxer_tile.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_hub_client.dart';
@@ -16,8 +17,19 @@ import 'fluxer_portal.dart';
 bool fluxerCanReport(AggregatedItem item) =>
     const {'Movie', 'Episode', 'Video', 'MusicVideo', 'Series', 'Season'}.contains(item.type);
 
-/// Los mismos que en la cuenta de Fluxer.
-const _symptoms = ['wont_start', 'buffering', 'cuts', 'bad_quality', 'audio', 'other'];
+/// Opciones de la lista: (clave, síntoma que acepta el Hub). Las dos de
+/// idioma y título equivocado van al Hub como «Otra cosa» con su texto en el
+/// comentario (el Hub solo acepta los seis síntomas de la cuenta de Fluxer).
+const _options = [
+  ('wont_start', 'wont_start'),
+  ('buffering', 'buffering'),
+  ('cuts', 'cuts'),
+  ('bad_quality', 'bad_quality'),
+  ('audio', 'audio'),
+  ('lang_missing', 'other'),
+  ('wrong_item', 'other'),
+  ('other', 'other'),
+];
 
 Future<void> showFluxerReportDialog(BuildContext context, AggregatedItem item) async {
   final s = FluxerStrings.of(context);
@@ -53,9 +65,7 @@ class _ReportDialog extends StatefulWidget {
 }
 
 class _ReportDialogState extends State<_ReportDialog> {
-  String _symptom = 'wont_start';
-  // Con «Otra cosa»: la opción de la lista larga (FluxerStrings.reportOtherOptions).
-  String? _otherKey;
+  String _option = 'wont_start';
   // Solo si el cliente tiene activado «Grabar diagnóstico» (Mi cuenta Fluxer).
   final bool _canAttach = GetIt.instance<LogService>().isEnabled;
   bool _attachDiagnostic = true;
@@ -76,16 +86,16 @@ class _ReportDialogState extends State<_ReportDialog> {
     return year != null ? '${item.name} ($year)' : item.name;
   }
 
-  /// La opción de «Otra cosa», en español para quien lo revisa en el Hub.
-  String? _otherComment() {
-    if (_symptom != 'other' || _otherKey == null) return null;
-    for (final o in FluxerStrings.reportOtherOptions) {
-      if (o.$2 == _otherKey) return 'Otra cosa: ${o.$3}';
-    }
-    return null;
+  /// «Otra cosa»: ventana con una caja de texto; al enviarla, se manda el
+  /// reporte con lo escrito.
+  Future<void> _askOther() async {
+    final text = await showDialog<String>(context: context, builder: (_) => const _OtherDialog());
+    if (text == null || !mounted) return;
+    setState(() => _option = 'other');
+    await _send(comment: text);
   }
 
-  Future<void> _send() async {
+  Future<void> _send({String? comment}) async {
     final s = FluxerStrings.of(context);
     setState(() {
       _sending = true;
@@ -96,8 +106,9 @@ class _ReportDialogState extends State<_ReportDialog> {
       final id = await FluxerHubClient.instance.report(
         type: 'technical_issue',
         title: _title(),
-        symptom: _symptom,
-        comment: _otherComment(),
+        symptom: _options.firstWhere((o) => o.$1 == _option).$2,
+        // Las opciones que el Hub no tiene, en español para quien lo revisa.
+        comment: comment ?? FluxerStrings.reportCommentFor(_option),
         embyItemId: item.id,
         embyItemType: item.type,
         seasonNumber: item.type == 'Episode' ? item.parentIndexNumber : null,
@@ -150,41 +161,17 @@ class _ReportDialogState extends State<_ReportDialog> {
               // Opciones de Ajustes (SettingsPickerOption), no RadioListTile:
               // en la tele el grupo de radios se quedaba con ↑/↓ y el botón
               // central no elegía, así que no se llegaba al comentario ni a Enviar.
-              for (final (i, key) in _symptoms.indexed)
+              for (final (i, (key, _)) in _options.indexed)
                 SettingsPickerOption(
                   autofocus: i == 0,
                   label: s.symptom(key),
-                  selected: _symptom == key,
-                  onTap: () => setState(() => _symptom = key),
+                  selected: _option == key,
+                  onTap: _sending
+                      ? () {}
+                      : key == 'other'
+                          ? _askOther
+                          : () => setState(() => _option = key),
                 ),
-              if (_symptom == 'other') ...[
-                const SizedBox(height: 12),
-                Text(s.reportOtherWhat),
-                for (final (i, o) in FluxerStrings.reportOtherOptions.indexed) ...[
-                  if (i == 0 || FluxerStrings.reportOtherOptions[i - 1].$1 != o.$1)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 2),
-                      child: Text(
-                        s.reportOtherGroup(o.$1),
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            ),
-                      ),
-                    ),
-                  SettingsPickerOption(
-                    label: s.reportOtherLabel(o),
-                    selected: _otherKey == o.$2,
-                    onTap: () => setState(() => _otherKey = o.$2),
-                  ),
-                ],
-                const SizedBox(height: 12),
-                Text(
-                  s.reportMoreDetailsWeb,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                ),
-              ],
               const SizedBox(height: 8),
               if (_canAttach)
                 FluxerTile(
@@ -204,11 +191,69 @@ class _ReportDialogState extends State<_ReportDialog> {
       actions: [
         TextButton(onPressed: _sending ? null : () => Navigator.pop(context), child: Text(s.back)),
         FilledButton(
-          onPressed: _sending ? null : _send,
+          onPressed: _sending ? null : () => _option == 'other' ? _askOther() : _send(),
           child: _sending
               ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
               : Text(s.send),
         ),
+      ],
+    );
+  }
+}
+
+/// «Otra cosa»: caja de texto con el foco puesto. Enter (o «Enviar» del
+/// teclado) envía; en la tele, ↑/↓ saltan entre la caja y los botones.
+class _OtherDialog extends StatefulWidget {
+  const _OtherDialog();
+
+  @override
+  State<_OtherDialog> createState() => _OtherDialogState();
+}
+
+class _OtherDialogState extends State<_OtherDialog> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  bool get _hasText => _controller.text.trim().isNotEmpty;
+
+  void _submit() {
+    if (_hasText) Navigator.pop(context, _controller.text.trim());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = FluxerStrings.of(context);
+    return AlertDialog(
+      title: Text(s.reportOtherTitle),
+      content: SizedBox(
+        width: 520,
+        child: FluxerTvTextFieldEscape(
+          enabled: PlatformDetection.isTV,
+          child: TextField(
+            controller: _controller,
+            autofocus: true,
+            minLines: 3,
+            maxLines: 5,
+            maxLength: 1000,
+            textCapitalization: TextCapitalization.sentences,
+            textInputAction: TextInputAction.send,
+            onChanged: (_) => setState(() {}),
+            onSubmitted: (_) => _submit(),
+            decoration: InputDecoration(
+              hintText: s.reportOtherHint,
+              border: const OutlineInputBorder(),
+            ),
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(s.back)),
+        FilledButton(onPressed: _hasText ? _submit : null, child: Text(s.send)),
       ],
     );
   }
