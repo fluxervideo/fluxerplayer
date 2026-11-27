@@ -176,7 +176,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     ];
 
     if (widget.sidebar) {
-      return _sidebar(s, plan, tone, label, endsAt, renewsAlone || plan?['auto_renew'] == true, balance, email);
+      return _sidebar(s, plan, tone, label, endsAt, renewsAlone || plan?['auto_renew'] == true, balance, email, topUpWarning);
     }
 
     // Con la prueba, sin plan o caducado: hay que recargar y elegir plan.
@@ -198,6 +198,7 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
     bool renews,
     double? balance,
     String? email,
+    String? topUpWarning,
   ) {
     final muted = Colors.white.withValues(alpha: 0.6);
     final trial = plan?['is_trial'] == true;
@@ -281,6 +282,11 @@ class _FluxerSubscriptionCardState extends State<FluxerSubscriptionCard> {
                           ),
                         ],
                       ),
+                    ],
+                    // FLUXER: aquí es donde más se ve el aviso de recargar.
+                    if (topUpWarning != null) ...[
+                      const SizedBox(height: 10),
+                      _topUpWarning(topUpWarning, 12),
                     ],
                   ],
                 ),
