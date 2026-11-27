@@ -1,5 +1,15 @@
 # Novedades de FluxerPlayer
 
+## 1.0.23 — Actualizaciones automáticas
+
+- Nueva opción «Instalar actualizaciones automáticamente», en Acerca de y en
+  la pantalla de versión nueva. Activada, al abrir la app la versión nueva se
+  instala sin preguntar.
+- Android: desde Android 12 la app se actualiza sin pedir confirmación
+  cuando el sistema lo permite; si no, sale el aviso de Android de siempre.
+- Windows: la actualización se instala sin ventanas y la app vuelve a abrirse.
+  Windows puede seguir pidiendo permiso para hacer cambios.
+
 ## 1.0.22 — Filas de Emby con filtros
 
 - Las filas de inicio creadas en Emby respetan sus filtros: una fila de
