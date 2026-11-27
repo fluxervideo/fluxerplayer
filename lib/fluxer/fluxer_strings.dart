@@ -82,6 +82,37 @@ class FluxerStrings {
         'audio' => _t('Problemas con el sonido o los subtítulos', 'Sound or subtitle problems'),
         _ => _t('Otra cosa', 'Something else'),
       };
+  // «Otra cosa»: la lista larga. Va al Hub como comentario, siempre en español.
+  String get reportOtherWhat => _t('¿Qué tipo de problema?', 'What kind of problem?');
+  String reportOtherGroup(String key) => switch (key) {
+        'video' => _t('El vídeo en sí', 'The video itself'),
+        'language' => _t('Idioma', 'Language'),
+        'player' => _t('Reproductor', 'Player'),
+        'catalog' => _t('Información y catálogo', 'Info and catalog'),
+        _ => _t('Otros', 'Other'),
+      };
+  static const reportOtherOptions = <(String, String, String, String)>[
+    // (grupo, clave, español, inglés)
+    ('video', 'wrong_item', 'Es otro capítulo o película (no es el que dice)', 'It is a different episode or movie'),
+    ('video', 'incomplete', 'Está incompleto o se corta antes del final', 'It is incomplete or ends early'),
+    ('video', 'ads', 'Lleva publicidad, marcas de agua o texto incrustado', 'It has ads, watermarks or burned-in text'),
+    ('video', 'cam', 'Calidad de cine (grabado en sala)', 'Cam quality (recorded in a cinema)'),
+    ('language', 'no_audio_lang', 'No está en español / falta el audio en mi idioma', 'Audio in my language is missing'),
+    ('language', 'no_subs_lang', 'Faltan subtítulos en mi idioma', 'Subtitles in my language are missing'),
+    ('player', 'player_option', 'Algún botón u opción del reproductor no funciona', 'A player button or option does not work'),
+    ('player', 'player_tracks', 'No puedo cambiar el audio o los subtítulos', 'I cannot change audio or subtitles'),
+    ('player', 'player_resume', 'No guarda por dónde iba', 'It does not remember where I was'),
+    ('catalog', 'wrong_info', 'Título, sinopsis o portada equivocados', 'Wrong title, synopsis or poster'),
+    ('catalog', 'wrong_order', 'Capítulos mal ordenados o mal numerados', 'Episodes in the wrong order or numbering'),
+    ('catalog', 'missing', 'Falta un capítulo o una temporada', 'An episode or season is missing'),
+    ('catalog', 'duplicate', 'Está repetido', 'It is duplicated'),
+    ('other', 'other', 'Otro problema', 'Another problem'),
+  ];
+  String reportOtherLabel((String, String, String, String) o) => _t(o.$3, o.$4);
+  String get reportMoreDetailsWeb => _t(
+        '¿Quieres contar más detalles? Escríbelo desde la web de Fluxer Hub, en tu cuenta.',
+        'Want to tell us more? Write it from the Fluxer Hub website, in your account.',
+      );
   String sidebarUpdateTitle(String version) => _t('Versión $version disponible', 'Version $version available');
   String get sidebarUpdateAction => _t('Pulsa para actualizar', 'Press to update');
   String basedOnMoonfin(String moonfin) => _t('Basada en Moonfin $moonfin', 'Based on Moonfin $moonfin');

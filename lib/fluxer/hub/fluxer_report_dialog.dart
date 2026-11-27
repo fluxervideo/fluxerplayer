@@ -54,6 +54,8 @@ class _ReportDialog extends StatefulWidget {
 
 class _ReportDialogState extends State<_ReportDialog> {
   String _symptom = 'wont_start';
+  // Con «Otra cosa»: la opción de la lista larga (FluxerStrings.reportOtherOptions).
+  String? _otherKey;
   // Solo si el cliente tiene activado «Grabar diagnóstico» (Mi cuenta Fluxer).
   final bool _canAttach = GetIt.instance<LogService>().isEnabled;
   bool _attachDiagnostic = true;
@@ -74,6 +76,15 @@ class _ReportDialogState extends State<_ReportDialog> {
     return year != null ? '${item.name} ($year)' : item.name;
   }
 
+  /// La opción de «Otra cosa», en español para quien lo revisa en el Hub.
+  String? _otherComment() {
+    if (_symptom != 'other' || _otherKey == null) return null;
+    for (final o in FluxerStrings.reportOtherOptions) {
+      if (o.$2 == _otherKey) return 'Otra cosa: ${o.$3}';
+    }
+    return null;
+  }
+
   Future<void> _send() async {
     final s = FluxerStrings.of(context);
     setState(() {
@@ -86,6 +97,7 @@ class _ReportDialogState extends State<_ReportDialog> {
         type: 'technical_issue',
         title: _title(),
         symptom: _symptom,
+        comment: _otherComment(),
         embyItemId: item.id,
         embyItemType: item.type,
         seasonNumber: item.type == 'Episode' ? item.parentIndexNumber : null,
@@ -145,6 +157,34 @@ class _ReportDialogState extends State<_ReportDialog> {
                   selected: _symptom == key,
                   onTap: () => setState(() => _symptom = key),
                 ),
+              if (_symptom == 'other') ...[
+                const SizedBox(height: 12),
+                Text(s.reportOtherWhat),
+                for (final (i, o) in FluxerStrings.reportOtherOptions.indexed) ...[
+                  if (i == 0 || FluxerStrings.reportOtherOptions[i - 1].$1 != o.$1)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 2),
+                      child: Text(
+                        s.reportOtherGroup(o.$1),
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                    ),
+                  SettingsPickerOption(
+                    label: s.reportOtherLabel(o),
+                    selected: _otherKey == o.$2,
+                    onTap: () => setState(() => _otherKey = o.$2),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                Text(
+                  s.reportMoreDetailsWeb,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
               const SizedBox(height: 8),
               if (_canAttach)
                 FluxerTile(
