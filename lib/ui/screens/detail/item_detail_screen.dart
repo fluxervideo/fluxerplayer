@@ -6874,12 +6874,10 @@ class DetailActionButtonsState extends State<DetailActionButtons> {
     return maxButtons > 2 ? maxButtons : 2;
   }
 
+  // FLUXER: siempre estrellas, para todos; sin ajuste para cambiarlo.
   PersonalRatingStyle _personalRatingStyle() {
-    final style = GetIt.instance<UserPreferences>().get(
-      UserPreferences.personalRatingStyle,
-    );
     return viewModel.supportsNumericUserRatings
-        ? style
+        ? PersonalRatingStyle.stars
         : PersonalRatingStyle.thumbs;
   }
 

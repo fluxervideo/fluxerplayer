@@ -12553,5 +12553,14 @@
     "afterHoursPixelPurgeCardRemote": "Mueve el deslizador hacia la izquierda y hacia la derecha.",
     "@afterHoursPixelPurgeCardRemote": {
         "description": "Short remote controls of the Pixel Purge arcade game on its How to play card. The scrubber is the seek bar used as the paddle. Keep under about 90 characters, it shows as one line"
-    }
+    },
+    "personalRatingStyle": "Estilo de puntuación personal",
+    "personalRatingNumeric": "Nota del 0 al 10",
+    "rate": "Puntuar",
+    "personalRatingRated": "Puntuado",
+    "personalRatingOutOfTen": "{rating} / 10",
+    "personalRatingOutOfFive": "{rating} / 5",
+    "resetRatingsTitle": "¿Restablecer puntuaciones?",
+    "resetRatingsDescription": "Vuelve a dejar como estaban todos los ajustes de puntuaciones, incluidas qué fuentes se muestran y en qué orden.",
+    "ratingsReset": "Puntuaciones restablecidas."
 }

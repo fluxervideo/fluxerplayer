@@ -66,21 +66,7 @@ class _DetailsScreenSettingsScreenState
                       DetailScreenStyle.frost => l10n.detailScreenStyleFrost,
                     },
                   ),
-                  EnumPreferenceTile<PersonalRatingStyle>(
-                    preference: UserPreferences.personalRatingStyle,
-                    title: l10n.personalRatingStyle,
-                    icon: Icons.rate_review,
-                    values: GetIt.instance<MediaServerClient>()
-                            .userLibraryApi
-                            .supportsNumericUserRatings
-                        ? PersonalRatingStyle.values
-                        : const [PersonalRatingStyle.thumbs],
-                    labelOf: (style) => switch (style) {
-                      PersonalRatingStyle.thumbs => l10n.personalRatingThumbs,
-                      PersonalRatingStyle.stars => l10n.personalRatingStars,
-                      PersonalRatingStyle.numeric => l10n.personalRatingNumeric,
-                    },
-                  ),
+                  // FLUXER: sin «Estilo de puntuación»: siempre estrellas.
                   SwitchPreferenceTile(
                     preference: UserPreferences.detailsBackdropEnabled,
                     title: l10n.detailsScreenBackdrop,
