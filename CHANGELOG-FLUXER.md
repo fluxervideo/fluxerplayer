@@ -1,7 +1,13 @@
 # Novedades de FluxerPlayer
 
-## 1.1.0 — Puntuar con estrellas
+## 1.1.1 — Estrellas, notas de IMDb y tu plan más claro
 
+- La ficha enseña las notas de IMDb, TMDb, Rotten Tomatoes y otras.
+- Tu plan: se ve lo que cuesta renovarlo y avisa en rojo si hay que recargar
+  antes de la renovación. «Recargar saldo» se ve más.
+- La barra lateral no mueve sus iconos al abrirse y ya no queda tapada por la
+  flecha de atrás.
+- Los perfiles no se mueven al cargar la tarjeta del plan.
 - Se puntúa siempre con estrellas, de cuarto en cuarto.
 - «Mi calificación» enseña la nota con 2 decimales (2.75/5).
 - Textos de puntuación en español.
