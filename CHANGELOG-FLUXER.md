@@ -1,6 +1,6 @@
 # Novedades de FluxerPlayer
 
-## 1.0.28 — Puntuar con estrellas
+## 1.1.0 — Puntuar con estrellas
 
 - Se puntúa siempre con estrellas, de cuarto en cuarto.
 - «Mi calificación» enseña la nota con 2 decimales (2.75/5).
