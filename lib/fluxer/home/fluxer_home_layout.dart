@@ -156,6 +156,12 @@ class FluxerHomeLayout {
         case 'items':
           serverRow(section, {
             'kind': 'items',
+            'query': {
+              // Filtros que Emby puede poner en la propia sección.
+              for (final k in const ['IsFavorite', 'Filters', 'IsPlayed', 'IsResumable'])
+                if (section[k] != null) k: section[k],
+              ...query,
+            },
             'itemTypes': ids(section['ItemTypes']),
             'tagIds': ids(query['TagIds']),
             'genreIds': ids(query['GenreIds']),
@@ -208,6 +214,17 @@ class FluxerHomeLayout {
         params['SortBy'] = query['sortBy'] ?? 'SortName';
         params['SortOrder'] = query['sortOrder'] ?? 'Ascending';
       case 'items':
+        // Filtros de la sección tal cual (favoritos, vistos…).
+        final extra = query['query'];
+        if (extra is Map) {
+          extra.forEach((key, value) {
+            if (value is List) {
+              if (csv(value) case final v?) params[key.toString()] = v;
+            } else if (value is String || value is num || value is bool) {
+              params[key.toString()] = value;
+            }
+          });
+        }
         params['Recursive'] = true;
         if (csv(query['itemTypes']) case final types?) params['IncludeItemTypes'] = types;
         if (csv(query['tagIds']) case final tags?) params['TagIds'] = tags;
