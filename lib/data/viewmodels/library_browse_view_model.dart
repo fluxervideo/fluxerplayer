@@ -24,6 +24,7 @@ import '../utils/bounded_concurrency.dart';
 import '../utils/genre_browse_utils.dart';
 import '../utils/merged_copies.dart';
 import '../utils/playlist_utils.dart';
+import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
 
 enum LibraryBrowseState { loading, ready, error }
 
@@ -474,7 +475,8 @@ class LibraryBrowseViewModel extends ChangeNotifier {
   }
 
   Future<void> _loadFocusedRatings(AggregatedItem item) async {
-    if (!_prefs.get(UserPreferences.enableAdditionalRatings)) return;
+    // FLUXER: MDBList solo en la ficha, para no gastar el cupo diario.
+    if (FluxerServers.activeIsFluxer || !_prefs.get(UserPreferences.enableAdditionalRatings)) return;
     final ratings = await _mdbListRepository.getRatingsForItem(
       item,
       episodeRatingsEnabled: _prefs.canFetchEpisodeRatings,

@@ -40,6 +40,7 @@ import '../../widgets/seerr/seerr_genre_label.dart';
 import '../../widgets/skeleton/skeleton_home_row.dart';
 import '../../widgets/skeleton/skeleton_shimmer.dart';
 import '../../widgets/offline_aware_image.dart';
+import '../../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
 
 const _tmdbPosterBase = 'https://image.tmdb.org/t/p/w300';
 const _tmdbBackdropBase = 'https://image.tmdb.org/t/p/w1280';
@@ -867,7 +868,8 @@ class _SeerrDiscoverScreenState extends State<SeerrDiscoverScreen> {
   }
 
   void _primeModernRatings(SeerrDiscoverItem item) {
-    if (!_prefs.get(UserPreferences.enableAdditionalRatings)) return;
+    // FLUXER: MDBList solo en la ficha, para no gastar el cupo diario.
+    if (FluxerServers.activeIsFluxer || !_prefs.get(UserPreferences.enableAdditionalRatings)) return;
     final key = _modernKey(item);
     if (!_modernRatingsRequested.add(key)) return;
     unawaited(

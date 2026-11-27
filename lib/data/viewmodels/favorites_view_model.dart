@@ -15,6 +15,7 @@ import '../services/seerr/seerr_api_models.dart';
 import '../services/user_data_sync.dart';
 import '../utils/blocked_ratings.dart';
 import '../utils/bounded_concurrency.dart';
+import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
 
 enum FavoritesState { loading, ready, error }
 
@@ -176,7 +177,8 @@ class FavoritesViewModel extends ChangeNotifier {
   }
 
   Future<void> _loadFocusedRatings(AggregatedItem item) async {
-    if (!_prefs.get(UserPreferences.enableAdditionalRatings)) return;
+    // FLUXER: MDBList solo en la ficha, para no gastar el cupo diario.
+    if (FluxerServers.activeIsFluxer || !_prefs.get(UserPreferences.enableAdditionalRatings)) return;
     final ratings = await _mdbListRepository.getRatingsForItem(
       item,
       episodeRatingsEnabled: _prefs.canFetchEpisodeRatings,

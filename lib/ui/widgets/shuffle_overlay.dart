@@ -22,6 +22,7 @@ import 'media_card.dart';
 import 'overlay_sheet.dart';
 import 'rating_display.dart';
 import 'shuffle_options_dialog.dart';
+import '../../fluxer/hub/fluxer_servers.dart'; // FLUXER:
 
 const _kShuffleCardCount = 5;
 const _kShuffleLoadTimeout = Duration(seconds: 25);
@@ -625,7 +626,8 @@ class _ShuffleOverlayState extends State<_ShuffleOverlay> {
     List<AggregatedItem> items, {
     AggregatedItem? selectedItem,
   }) {
-    if (!_prefs.get(UserPreferences.enableAdditionalRatings)) return;
+    // FLUXER: MDBList solo en la ficha, para no gastar el cupo diario.
+    if (FluxerServers.activeIsFluxer || !_prefs.get(UserPreferences.enableAdditionalRatings)) return;
 
     final selectedKey = selectedItem == null
         ? null
@@ -678,7 +680,8 @@ class _ShuffleOverlayState extends State<_ShuffleOverlay> {
       return;
     }
 
-    if (!_prefs.get(UserPreferences.enableAdditionalRatings)) {
+    // FLUXER: MDBList solo en la ficha, para no gastar el cupo diario.
+    if (FluxerServers.activeIsFluxer || !_prefs.get(UserPreferences.enableAdditionalRatings)) {
       if (mounted) {
         setState(() => _selectedRatings = const {});
       }

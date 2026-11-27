@@ -39,6 +39,9 @@ final Map<String, Object> _locked = {
   'mediaBarMode': UserPreferences.mediaBarModeMoonfin,
   // Filas de inicio en carrusel (con panel de detalles) en todos los aparatos.
   'pref_home_rows_style': HomeRowsStyle.carousel,
+  // Valoraciones adicionales (IMDb, TMDb… vía MDBList, clave en el plugin):
+  // siempre en la ficha. Solo ahí, para no gastar el cupo diario.
+  'enableAdditionalRatings': true,
 };
 
 /// El valor fijado para [key] si la sesión activa es de Fluxer; si no, null.
