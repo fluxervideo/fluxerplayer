@@ -1,5 +1,10 @@
 # Novedades de FluxerPlayer
 
+## 1.2.0-beta.3 — Betas antes
+
+- Con «Recibir versiones beta», la app busca versión nueva cada 10 minutos en
+  vez de cada 30.
+
 ## 1.2.0-beta.2 — Barra lateral
 
 - Con Bibliotecas desplegado, la tarjeta del plan ya no tapa los menús: van

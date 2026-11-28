@@ -18,6 +18,7 @@ import '../../ui/widgets/app_update_dialog.dart';
 import '../../util/platform_detection.dart';
 import '../fluxer_strings.dart';
 import 'fluxer_auto_update.dart';
+import 'fluxer_beta_channel.dart';
 
 /// La versión nueva encontrada al abrir la app (aunque se haya cancelado):
 /// «Acerca de» ofrece entonces «Actualizar a la versión X».
@@ -33,7 +34,10 @@ class FluxerUpdateGate extends StatefulWidget {
 }
 
 class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
-  static const _recheckEvery = Duration(minutes: 30);
+  // Cada 10 min con «Recibir versiones beta»; si no, cada 30.
+  static const _tick = Duration(minutes: 10);
+  static const _ticksWithoutBeta = 3;
+  int _ticks = 0;
 
   DesktopUpdateInfo? _update;
   Timer? _recheck;
@@ -42,7 +46,10 @@ class _FluxerUpdateGateState extends State<FluxerUpdateGate> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => unawaited(_check()));
-    _recheck = Timer.periodic(_recheckEvery, (_) => unawaited(_recheckQuietly()));
+    _recheck = Timer.periodic(_tick, (_) {
+      _ticks++;
+      if (FluxerBetaChannel.enabled || _ticks % _ticksWithoutBeta == 0) unawaited(_recheckQuietly());
+    });
   }
 
   @override
